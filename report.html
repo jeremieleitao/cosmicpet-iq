@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<!-- GA4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-KH9YF6Y6W0"></script>
+<script>
+  window.dataLayer=window.dataLayer||[];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js',new Date());
+  gtag('config','G-KH9YF6Y6W0');
+</script>
+<title>🧠 Cognitive Report — Pet IQ Lab</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&family=DM+Mono:wght@400;500&family=Fraunces:ital,wght@0,700;1,600;1,700;1,800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --pink:   #f43f8f;
+  --blue:   #1d6ef5;
+  --dark:   #0b1f3a;
+  --ink:    #1a2e4a;
+  --muted:  #8a8ea8;
+  --border: rgba(11,31,58,.08);
+  --cream:  #f5f1eb;
+  --white:  #ffffff;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--ink); min-height:100vh; -webkit-font-smoothing:antialiased; }
+
+/* ── HERO ── */
+.hero {
+  background:linear-gradient(165deg,#0a1828 0%,#0e2540 60%,#0f2d52 100%);
+  padding:52px 24px 60px; text-align:center; position:relative; overflow:hidden;
+}
+.hero::before {
+  content:''; position:absolute; top:-100px; right:-80px; width:340px; height:340px;
+  border-radius:50%; background:radial-gradient(circle,rgba(232,24,94,.14),transparent 65%); pointer-events:none;
+}
+.hero::after {
+  content:''; position:absolute; bottom:-80px; left:-60px; width:260px; height:260px;
+  border-radius:50%; background:radial-gradient(circle,rgba(29,110,245,.12),transparent 65%); pointer-events:none;
+}
+.hero-brand {
+  font-size:10px; letter-spacing:3.5px; text-transform:uppercase; font-family:'DM Mono',monospace;
+  color:rgba(255,255,255,.25); margin-bottom:28px;
+}
+.hero-emoji {
+  font-size:52px; line-height:1; display:block; margin-bottom:18px;
+  animation:float 4s ease-in-out infinite;
+}
+.hero-title {
+  font-family:'Fraunces',serif; font-style:italic; font-weight:700;
+  font-size:clamp(26px,6vw,38px); color:white; line-height:1.2; margin-bottom:6px;
+}
+.hero-profile {
+  font-family:'Fraunces',serif; font-style:italic; font-weight:500;
+  font-size:17px; color:var(--pink); margin-bottom:28px; opacity:.9;
+}
+.hero-stats {
+  display:flex; gap:1px; justify-content:center; max-width:260px; margin:0 auto 28px;
+  background:rgba(255,255,255,.06); border-radius:16px; overflow:hidden;
+  border:1px solid rgba(255,255,255,.07);
+}
+.hero-stat {
+  flex:1; padding:16px 12px; text-align:center;
+}
+.hero-stat + .hero-stat { border-left:1px solid rgba(255,255,255,.07); }
+.hero-stat-num {
+  font-family:'Fraunces',serif; font-size:32px; font-weight:700; color:var(--pink); line-height:1;
+  font-variant-numeric:tabular-nums;
+}
+.hero-stat-denom { font-size:14px; color:rgba(255,255,255,.3); }
+.hero-stat-label {
+  font-size:9px; letter-spacing:1.5px; text-transform:uppercase; font-family:'DM Mono',monospace;
+  color:rgba(255,255,255,.25); margin-top:4px;
+}
+.hero-badge {
+  display:inline-flex; align-items:center; gap:7px;
+  background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1);
+  color:rgba(255,255,255,.5); font-size:11px; font-family:'DM Mono',monospace;
+  padding:7px 16px; border-radius:50px;
+}
+.hero-badge-dot { width:5px; height:5px; background:#4ade80; border-radius:50%; animation:pulse 2s infinite; }
+
+/* ── WRAP ── */
+.page-wrap { max-width:660px; margin:0 auto; padding:0 20px 80px; }
+
+/* ── DIM SUMMARY ── */
+.dim-summary {
+  background:var(--white); border-radius:20px; padding:28px 26px; margin-top:24px;
+  border:1px solid var(--border);
+}
+.section-eyebrow {
+  font-size:10px; letter-spacing:2.5px; text-transform:uppercase; font-family:'DM Mono',monospace;
+  color:var(--muted); margin-bottom:20px;
+}
+.dim-row { display:flex; align-items:center; gap:14px; padding:10px 0; border-bottom:1px solid rgba(11,31,58,.05); }
+.dim-row:last-child { border-bottom:none; padding-bottom:0; }
+.dim-row:first-of-type { padding-top:0; }
+.dim-icon { font-size:16px; width:24px; text-align:center; flex-shrink:0; }
+.dim-info { flex:1; }
+.dim-name { font-size:13px; font-weight:500; color:var(--ink); margin-bottom:6px; }
+.dim-bar-track { height:5px; background:rgba(11,31,58,.07); border-radius:3px; overflow:hidden; }
+.dim-bar-fill { height:100%; border-radius:3px; transition:width 1s cubic-bezier(.4,0,.2,1); }
+.dim-score { font-size:11px; font-family:'DM Mono',monospace; color:var(--muted); width:34px; text-align:right; flex-shrink:0; }
+
+/* ── CHAPTER ── */
+.chapter { padding:40px 0; border-bottom:1px solid var(--border); }
+.chapter:last-child { border-bottom:none; }
+.chapter-meta { display:flex; align-items:center; gap:10px; margin-bottom:20px; }
+.chapter-icon-pill {
+  display:inline-flex; align-items:center; gap:7px;
+  padding:5px 13px 5px 9px; border-radius:50px;
+  font-size:12px; font-weight:500; color:var(--ink);
+  border:1px solid var(--border); background:var(--white);
+}
+.chapter-score-badge {
+  font-size:10px; font-family:'DM Mono',monospace; color:var(--muted);
+  margin-left:auto;
+}
+.chapter-title {
+  font-family:'Fraunces',serif; font-style:italic; font-weight:700;
+  font-size:clamp(19px,4vw,23px); color:var(--dark); line-height:1.25; margin-bottom:18px;
+}
+.insight-callout {
+  font-family:'Fraunces',serif; font-style:italic; font-weight:500;
+  font-size:16px; color:var(--ink); line-height:1.55;
+  border-left:2.5px solid var(--pink); padding-left:16px; margin-bottom:18px;
+  opacity:.85;
+}
+.chapter-body-text p {
+  font-size:14.5px; line-height:1.85; color:#374151; font-weight:400;
+  margin-bottom:14px;
+}
+.chapter-body-text p:last-child { margin-bottom:0; }
+.chapter-body-text strong { color:var(--dark); font-weight:600; }
+.chapter-body-text em { color:var(--blue); font-style:italic; font-weight:400; }
+
+.exercise-box {
+  margin-top:20px; padding:16px 18px;
+  background:rgba(29,110,245,.04);
+  border:1px solid rgba(29,110,245,.1);
+  border-radius:12px;
+}
+.exercise-label {
+  font-size:9px; letter-spacing:2px; text-transform:uppercase; font-family:'DM Mono',monospace;
+  color:var(--blue); margin-bottom:8px;
+}
+.exercise-text {
+  font-size:13.5px; line-height:1.7; color:#374151; font-weight:400;
+}
+.exercise-text strong { font-weight:600; color:var(--dark); }
+
+/* ── CHAPTERS SECTION ── */
+.chapters-section {
+  background:var(--white); border-radius:20px; padding:8px 26px 26px; margin-top:16px;
+  border:1px solid var(--border);
+}
+
+/* ── SIGNATURE CARD ── */
+.signature-card {
+  background:linear-gradient(160deg,#0a1828 0%,#0e2540 100%);
+  border-radius:20px; padding:32px 28px; margin-top:16px;
+  position:relative; overflow:hidden;
+}
+.signature-card::before {
+  content:''; position:absolute; top:-50px; right:-50px; width:180px; height:180px;
+  border-radius:50%; background:radial-gradient(circle,rgba(232,24,94,.18),transparent 70%);
+  pointer-events:none;
+}
+.signature-eyebrow {
+  font-size:10px; letter-spacing:2.5px; text-transform:uppercase; font-family:'DM Mono',monospace;
+  color:var(--pink); margin-bottom:14px;
+}
+.signature-body p {
+  font-size:15px; line-height:1.8; color:rgba(255,255,255,.72); font-weight:400;
+  margin-bottom:12px;
+}
+.signature-body p:last-child { margin-bottom:0; }
+.signature-body strong { color:white; font-weight:600; }
+
+/* ── REFS ── */
+.refs-card {
+  background:var(--white); border-radius:20px; padding:24px 26px; margin-top:16px;
+  border:1px solid var(--border);
+}
+.refs-list { display:flex; flex-wrap:wrap; gap:7px; margin-top:14px; }
+.ref-chip {
+  font-size:10px; font-family:'DM Mono',monospace; color:var(--muted);
+  background:rgba(11,31,58,.04); padding:5px 11px; border-radius:50px;
+  border:1px solid var(--border);
+}
+
+/* ── SHARE CARD ── */
+.share-card {
+  background:var(--white); border-radius:20px; padding:28px 26px; margin-top:16px;
+  border:1px solid var(--border); text-align:center;
+}
+.share-card-title {
+  font-family:'Fraunces',serif; font-style:italic; font-weight:700;
+  font-size:20px; color:var(--dark); margin-bottom:6px;
+}
+.share-card-sub { font-size:13px; color:var(--muted); font-weight:400; margin-bottom:22px; }
+.share-btn {
+  display:inline-flex; align-items:center; gap:8px;
+  background:var(--dark); color:white; border:none;
+  padding:13px 24px; border-radius:50px; font-size:13.5px; font-weight:500;
+  cursor:pointer; font-family:'DM Sans',sans-serif; transition:opacity .15s;
+}
+.share-btn:hover { opacity:.85; }
+
+/* ── REPORT HEADER ── */
+.report-header {
+  position:sticky; top:0; z-index:50;
+  background:rgba(255,255,255,.88); backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(11,31,58,.07);
+  padding:13px 20px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.report-header-brand { font-weight:900; font-size:15px; color:var(--pink); text-decoration:none; }
+.report-header-quiz {
+  font-size:12px; font-weight:700; color:var(--muted);
+  text-decoration:none; padding:7px 14px; border-radius:50px;
+  border:1.5px solid var(--border); transition:all .2s;
+}
+.report-header-quiz:hover { color:var(--dark); border-color:var(--dark); }
+
+/* ── UPSELL CARD ── */
+.upsell-card {
+  background:linear-gradient(160deg,#0a1828 0%,#0e2540 100%);
+  border-radius:20px; padding:28px; margin-top:16px;
+  text-align:center; position:relative; overflow:hidden;
+}
+.upsell-card::before {
+  content:''; position:absolute; top:-50px; right:-50px; width:180px; height:180px;
+  border-radius:50%; background:radial-gradient(circle,rgba(244,63,143,.15),transparent 70%);
+  pointer-events:none;
+}
+.upsell-eyebrow {
+  font-size:10px; letter-spacing:2.5px; text-transform:uppercase; font-family:'DM Mono',monospace;
+  color:var(--pink); margin-bottom:10px;
+}
+.upsell-title {
+  font-family:'Fraunces',serif; font-style:italic; font-weight:700;
+  font-size:20px; color:white; line-height:1.3; margin-bottom:8px;
+}
+.upsell-sub { font-size:13px; color:rgba(255,255,255,.45); margin-bottom:20px; line-height:1.6; }
+.upsell-cta {
+  display:inline-block; background:linear-gradient(135deg,#f43f8f,#e0287d);
+  color:white; text-decoration:none; padding:14px 28px; border-radius:12px;
+  font-size:14px; font-weight:800; box-shadow:0 4px 20px rgba(244,63,143,.3);
+  transition:all .2s;
+}
+.upsell-cta:hover { transform:translateY(-1px); box-shadow:0 8px 28px rgba(244,63,143,.4); }
+
+/* ── FOOTER ── */
+.trust-footer {
+  text-align:center; padding:32px 16px 0; font-size:11px; color:var(--muted);
+  font-weight:400; line-height:2;
+}
+.trust-footer a { color:var(--muted); text-decoration:none; }
+
+/* ── LOADING / ERROR ── */
+.loading-wrap {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  min-height:80vh; text-align:center; padding:40px 24px;
+}
+.loading-emoji { font-size:40px; margin-bottom:16px; animation:float 2s ease-in-out infinite; }
+.loading-txt { font-size:16px; font-weight:500; color:var(--dark); margin-bottom:5px; }
+.loading-sub { font-size:13px; color:var(--muted); }
+.error-wrap { text-align:center; padding:80px 24px; }
+.error-txt { font-size:16px; font-weight:600; color:var(--dark); margin-bottom:6px; }
+.error-sub { font-size:13px; color:var(--muted); }
+
+@keyframes float  { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
+@keyframes pulse  { 0%,100%{opacity:1} 50%{opacity:.3} }
+@keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+.fade-in { animation:fadeUp .45s ease both; }
+</style>
+</head>
+<body>
+
+<div class="report-header">
+  <a href="/" class="report-header-brand">🧠 Pet IQ Lab</a>
+  <a href="/" class="report-header-quiz">↩ Take quiz again</a>
+</div>
+
+<div id="loading" class="loading-wrap">
+  <div class="loading-emoji">🧠</div>
+  <div class="loading-txt">Loading report…</div>
+  <div class="loading-sub">Fetching cognitive analysis</div>
+</div>
+
+<div id="error" class="error-wrap" style="display:none">
+  <div class="error-txt">Report not found</div>
+  <div class="error-sub">This link may have expired. Contact <a href="mailto:contact@thecosmicpet.com" style="color:var(--pink)">contact@thecosmicpet.com</a></div>
+</div>
+
+<div id="report" style="display:none">
+  <div id="hero-wrap"></div>
+  <div class="page-wrap">
+    <div id="dim-summary-wrap"></div>
+    <div id="chapters-wrap"></div>
+    <div id="signature-wrap"></div>
+    <div id="refs-wrap"></div>
+    <div id="share-wrap"></div>
+    <div id="upsell-wrap"></div>
+    <div class="trust-footer">
+      Pet IQ Lab · REAUMUR SAS · 9 rue des Colonnes, 75002 Paris<br>
+      <a href="/privacy.html">Privacy Policy</a> ·
+      <a href="mailto:contact@thecosmicpet.com">contact@thecosmicpet.com</a><br>
+      Self-reported assessment · Educational purposes
+    </div>
+  </div>
+</div>
+
+<script>
+const API_BASE = '';
+function track(e,p){ if(typeof gtag!=='undefined') gtag('event',e,p||{}); }
+
+// IQ scale (backwards compat: calculate if not stored)
+function probit(p){
+  const a=[-3.969683028665376e+01,2.209460984245205e+02,-2.759285104469687e+02,1.383577518672690e+02,-3.066479806614716e+01,2.506628277459239e+00];
+  const b=[-5.447609879822406e+01,1.615858368580409e+02,-1.556989798598866e+02,6.680131188771972e+01,-1.328068155288572e+01];
+  const c=[-7.784894002430293e-03,-3.223964580411365e-01,-2.400758277161838e+00,-2.549732539343734e+00,4.374664141464968e+00,2.938163982698783e+00];
+  const d=[7.784695709041462e-03,3.224671290700398e-01,2.445134137142996e+00,3.754408661907416e+00];
+  const pL=0.02425,pH=1-pL;
+  if(p<pL){const q=Math.sqrt(-2*Math.log(p));return(((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5])/((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);}
+  if(p<=pH){const q=p-.5,r=q*q;return(((((a[0]*r+a[1])*r+a[2])*r+a[3])*r+a[4])*r+a[5])*q/(((((b[0]*r+b[1])*r+b[2])*r+b[3])*r+b[4])*r+1);}
+  const q=Math.sqrt(-2*Math.log(1-p));
+  return-(((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5])/((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);
+}
+function percentileToIQ(pct){ return Math.round(100+15*probit(Math.max(1,Math.min(99,pct))/100)); }
+
+const DIMS = [
+  { key:'memory',       label:'Memory & Learning',  icon:'🧠', color:'#818cf8', max:6 },
+  { key:'social',       label:'Social Intelligence', icon:'👁️', color:'#f472b6', max:9 },
+  { key:'problem',      label:'Problem Solving',     icon:'🔧', color:'#fb923c', max:9 },
+  { key:'selfcontrol',  label:'Self-Control',        icon:'🧘', color:'#4ade80', max:6 },
+  { key:'adaptability', label:'Adaptability',        icon:'🌍', color:'#facc15', max:6 },
+];
+
+function parseSections(content) {
+  const lines = content.split('\n');
+  const sections = [];
+  let cur = null;
+  for (const line of lines) {
+    if (line.startsWith('## ')) {
+      if (cur) sections.push(cur);
+      cur = { title: line.slice(3).trim(), body: [] };
+    } else if (cur) {
+      cur.body.push(line);
+    }
+  }
+  if (cur) sections.push(cur);
+  return sections;
+}
+
+function parseChapterBody(lines) {
+  const text  = lines.join('\n');
+  const parts = text.split(/### WHAT TO DO/i);
+  // Extract first line after INSIGHT as callout
+  const insightBlock = parts[0].replace(/### INSIGHT/i, '').trim();
+  const insightLines = insightBlock.split('\n').filter(l => l.trim());
+  const callout  = insightLines[0] || '';
+  const bodyText = insightLines.slice(1).join('\n');
+  const exercise = parts[1] ? parts[1].trim() : '';
+  return { callout, bodyText, exercise };
+}
+
+function renderInline(text) {
+  return text
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g,   '<em>$1</em>');
+}
+
+function renderBody(text) {
+  return text.split('\n')
+    .map(l => l.trim())
+    .filter(l => l && !l.startsWith('###'))
+    .map(l => `<p>${renderInline(l)}</p>`)
+    .join('');
+}
+
+async function loadReport() {
+  const token = new URLSearchParams(window.location.search).get('token');
+  if (!token) { showError(); return; }
+  try {
+    const res  = await fetch(`${API_BASE}/api/report/${token}`);
+    if (!res.ok) { showError(); return; }
+    renderReport(await res.json());
+  } catch { showError(); }
+}
+
+function showError() {
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('error').style.display   = 'block';
+}
+
+function renderReport(data) {
+  const { petName, petType, profileName, profileEmoji, normScore, percentile, dimScores, content } = data;
+  const iqScore = data.iqScore || percentileToIQ(percentile); // backwards compat
+  const speciesLabel = petType === 'cat' ? 'cats' : 'dogs';
+  const topPct = 100 - percentile;
+
+  // ── Hero
+  document.getElementById('hero-wrap').innerHTML = `
+    <div class="hero fade-in">
+      <div class="hero-brand">Pet IQ Lab · Cognitive Report</div>
+      <span class="hero-emoji">${profileEmoji}</span>
+      <div class="hero-title">${petName}'s Intelligence Report</div>
+      <div class="hero-profile">${profileName}</div>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-num">${iqScore}</div>
+          <div class="hero-stat-label">Pet IQ</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">top ${topPct}<span class="hero-stat-denom">%</span></div>
+          <div class="hero-stat-label">Percentile</div>
+        </div>
+      </div>
+      <div class="hero-badge">
+        <span class="hero-badge-dot"></span>
+        ${iqScore > 115 ? 'exceptionally gifted' : iqScore > 100 ? 'above average' : iqScore === 100 ? 'exactly average' : 'below average'} · based on Arden & Adams 2016
+      </div>
+    </div>`;
+
+  // ── Dim Summary
+  const dimRows = DIMS.map(d => {
+    const raw = dimScores[d.key] || 0;
+    const pct = Math.round((raw / d.max) * 100);
+    return `<div class="dim-row">
+      <span class="dim-icon">${d.icon}</span>
+      <div class="dim-info">
+        <div class="dim-name">${d.label}</div>
+        <div class="dim-bar-track"><div class="dim-bar-fill" style="width:${pct}%;background:${d.color}"></div></div>
+      </div>
+      <div class="dim-score">${raw}/${d.max}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('dim-summary-wrap').innerHTML = `
+    <div class="dim-summary fade-in">
+      <div class="section-eyebrow">Overview</div>
+      ${dimRows}
+    </div>`;
+
+  // ── Chapters
+  const sections     = parseSections(content);
+  const dimSections  = sections.filter((_, i) => i < 5);
+  const sigSection   = sections.find(s => s.title.toLowerCase().includes('signature') || s.title.includes('🏆'));
+
+  const chaptersHtml = dimSections.map((sec, i) => {
+    const dim = DIMS[i] || DIMS[0];
+    const raw = dimScores[dim.key] || 0;
+    const pct = Math.round((raw / dim.max) * 100);
+    const { callout, bodyText, exercise } = parseChapterBody(sec.body);
+    const cleanTitle = sec.title.replace(/^[\s\S]*?—\s*\d+\/\d+/, '').replace(/^[^\w]*/, '').trim()
+      || sec.title.replace(/^\S+\s*/, '');
+
+    const exerciseHtml = exercise ? `
+      <div class="exercise-box">
+        <div class="exercise-label">Exercise</div>
+        <div class="exercise-text">${renderInline(exercise)}</div>
+      </div>` : '';
+
+    return `<div class="chapter" style="animation-delay:${i * .07}s">
+      <div class="chapter-meta">
+        <span class="chapter-icon-pill">${dim.icon} <span>${dim.label}</span></span>
+        <span class="chapter-score-badge">${raw}/${dim.max} · ${pct}%</span>
+      </div>
+      ${callout ? `<div class="insight-callout">${renderInline(callout)}</div>` : ''}
+      <div class="chapter-body-text">${renderBody(bodyText)}</div>
+      ${exerciseHtml}
+    </div>`;
+  }).join('');
+
+  document.getElementById('chapters-wrap').innerHTML = `
+    <div class="chapters-section fade-in">${chaptersHtml}</div>`;
+
+  // ── Signature
+  if (sigSection) {
+    document.getElementById('signature-wrap').innerHTML = `
+      <div class="signature-card fade-in">
+        <div class="signature-eyebrow">Cognitive Signature</div>
+        <div class="signature-body">
+          ${sigSection.body.join('\n').split('\n').filter(l => l.trim())
+            .map(l => `<p>${renderInline(l)}</p>`).join('')}
+        </div>
+      </div>`;
+  }
+
+  // ── Refs
+  document.getElementById('refs-wrap').innerHTML = `
+    <div class="refs-card fade-in">
+      <div class="section-eyebrow">Scientific References</div>
+      <div class="refs-list">
+        <span class="ref-chip">Coren 1994 — Intelligence of Dogs</span>
+        <span class="ref-chip">Hare & Tomasello 2005 · Science</span>
+        <span class="ref-chip">Kaminski et al. 2004 · Science</span>
+        <span class="ref-chip">Miklósi et al. 2003 · Animal Cognition</span>
+        <span class="ref-chip">Bray et al. 2014 · Animal Behaviour</span>
+        <span class="ref-chip">Osthaus et al. 2005 · Animal Cognition</span>
+        <span class="ref-chip">Takagi et al. 2017 · Episodic Memory</span>
+      </div>
+    </div>`;
+
+  // ── Share
+  document.getElementById('share-wrap').innerHTML = `
+    <div class="share-card fade-in">
+      <div class="share-card-title">Share ${petName}'s results</div>
+      <div class="share-card-sub">Challenge your friends to test their pets</div>
+      <button class="share-btn" onclick="copyLink()">🔗 Copy report link</button>
+    </div>`;
+
+  // ── Upsell
+  const weakDim = Object.entries(dimScores || {})
+    .sort((a, b) => {
+      const dims = {memory:6,social:9,problem:9,selfcontrol:6,adaptability:6};
+      return (a[1]/(dims[a[0]]||1)) - (b[1]/(dims[b[0]]||1));
+    })[0]?.[0] || 'memory';
+  const token = new URLSearchParams(window.location.search).get('token') || '';
+  const otoParams = new URLSearchParams({ pet: petName, dim: weakDim, species: petType, iq: iqScore, token });
+  document.getElementById('upsell-wrap').innerHTML = `
+    <div class="upsell-card fade-in">
+      <div class="upsell-eyebrow">21-Day Training Programme</div>
+      <div class="upsell-title">Want to boost ${petName}'s weakest dimension?</div>
+      <div class="upsell-sub">Daily 5-minute exercises, personalised to ${petName}'s cognitive profile — grounded in the same peer-reviewed research as this report.</div>
+      <a href="/oto.html?${otoParams.toString()}" class="upsell-cta">🎯 Get ${petName}'s training plan →</a>
+    </div>`;
+
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('report').style.display  = 'block';
+  document.title = `${petName}'s IQ Report · ${profileName}`;
+
+  // ── GA4 events
+  track('report_view', { pet_type: petType, iq_score: iqScore, profile_name: profileName, percentile });
+
+  // Scroll depth: 50% and 100%
+  const reportEl = document.getElementById('report');
+  const depths = [50, 100];
+  const depthObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const depth = entry.target.dataset.depth;
+        track('report_scroll_depth', { depth_pct: Number(depth), pet_type: petType });
+        depthObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  depths.forEach(d => {
+    const marker = document.createElement('div');
+    marker.dataset.depth = d;
+    marker.style.cssText = 'position:absolute;pointer-events:none;height:1px;width:1px;';
+    marker.style.top = d + '%';
+    reportEl.style.position = reportEl.style.position || 'relative';
+    reportEl.appendChild(marker);
+    depthObserver.observe(marker);
+  });
+
+  // Upsell click tracking
+  setTimeout(() => {
+    document.querySelector('.upsell-cta')?.addEventListener('click', () => {
+      track('report_upsell_click', { pet_type: petType, weak_dim: weakDim, iq_score: iqScore });
+    });
+  }, 0);
+}
+
+function copyLink() {
+  track('report_share_click', { method: 'copy_link' });
+  navigator.clipboard.writeText(window.location.href).then(() => {
+    const btn = document.querySelector('.share-btn');
+    if (btn) {
+      btn.textContent = '✅ Copied!';
+      setTimeout(() => btn.textContent = '🔗 Copy report link', 2000);
+    }
+  });
+}
+
+loadReport();
+</script>
+</body>
+</html>

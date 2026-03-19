@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>One Special Offer — Pet IQ Lab</title>
+<meta property="og:title" content="Pet IQ Lab — 21-day Training Programme">
+<meta property="og:description" content="Personalised cognitive training for your pet, delivered by email. Based on your IQ quiz results.">
+<meta property="og:image" content="https://iq.thecosmicpet.com/og-image.png">
+<meta name="robots" content="noindex">
+<!-- GA4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-KH9YF6Y6W0"></script>
+<script>
+  window.dataLayer=window.dataLayer||[];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js',new Date());
+  gtag('config','G-KH9YF6Y6W0');
+</script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;0,9..40,900;1,9..40,400&family=DM+Mono:wght@400;500&family=Fraunces:ital,wght@0,700;1,600;1,700;1,800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #060b18;
+  --surface: #0d1628;
+  --surface2: #131e32;
+  --border: rgba(255,255,255,.07);
+  --pink: #f43f8f;
+  --pink-dim: rgba(244,63,143,.15);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,.12);
+  --teal: #14b8a6;
+  --green: #22c55e;
+  --white: #f0f4ff;
+  --muted: rgba(240,244,255,.45);
+  --mono: 'DM Mono', monospace;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--white);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* noise overlay */
+body::before {
+  content:'';
+  position:fixed;inset:0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:0;opacity:.6;
+}
+
+/* ambient glow */
+.glow-top {
+  position:fixed;top:-200px;left:50%;transform:translateX(-50%);
+  width:800px;height:600px;border-radius:50%;
+  background:radial-gradient(ellipse,rgba(244,63,143,.08) 0%,transparent 65%);
+  pointer-events:none;z-index:0;
+}
+
+.wrap {
+  position:relative;z-index:1;
+  max-width:480px;margin:0 auto;padding:0 20px 80px;
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+@keyframes popIn  { 0%{transform:scale(.9);opacity:0} 60%{transform:scale(1.03)} 100%{transform:scale(1);opacity:1} }
+@keyframes pulse  { 0%,100%{opacity:1} 50%{opacity:.55} }
+@keyframes glow-pulse { 0%,100%{box-shadow:0 0 20px rgba(244,63,143,.2)} 50%{box-shadow:0 0 40px rgba(244,63,143,.45)} }
+@keyframes shrink { from{width:100%} to{width:0%} }
+@keyframes spin   { to{transform:rotate(360deg)} }
+
+/* ── HEADER PILL ── */
+.header-pill {
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  padding:14px 0 10px;
+  font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--muted);font-family:var(--mono);
+  animation:fadeUp .4s ease both;
+}
+.header-dot {
+  width:6px;height:6px;border-radius:50%;
+  background:var(--green);box-shadow:0 0 8px var(--green);
+  animation:pulse 1.8s ease-in-out infinite;
+}
+
+/* ── CHECKMARK HERO ── */
+.check-hero {
+  display:flex;align-items:center;justify-content:center;
+  padding:28px 0 0;
+  animation:popIn .5s ease .1s both;
+}
+.check-circle {
+  width:72px;height:72px;border-radius:50%;
+  background:linear-gradient(135deg,rgba(34,197,94,.2),rgba(34,197,94,.08));
+  border:1.5px solid rgba(34,197,94,.3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:30px;
+}
+
+/* ── CONFIRMED LABEL ── */
+.confirmed-label {
+  text-align:center;padding:12px 0 6px;
+  font-size:12px;font-weight:600;color:var(--green);letter-spacing:.5px;
+  font-family:var(--mono);
+  animation:fadeUp .4s ease .15s both;
+}
+
+/* ── SECTION DIVIDER ── */
+.divider {
+  height:1px;background:var(--border);margin:24px 0;
+}
+
+/* ── URGENCY BANNER ── */
+.urgency-banner {
+  background: linear-gradient(135deg, rgba(244,63,143,.12), rgba(244,63,143,.06));
+  border:1px solid rgba(244,63,143,.25);
+  border-radius:14px;padding:14px 18px;
+  display:flex;align-items:center;gap:12px;
+  margin-bottom:20px;
+  animation:fadeUp .4s ease .2s both;
+}
+.urgency-icon { font-size:22px;flex-shrink:0; }
+.urgency-text { flex:1; }
+.urgency-text strong { font-size:13px;font-weight:700;color:var(--white);display:block;margin-bottom:2px; }
+.urgency-text span { font-size:12px;color:var(--muted); }
+.timer-display {
+  font-family:var(--mono);font-size:22px;font-weight:500;
+  color:var(--pink);letter-spacing:2px;flex-shrink:0;
+  text-shadow:0 0 20px rgba(244,63,143,.4);
+}
+
+/* ── PROGRESS TIMER BAR ── */
+.timer-bar-wrap { height:3px;background:rgba(244,63,143,.12);border-radius:2px;margin-bottom:24px;overflow:hidden; }
+.timer-bar { height:100%;background:linear-gradient(90deg,var(--pink),rgba(244,63,143,.4));border-radius:2px;
+  animation:shrink 900s linear forwards; }
+
+/* ── MAIN OFFER CARD ── */
+.offer-card {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:20px;padding:24px;
+  margin-bottom:16px;
+  animation:fadeUp .4s ease .25s both;
+  position:relative;overflow:hidden;
+}
+.offer-card::before {
+  content:'';position:absolute;top:-60px;right:-60px;
+  width:200px;height:200px;border-radius:50%;
+  background:radial-gradient(ellipse,rgba(244,63,143,.06),transparent 70%);
+  pointer-events:none;
+}
+.offer-pill {
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(244,63,143,.12);border:1px solid rgba(244,63,143,.25);
+  padding:5px 12px;border-radius:50px;margin-bottom:14px;
+  font-size:11px;font-weight:700;color:var(--pink);letter-spacing:1px;text-transform:uppercase;font-family:var(--mono);
+}
+.offer-title {
+  font-family:'Fraunces',serif;font-style:italic;
+  font-size:clamp(22px,5.5vw,28px);font-weight:700;line-height:1.25;
+  margin-bottom:10px;
+}
+.offer-title .pet-name { color:var(--pink); }
+.offer-subtitle {
+  font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:20px;font-weight:400;
+}
+
+/* feature list */
+.feature-list { list-style:none;margin-bottom:22px; }
+.feature-list li {
+  display:flex;align-items:flex-start;gap:10px;
+  padding:9px 0;border-bottom:1px solid rgba(255,255,255,.04);
+  font-size:13.5px;line-height:1.5;
+}
+.feature-list li:last-child { border-bottom:none; }
+.feature-icon {
+  width:26px;height:26px;border-radius:8px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:13px;
+  margin-top:1px;
+}
+.feature-icon.pink { background:var(--pink-dim); }
+.feature-icon.blue { background:var(--blue-dim); }
+.feature-icon.teal { background:rgba(20,184,166,.12); }
+.feature-text { flex:1; }
+.feature-text strong { color:var(--white);font-weight:600; }
+.feature-text span { color:var(--muted); }
+
+/* price row */
+.price-row {
+  display:flex;align-items:center;gap:12px;margin-bottom:18px;
+  padding:16px;background:var(--surface2);border-radius:14px;
+  border:1px solid var(--border);
+}
+.price-was {
+  font-size:13px;color:rgba(240,244,255,.3);text-decoration:line-through;
+  font-family:var(--mono);font-weight:400;
+}
+.price-now {
+  font-size:36px;font-weight:900;color:var(--white);letter-spacing:-1px;
+  font-variant-numeric:tabular-nums;
+}
+.price-now sub { font-size:16px;font-weight:500;color:var(--muted);vertical-align:super;margin-left:2px; }
+.price-badge {
+  margin-left:auto;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.2);
+  padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;color:var(--green);
+  font-family:var(--mono);white-space:nowrap;
+}
+
+/* CTA button */
+.cta-btn {
+  width:100%;padding:17px;border-radius:14px;border:none;cursor:pointer;
+  background:linear-gradient(135deg,#f43f8f,#e0287d);
+  color:white;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:800;
+  letter-spacing:.2px;transition:all .2s;
+  box-shadow:0 4px 24px rgba(244,63,143,.3);
+  animation:glow-pulse 2.5s ease-in-out infinite;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.cta-btn:hover { transform:translateY(-1px);box-shadow:0 8px 32px rgba(244,63,143,.45); }
+.cta-btn:active { transform:scale(.98); }
+.cta-btn:disabled { opacity:.6;cursor:not-allowed;animation:none;transform:none; }
+
+.guarantee-note {
+  text-align:center;font-size:11.5px;color:var(--muted);margin-top:10px;
+  display:flex;align-items:center;justify-content:center;gap:5px;
+}
+
+/* ── EMAIL FORM (post-CTA) ── */
+#email-form-section {
+  margin-top:16px;animation:fadeUp .3s ease both;
+}
+.email-input-wrap { display:flex;gap:8px;margin-bottom:8px; }
+.email-input {
+  flex:1;padding:13px 16px;border-radius:12px;
+  background:var(--surface2);border:1.5px solid rgba(59,130,246,.25);
+  color:var(--white);font-family:'DM Sans',sans-serif;font-size:14px;
+  outline:none;transition:border-color .2s;
+}
+.email-input:focus { border-color:var(--blue); }
+.email-input::placeholder { color:rgba(240,244,255,.3); }
+.email-submit-btn {
+  padding:13px 20px;border-radius:12px;border:none;cursor:pointer;
+  background:var(--blue);color:white;font-family:'DM Sans',sans-serif;
+  font-size:14px;font-weight:700;transition:all .2s;white-space:nowrap;
+}
+.email-submit-btn:hover { background:#2563eb; }
+.email-submit-btn:disabled { opacity:.6;cursor:not-allowed; }
+.email-note {
+  font-size:11px;color:var(--muted);text-align:center;line-height:1.5;
+}
+.email-confirm {
+  display:none;padding:12px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);
+  border-radius:10px;text-align:center;font-size:13px;font-weight:600;color:var(--green);
+}
+
+/* ── TESTIMONIALS ── */
+.testimonials-section {
+  animation:fadeUp .4s ease .35s both;
+}
+.section-label {
+  font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  color:var(--muted);font-family:var(--mono);margin-bottom:14px;
+  display:flex;align-items:center;gap:8px;
+}
+.section-label::after { content:'';flex:1;height:1px;background:var(--border); }
+
+.testimonial {
+  background:var(--surface);border:1px solid var(--border);
+  border-left:3px solid var(--pink);border-radius:0 14px 14px 0;
+  padding:16px 18px;margin-bottom:10px;
+}
+.testimonial-text {
+  font-size:13.5px;line-height:1.65;color:var(--white);margin-bottom:10px;font-weight:400;
+  font-style:italic;
+}
+.testimonial-text .highlight { color:var(--pink);font-style:normal;font-weight:600; }
+.testimonial-meta {
+  display:flex;align-items:center;gap:8px;
+}
+.testimonial-avatar {
+  width:30px;height:30px;border-radius:50%;
+  background:linear-gradient(135deg,rgba(244,63,143,.3),rgba(59,130,246,.3));
+  display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;
+}
+.testimonial-name { font-size:12px;font-weight:700;color:var(--white); }
+.testimonial-pet { font-size:11px;color:var(--muted); }
+.testimonial-stars { margin-left:auto;font-size:11px;letter-spacing:1px; }
+
+/* ── DIMENSION BADGE ── */
+.dim-badge {
+  display:inline-flex;align-items:center;gap:6px;
+  padding:6px 12px;border-radius:50px;margin-bottom:20px;
+  font-size:12px;font-weight:700;font-family:var(--mono);
+}
+.dim-badge.memory    { background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.25);color:#93c5fd; }
+.dim-badge.social    { background:rgba(244,63,143,.12);border:1px solid rgba(244,63,143,.25);color:#f9a8d4; }
+.dim-badge.problem   { background:rgba(168,85,247,.12);border:1px solid rgba(168,85,247,.25);color:#d8b4fe; }
+.dim-badge.self      { background:rgba(234,179,8,.12);border:1px solid rgba(234,179,8,.25);color:#fde047; }
+.dim-badge.adapt     { background:rgba(20,184,166,.12);border:1px solid rgba(20,184,166,.25);color:#5eead4; }
+
+/* ── SKIP LINK ── */
+.skip-link {
+  display:block;text-align:center;margin-top:24px;padding:12px;
+  font-size:12px;color:rgba(240,244,255,.25);cursor:pointer;
+  text-decoration:none;transition:color .2s;
+}
+.skip-link:hover { color:rgba(240,244,255,.5); }
+
+/* ── SPINNER ── */
+.spinner {
+  width:16px;height:16px;border:2px solid rgba(255,255,255,.3);
+  border-top-color:white;border-radius:50%;
+  animation:spin .6s linear infinite;display:inline-block;
+}
+
+/* ── FOOTER ── */
+.page-footer {
+  text-align:center;padding:20px 0;
+  font-size:11px;color:rgba(240,244,255,.15);
+  font-family:var(--mono);letter-spacing:.5px;
+}
+
+/* ── STICKY TIMER BAR ── */
+.sticky-timer {
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  background:rgba(6,8,20,.96);
+  border-bottom:1px solid rgba(244,63,143,.25);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  padding:0 16px;height:44px;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  transform:translateY(-100%);
+  transition:transform .3s cubic-bezier(.4,0,.2,1);
+}
+.sticky-timer.visible { transform:translateY(0); }
+.sticky-timer-label {
+  font-size:12px;font-weight:600;color:rgba(240,244,255,.55);
+  font-family:var(--sans);letter-spacing:.2px;
+}
+.sticky-timer-countdown {
+  font-family:var(--mono);font-size:16px;font-weight:500;
+  color:var(--pink);letter-spacing:2px;
+  min-width:52px;text-align:center;
+  animation:heartbeat-glow 1s ease-in-out infinite;
+}
+.sticky-timer-cta {
+  position:relative;overflow:hidden;
+  background:var(--pink);color:#fff;
+  font-family:var(--sans);font-size:12px;font-weight:700;
+  padding:6px 14px;border-radius:20px;border:none;cursor:pointer;
+  letter-spacing:.3px;transition:opacity .15s, box-shadow .15s;
+  text-decoration:none;
+  box-shadow:0 0 0 0 rgba(244,63,143,.5);
+  animation:cta-pulse 2.4s ease-in-out infinite;
+}
+.sticky-timer-cta::after {
+  content:'';
+  position:absolute;top:0;left:-70%;width:50%;height:100%;
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,.35), transparent);
+  transform:skewX(-20deg);
+  animation:shimmer 2.4s ease-in-out infinite;
+}
+.sticky-timer-cta:hover { opacity:.88; animation:none; box-shadow:0 4px 16px rgba(244,63,143,.5); }
+.sticky-timer-countdown.urgent { color:#f87171; animation:pulse-red 1s ease infinite; }
+@keyframes heartbeat-glow {
+  0%,100% { text-shadow:0 0 8px rgba(244,63,143,.3); }
+  50%      { text-shadow:0 0 22px rgba(244,63,143,.85), 0 0 40px rgba(244,63,143,.3); }
+}
+@keyframes cta-pulse {
+  0%,100% { box-shadow:0 0 0 0 rgba(244,63,143,.45); }
+  50%      { box-shadow:0 0 0 5px rgba(244,63,143,.0); }
+}
+@keyframes shimmer {
+  0%   { left:-70%; }
+  60%,100% { left:130%; }
+}
+@keyframes pulse-red { 0%,100%{opacity:1} 50%{opacity:.6} }
+</style>
+</head>
+<body>
+<!-- Sticky timer bar -->
+<div class="sticky-timer" id="sticky-timer">
+  <span class="sticky-timer-label">⚡ Offer expires in</span>
+  <span class="sticky-timer-countdown" id="sticky-countdown">15:00</span>
+  <a class="sticky-timer-cta" href="#cta-anchor" onclick="handleCTA()">Unlock now →</a>
+</div>
+
+<div class="glow-top"></div>
+
+<div class="wrap">
+
+  <!-- header -->
+  <div class="header-pill">
+    <div class="header-dot"></div>
+    <span>Pet IQ Lab — Secure Checkout</span>
+  </div>
+
+  <!-- success check -->
+  <div class="check-hero">
+    <div class="check-circle">✅</div>
+  </div>
+  <div class="confirmed-label">Report sent to your inbox</div>
+
+  <div class="divider"></div>
+
+  <!-- urgency banner -->
+  <div class="urgency-banner">
+    <div class="urgency-icon">⚡</div>
+    <div class="urgency-text">
+      <strong>One-time offer — expires in</strong>
+      <span>Price returns to €29.99 after this session</span>
+    </div>
+    <div class="timer-display" id="timer-display">15:00</div>
+  </div>
+  <div class="timer-bar-wrap">
+    <div class="timer-bar" id="timer-bar"></div>
+  </div>
+
+  <!-- main offer card -->
+  <div class="offer-card">
+    <div class="offer-pill">🎯 Special offer · One time only</div>
+
+    <div id="dim-badge-wrap"></div>
+
+    <div class="offer-title">
+      <span id="pet-name-title">Your pet</span>'s<br>
+      21-Day Training Programme
+    </div>
+    <div class="offer-subtitle" id="offer-subtitle">
+      Personalised to your pet's weakest cognitive dimension — daily 5-minute exercises delivered straight to your inbox, grounded in the same peer-reviewed research as the report.
+    </div>
+
+    <ul class="feature-list">
+      <li>
+        <div class="feature-icon pink">🧠</div>
+        <div class="feature-text">
+          <strong>21 daily sessions</strong><br>
+          <span>5 minutes each — designed around your pet's specific cognitive profile</span>
+        </div>
+      </li>
+      <li>
+        <div class="feature-icon blue">📊</div>
+        <div class="feature-text">
+          <strong>Targeted to <span id="weak-dim-text">your weakest dimension</span></strong><br>
+          <span>Focused training on the exact area with the most improvement potential</span>
+        </div>
+      </li>
+      <li>
+        <div class="feature-icon teal">📩</div>
+        <div class="feature-text">
+          <strong>Delivered by email, Day 1 → Day 21</strong><br>
+          <span>No app, no login — opens on any device, any time</span>
+        </div>
+      </li>
+      <li>
+        <div class="feature-icon pink">🔬</div>
+        <div class="feature-text">
+          <strong>Science-referenced exercises</strong><br>
+          <span>Every technique cited from published cognitive ethology literature</span>
+        </div>
+      </li>
+      <li>
+        <div class="feature-icon blue">📈</div>
+        <div class="feature-text">
+          <strong>Re-test at Day 21</strong><br>
+          <span>Retake the quiz — measure how much your pet's score improves</span>
+        </div>
+      </li>
+    </ul>
+
+    <!-- price -->
+    <div class="price-row">
+      <div>
+        <div class="price-was">€29.99</div>
+        <div class="price-now">€19.99 <sub>one time</sub></div>
+      </div>
+      <div class="price-badge">−50% TODAY</div>
+    </div>
+
+    <!-- CTA -->
+    <a id="cta-anchor"></a>
+    <button class="cta-btn" id="main-cta" onclick="handleCTA()">
+      🔓 Start <span id="cta-pet-name">Rex</span>'s 21-day programme →
+    </button>
+    <div class="guarantee-note">🔒 Secure payment · Instant delivery · No subscription</div>
+  </div>
+
+  <!-- email form section (hidden until CTA clicked) -->
+  <div id="email-form-section" style="display:none">
+    <div style="text-align:center;font-size:12px;color:var(--muted);margin-bottom:12px;padding:0 8px;line-height:1.6;">
+      Enter your email — Day 1 lands in your inbox immediately:
+    </div>
+    <div class="email-input-wrap">
+      <input type="email" id="upsell-email" class="email-input" placeholder="your@email.com" autocomplete="email">
+      <button class="email-submit-btn" id="email-submit-btn" onclick="submitOTOEmail()">Start →</button>
+    </div>
+    <div class="email-note">No payment required now · 21 emails over 21 days · Unsubscribe anytime</div>
+    <div class="email-confirm" id="email-confirm">
+      ✅ Day 1 is on its way! Check your inbox in a few seconds.
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- testimonials -->
+  <div class="testimonials-section">
+    <div class="section-label">What pet owners say</div>
+
+    <div class="testimonial">
+      <div class="testimonial-text">
+        "I honestly thought these were silly generic tips — but the exercises were <span class="highlight">completely specific to Max's score</span>. By Day 10 he was responding to commands he'd never even attempted before."
+      </div>
+      <div class="testimonial-meta">
+        <div class="testimonial-avatar">👩</div>
+        <div>
+          <div class="testimonial-name">Sophie L.</div>
+          <div class="testimonial-pet">Golden Retriever · Memory track</div>
+        </div>
+        <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+      </div>
+    </div>
+
+    <div class="testimonial">
+      <div class="testimonial-text">
+        "My cat Nala scored low on Self-Control. After the 21 days, <span class="highlight">she actually waits before jumping on the food bowl</span>. I didn't think cats could be trained like this. The science explanations in each email made it feel real."
+      </div>
+      <div class="testimonial-meta">
+        <div class="testimonial-avatar">👩‍🦱</div>
+        <div>
+          <div class="testimonial-name">Marie-Claire D.</div>
+          <div class="testimonial-pet">Domestic cat · Self-Control track</div>
+        </div>
+        <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- view report link -->
+  <a id="view-report-btn" href="/"
+    style="display:block;text-align:center;margin-top:20px;padding:14px;
+           border-radius:14px;border:1px solid rgba(255,255,255,.1);
+           color:rgba(240,244,255,.7);font-size:14px;font-weight:600;
+           text-decoration:none;transition:all .2s;background:rgba(255,255,255,.04)">
+    📄 View <span id="report-pet-name">your pet</span>'s report →
+  </a>
+
+  <!-- skip link -->
+  <a class="skip-link" href="/" onclick="return false;" id="skip-link">
+    No thanks, I'll skip this offer
+  </a>
+
+  <div class="page-footer">
+    Pet IQ Lab · REAUMUR SAS · 9 rue des Colonnes, 75002 Paris ·
+    <a href="/privacy.html" style="color:inherit;text-decoration:underline">Privacy</a> ·
+    <a href="mailto:contact@thecosmicpet.com" style="color:inherit;text-decoration:underline">contact@thecosmicpet.com</a>
+  </div>
+
+</div>
+
+<script>
+const API_URL = '';
+function track(e,p){ if(typeof gtag!=='undefined') gtag('event',e,p||{}); }
+
+// ── READ URL PARAMS ──
+const params   = new URLSearchParams(window.location.search);
+const petName  = params.get('pet')     || 'Your pet';
+const dimKey   = params.get('dim')     || '';
+const species  = params.get('species') || 'dog';
+const iqScore  = params.get('iq')      || '';
+const token    = params.get('token')   || '';
+const emailPre = params.get('email')   || '';
+
+// dimension metadata
+const DIM_META = {
+  memory:       { label:'🧠 Memory',        cls:'memory',  badge:'memory',  desc:'recall and associative learning' },
+  social:       { label:'🤝 Social Intel.',  cls:'social',  badge:'social',  desc:'reading emotions and social cues' },
+  problem:      { label:'🔑 Problem Solving',cls:'problem', badge:'problem', desc:'spatial reasoning and puzzle-solving' },
+  selfcontrol:  { label:'🧘 Self-Control',   cls:'self',    badge:'self',    desc:'impulse inhibition and patience' },
+  adaptability: { label:'⚡ Adaptability',   cls:'adapt',   badge:'adapt',   desc:'coping with new situations and change' },
+};
+
+// ── POPULATE PAGE ──
+(function init() {
+  track('oto_view', { iq_score: Number(iqScore)||0, weak_dim: dimKey, pet_type: species });
+  // pet name
+  document.querySelectorAll('#pet-name-title, #cta-pet-name').forEach(el => {
+    el.textContent = petName;
+  });
+
+  // dim badge + subtitle
+  const meta = DIM_META[dimKey.toLowerCase().replace(/[\s-]/g,'')];
+  if (meta) {
+    const badgeWrap = document.getElementById('dim-badge-wrap');
+    badgeWrap.innerHTML = `<span class="dim-badge ${meta.badge}">${meta.label}</span>`;
+
+    document.getElementById('weak-dim-text').textContent = meta.label.replace(/^[^\s]+ /,'');
+    document.getElementById('offer-subtitle').textContent =
+      `Personalised to ${petName}'s ${meta.desc} — targeted exercises delivered daily over 21 days, grounded in the same cognitive ethology research as the report.`;
+
+    // update CTA
+    document.getElementById('main-cta').innerHTML =
+      `🔓 Start ${petName}'s ${meta.label.replace(/^[^\s]+ /,'')} programme →`;
+  }
+
+  // pre-fill email if passed
+  if (emailPre) {
+    document.getElementById('upsell-email').value = emailPre;
+  }
+})();
+
+// ── COUNTDOWN TIMER (15 minutes) ──
+const DURATION_S = 15 * 60;
+let secondsLeft  = DURATION_S;
+const timerEl       = document.getElementById('timer-display');
+const timerBar      = document.getElementById('timer-bar');
+const stickyBar     = document.getElementById('sticky-timer');
+const stickyCountEl = document.getElementById('sticky-countdown');
+
+// set timer-bar initial width
+timerBar.style.width = '100%';
+
+const tick = setInterval(() => {
+  secondsLeft--;
+  if (secondsLeft <= 0) {
+    clearInterval(tick);
+    timerEl.textContent = '00:00';
+    stickyCountEl.textContent = '00:00';
+    timerEl.style.color = 'rgba(240,244,255,.3)';
+    document.getElementById('main-cta').textContent = 'Offer expired — redirecting…';
+    document.getElementById('main-cta').disabled = true;
+    setTimeout(() => { window.location.href = reportUrl; }, 3000);
+    return;
+  }
+  const m = String(Math.floor(secondsLeft / 60)).padStart(2, '0');
+  const s = String(secondsLeft % 60).padStart(2, '0');
+  const fmt = `${m}:${s}`;
+  timerEl.textContent = fmt;
+  stickyCountEl.textContent = fmt;
+  const pct = (secondsLeft / DURATION_S) * 100;
+  timerBar.style.width = pct + '%';
+  if (secondsLeft <= 60) {
+    timerEl.style.color = '#f87171';
+    stickyCountEl.classList.add('urgent');
+  }
+}, 1000);
+
+// Show sticky bar when urgency-banner scrolls out of view
+const urgencyBanner = document.querySelector('.urgency-banner');
+if (urgencyBanner && 'IntersectionObserver' in window) {
+  const obs = new IntersectionObserver(entries => {
+    stickyBar.classList.toggle('visible', !entries[0].isIntersecting);
+  }, { threshold: 0 });
+  obs.observe(urgencyBanner);
+}
+
+// ── CTA HANDLER ──
+// Right now: shows email form and scrolls to it.
+// When Paddle is ready: replace with Paddle.Checkout.open(...)
+function handleCTA() {
+  track('oto_cta_click', { weak_dim: dimKey });
+  const form = document.getElementById('email-form-section');
+  form.style.display = 'block';
+  setTimeout(() => {
+    form.scrollIntoView({ behavior:'smooth', block:'center' });
+    document.getElementById('upsell-email')?.focus();
+  }, 50);
+  // TODO: replace with Paddle checkout when live:
+  // Paddle.Environment.set('production');
+  // Paddle.Initialize({ token: 'YOUR_CLIENT_TOKEN' });
+  // Paddle.Checkout.open({ items:[{ priceId:'pri_xxx', quantity:1 }], ... });
+}
+
+// ── EMAIL SUBMIT ──
+async function submitOTOEmail() {
+  const emailEl = document.getElementById('upsell-email');
+  const btn     = document.getElementById('email-submit-btn');
+  const confirm = document.getElementById('email-confirm');
+  const note    = document.querySelector('.email-note');
+  const wrap    = document.querySelector('.email-input-wrap');
+  const email   = emailEl?.value.trim();
+
+  if (!email || !email.includes('@')) {
+    emailEl.style.borderColor = 'var(--pink)';
+    emailEl.focus();
+    return;
+  }
+
+  track('oto_email_submit', { weak_dim: dimKey });
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>';
+
+  // Show generating state while Gemini works (~15-20s)
+  if (note) note.innerHTML = '⏳ Generating your personalised programme… this takes ~15 seconds';
+
+  try {
+    const r = await fetch(`${API_URL}/api/upsell-generate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email,
+        petName,
+        species,
+        breed: params.get('breed') || '',
+        weakDim: dimKey,
+        iqScore,
+        token,
+      }),
+    });
+    const data = await r.json();
+    if (data.ok) track('oto_convert', { weak_dim: dimKey, iq_score: Number(iqScore)||0 });
+    if (!data.ok) throw new Error(data.error || 'error');
+  } catch (e) {
+    // Show confirm anyway — don't block the user on a generation error
+    console.error('Programme generation error:', e);
+  }
+
+  if (wrap) wrap.style.display = 'none';
+  if (note) note.style.display = 'none';
+  confirm.style.display = 'block';
+}
+
+// ── REPORT + SKIP LINKS ──
+const reportUrl = token ? `/report.html?token=${token}` : '/';
+
+const viewBtn = document.getElementById('view-report-btn');
+if (viewBtn) {
+  viewBtn.href = reportUrl;
+  const nameSpan = document.getElementById('report-pet-name');
+  if (nameSpan) nameSpan.textContent = petName;
+}
+
+document.getElementById('skip-link').addEventListener('click', () => {
+  track('oto_skip');
+  window.location.href = reportUrl;
+});
+</script>
+</body>
+</html>

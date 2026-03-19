@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pet IQ Lab — Redesign v2 · Science Direction</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;1,600;1,700;1,800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #030712;
+  --navy: #080d1a;
+  --surface: #0f1729;
+  --card: #141e35;
+  --card-2: #1a2640;
+  --border: rgba(255,255,255,.07);
+  --border-bright: rgba(255,255,255,.13);
+  --pink: #f43f8f;
+  --pink-dim: rgba(244,63,143,.15);
+  --pink-glow: rgba(244,63,143,.3);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,.15);
+  --teal: #2dd4bf;
+  --amber: #f59e0b;
+  --green: #34d399;
+  --purple: #a78bfa;
+  --text: #f1f5f9;
+  --muted: #475569;
+  --muted-2: #64748b;
+  --mono: 'DM Mono', monospace;
+  --sans: 'DM Sans', sans-serif;
+  --serif: 'Fraunces', serif;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--bg);
+  font-family: var(--sans);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 60px 20px 100px;
+}
+
+/* Subtle grid texture */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(59,130,246,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(59,130,246,.025) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── STAGE ── */
+.stage {
+  position: relative;
+  z-index: 1;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+/* ── HEADER ── */
+.doc-header {
+  text-align: center;
+  margin-bottom: 64px;
+}
+.doc-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--muted-2);
+  margin-bottom: 10px;
+}
+.doc-title {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-style: italic;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.5px;
+}
+.doc-title span { color: var(--pink); }
+.doc-line {
+  width: 40px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--pink), transparent);
+  margin: 14px auto 0;
+}
+
+/* ── SCREEN SECTION ── */
+.screen-section {
+  margin-bottom: 64px;
+}
+.screen-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.screen-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ── PHONE FRAME ── */
+.phone {
+  background: var(--navy);
+  border-radius: 28px;
+  overflow: hidden;
+  border: 1.5px solid var(--border-bright);
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,.5),
+    0 40px 80px rgba(0,0,0,.6),
+    0 0 60px rgba(244,63,143,.04);
+  position: relative;
+}
+
+/* ── ANIMATIONS ── */
+@keyframes ticker { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
+@keyframes beat { 0%,100%{box-shadow:0 0 0 0 var(--pink-glow)} 50%{box-shadow:0 0 0 12px transparent} }
+@keyframes scan-in { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+@keyframes arc-fill-0 { from{stroke-dashoffset:188} to{stroke-dashoffset:50} }
+@keyframes arc-fill-1 { from{stroke-dashoffset:251} to{stroke-dashoffset:80} }
+@keyframes arc-fill-2 { from{stroke-dashoffset:314} to{stroke-dashoffset:110} }
+@keyframes arc-fill-3 { from{stroke-dashoffset:377} to{stroke-dashoffset:140} }
+@keyframes arc-fill-4 { from{stroke-dashoffset:440} to{stroke-dashoffset:175} }
+@keyframes shimmer { 0%,100%{opacity:0} 50%{opacity:1} }
+
+/* ── GLOBAL ELEMENTS ── */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 50px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .5px;
+  padding: 6px 12px;
+}
+.pill-blue { background: var(--blue-dim); color: var(--blue); border: 1px solid rgba(59,130,246,.25); }
+.pill-pink { background: var(--pink-dim); color: var(--pink); border: 1px solid rgba(244,63,143,.25); }
+.pill-muted { background: rgba(255,255,255,.04); color: var(--muted-2); border: 1px solid var(--border); }
+
+/* ──────────────────────────────────────────
+   01 — INTRO
+────────────────────────────────────────── */
+
+/* Ticker */
+.ticker-bar {
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.ticker-inner { display:inline-block; animation: ticker 16s linear infinite; }
+.ticker-item {
+  display: inline-block;
+  padding: 0 24px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted-2);
+}
+.ticker-item b { color: var(--pink); font-weight: 500; }
+
+/* Nav bar */
+.nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.nav-brand {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  letter-spacing: 1px;
+}
+.nav-brand span { color: var(--pink); }
+.nav-pips { display: flex; gap: 6px; }
+.pip { width: 6px; height: 6px; border-radius: 50%; background: var(--border-bright); }
+.pip.active { background: var(--pink); box-shadow: 0 0 6px var(--pink-glow); }
+
+/* Intro body */
+.intro-body { padding: 28px 20px 32px; }
+.intro-badge { margin-bottom: 22px; }
+.hero-title {
+  font-family: var(--serif);
+  font-size: 36px;
+  font-style: italic;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--text);
+  margin-bottom: 10px;
+  letter-spacing: -1px;
+}
+.hero-title em { color: var(--pink); font-style: italic; }
+.hero-sub {
+  font-size: 13px;
+  color: var(--muted-2);
+  font-weight: 500;
+  line-height: 1.65;
+  margin-bottom: 24px;
+}
+
+/* Social proof */
+.sp-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+}
+.sp-stars { color: #fbbf24; font-size: 12px; letter-spacing: 1px; margin-bottom: 3px; }
+.sp-text { font-size: 12px; font-weight: 700; color: var(--muted-2); }
+.sp-text b { color: var(--text); }
+.sp-avatars { display: flex; }
+.sp-av {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: var(--card-2);
+  border: 2px solid var(--navy);
+  font-size: 13px;
+  display: flex; align-items: center; justify-content: center;
+  margin-left: -7px;
+}
+
+/* Pet cards */
+.pet-row { display: flex; gap: 10px; margin-bottom: 14px; }
+.pet-card {
+  flex: 1;
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 16px 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: all .2s;
+}
+.pet-card.active {
+  border-color: var(--pink);
+  background: var(--pink-dim);
+  box-shadow: 0 0 20px rgba(244,63,143,.12);
+}
+.pet-emoji { font-size: 32px; display: block; margin-bottom: 6px; }
+.pet-label { font-size: 12px; font-weight: 700; color: var(--muted-2); }
+.pet-card.active .pet-label { color: var(--pink); }
+
+/* Input */
+.name-input {
+  width: 100%;
+  background: var(--card);
+  border: 1.5px solid var(--border-bright);
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 14px;
+}
+.name-input::placeholder { color: var(--muted); }
+
+/* CTA */
+.cta-btn {
+  display: block;
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, var(--pink), #c026d3);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 800;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(244,63,143,.3);
+  margin-bottom: 14px;
+  cursor: pointer;
+}
+
+/* Trust row */
+.trust-row {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.trust-item { font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: .5px; }
+
+/* ──────────────────────────────────────────
+   02 — QUIZ
+────────────────────────────────────────── */
+.progress-bar-wrap { height: 3px; background: var(--border); }
+.progress-bar-fill {
+  height: 100%;
+  width: 35%;
+  background: linear-gradient(90deg, var(--pink), var(--blue));
+  border-radius: 2px;
+  box-shadow: 0 0 8px rgba(244,63,143,.4);
+}
+
+.quiz-body { padding: 20px 20px 28px; }
+.dim-header { margin-bottom: 18px; }
+.dim-pill-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.dim-name {
+  font-family: var(--serif);
+  font-size: 18px;
+  font-style: italic;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+.dim-source { font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: .5px; }
+
+.q-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 12px;
+}
+.q-num { font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; }
+.q-text { font-size: 15px; font-weight: 700; line-height: 1.5; color: var(--text); margin-bottom: 16px; }
+
+.options { display: flex; flex-direction: column; gap: 8px; }
+.option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--card-2);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all .15s;
+}
+.option.selected {
+  border-color: var(--pink);
+  background: var(--pink-dim);
+  box-shadow: 0 0 12px rgba(244,63,143,.1);
+}
+.opt-dot {
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  border: 2px solid var(--muted);
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.option.selected .opt-dot {
+  border-color: var(--pink);
+  background: var(--pink);
+}
+.opt-dot-inner { width: 6px; height: 6px; border-radius: 50%; background: white; display: none; }
+.option.selected .opt-dot-inner { display: block; }
+.opt-text { font-size: 13px; font-weight: 600; color: var(--muted-2); line-height: 1.4; }
+.option.selected .opt-text { color: var(--text); }
+
+/* Reaction */
+.reaction-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(52,211,153,.1);
+  border: 1px solid rgba(52,211,153,.2);
+  border-radius: 50px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--green);
+  margin-top: 10px;
+}
+
+/* Nav */
+.q-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px 20px;
+}
+.btn-back-q { background: none; border: none; font-size: 12px; font-weight: 600; color: var(--muted); font-family: var(--sans); cursor: pointer; }
+.q-counter { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+.btn-next-q {
+  padding: 10px 22px;
+  background: linear-gradient(135deg, var(--pink), #c026d3);
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(244,63,143,.25);
+}
+
+/* Mid teaser */
+.mid-teaser {
+  margin: 0 20px 16px;
+  background: linear-gradient(135deg, #0d1f3c, #0f2644);
+  border: 1px solid rgba(59,130,246,.25);
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.teaser-icon { font-size: 24px; animation: pulse 2s infinite; flex-shrink: 0; }
+.teaser-title { font-family: var(--serif); font-size: 14px; font-style: italic; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+.teaser-sub { font-size: 11px; color: rgba(147,197,253,.5); font-weight: 600; }
+
+/* ──────────────────────────────────────────
+   03 — ANALYSIS
+────────────────────────────────────────── */
+.analysis-body {
+  padding: 32px 20px 36px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* Radar SVG */
+.radar-wrap {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  margin-bottom: 24px;
+}
+.radar-wrap svg { position: absolute; top: 0; left: 0; }
+.orb {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--card), var(--card-2));
+  border: 1.5px solid rgba(244,63,143,.3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px;
+  z-index: 2;
+  animation: beat 2s ease-in-out infinite;
+  box-shadow: 0 0 30px rgba(244,63,143,.15);
+}
+
+.a-phase {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--pink-dim);
+  border: 1px solid rgba(244,63,143,.2);
+  border-radius: 50px;
+  padding: 7px 14px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--pink);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.a-phase-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--pink); animation: pulse 1s infinite; }
+
+.a-title {
+  font-family: var(--serif);
+  font-size: 26px;
+  font-style: italic;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 6px;
+  letter-spacing: -.5px;
+}
+.a-sub { font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: 1px; margin-bottom: 24px; }
+
+.insight-card {
+  width: 100%;
+  background: var(--card);
+  border: 1px solid var(--border-bright);
+  border-radius: 14px;
+  padding: 16px 18px;
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+}
+.insight-card::before {
+  content: '';
+  position: absolute;
+  top: -30px; right: -30px;
+  width: 100px; height: 100px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(244,63,143,.1), transparent 70%);
+}
+.insight-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--pink);
+  margin-bottom: 7px;
+}
+.insight-text { font-size: 13px; font-weight: 600; color: rgba(241,245,249,.85); line-height: 1.6; }
+
+/* ──────────────────────────────────────────
+   04 — RESULTS
+────────────────────────────────────────── */
+.results-body { padding: 16px 16px 24px; }
+
+.score-hero {
+  background: linear-gradient(145deg, #060b18 0%, #0d1a2e 100%);
+  border: 1px solid rgba(244,63,143,.15);
+  border-radius: 20px;
+  padding: 28px 24px;
+  text-align: center;
+  margin-bottom: 12px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 40px rgba(244,63,143,.07);
+}
+.score-hero::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 200px; height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(244,63,143,.12), transparent 60%);
+}
+.score-hero::after {
+  content: '';
+  position: absolute;
+  bottom: -40px; left: -40px;
+  width: 140px; height: 140px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(59,130,246,.08), transparent 60%);
+}
+.score-label-top {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.2);
+  margin-bottom: 12px;
+  position: relative; z-index: 1;
+}
+.score-emoji-big { font-size: 44px; display: block; margin-bottom: 8px; animation: float 3s ease-in-out infinite; position: relative; z-index: 1; }
+.score-profile-name {
+  font-family: var(--serif);
+  font-size: 26px;
+  font-style: italic;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+  position: relative; z-index: 1;
+  letter-spacing: -.5px;
+}
+.score-tagline { font-size: 13px; color: rgba(255,255,255,.4); font-weight: 600; margin-bottom: 20px; position: relative; z-index: 1; }
+
+/* Blurred percentile */
+.percentile-blur-wrap {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 4px;
+}
+.percentile-num {
+  font-family: var(--mono);
+  font-size: 80px;
+  font-weight: 500;
+  color: var(--pink);
+  line-height: 1;
+  filter: blur(10px);
+  user-select: none;
+  letter-spacing: -3px;
+}
+.percentile-lock {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 800;
+  color: rgba(255,255,255,.7);
+}
+.percentile-sub {
+  font-size: 13px;
+  color: rgba(255,255,255,.3);
+  font-weight: 600;
+  filter: blur(5px);
+  user-select: none;
+  position: relative; z-index: 1;
+}
+
+/* Locked dims card */
+.locked-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 18px;
+  margin-bottom: 12px;
+}
+.locked-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.locked-card-title {
+  font-family: var(--serif);
+  font-size: 16px;
+  font-style: italic;
+  font-weight: 700;
+  color: var(--text);
+}
+.locked-badge-count {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  background: var(--card-2);
+  border: 1px solid var(--border-bright);
+  color: var(--muted-2);
+  padding: 4px 10px;
+  border-radius: 50px;
+}
+
+.dim-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.dim-icon { font-size: 16px; flex-shrink: 0; width: 20px; text-align: center; }
+.dim-bar-wrap { flex: 1; }
+.dim-bar-label { font-size: 11px; font-weight: 700; color: var(--muted-2); margin-bottom: 5px; display: flex; align-items: center; gap: 6px; }
+.unlocked-tag { font-family: var(--mono); font-size: 9px; color: var(--green); letter-spacing: .5px; }
+.dim-bar { height: 6px; background: rgba(255,255,255,.06); border-radius: 3px; overflow: hidden; position: relative; }
+.dim-bar-fill { height: 100%; border-radius: 3px; }
+.dim-bar-overlay {
+  position: absolute; inset: 0;
+  background: rgba(15,23,41,.7);
+  backdrop-filter: blur(3px);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 8px; color: var(--muted); letter-spacing: 1px;
+}
+.dim-score { font-family: var(--mono); font-size: 13px; font-weight: 500; color: var(--muted-2); flex-shrink: 0; width: 28px; text-align: right; }
+.dim-score.blurred { filter: blur(5px); user-select: none; }
+
+/* ──────────────────────────────────────────
+   05 — PAYWALL
+────────────────────────────────────────── */
+.paywall-body { padding: 16px; }
+
+.paywall-card {
+  background: linear-gradient(145deg, #060b18 0%, #0d1a2e 100%);
+  border: 1px solid rgba(244,63,143,.2);
+  border-radius: 20px;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 50px rgba(244,63,143,.06);
+}
+.paywall-card::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -40px;
+  width: 180px; height: 180px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(244,63,143,.1), transparent 65%);
+  pointer-events: none;
+}
+
+.pw-title {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-style: italic;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+  position: relative; z-index: 1;
+  letter-spacing: -.5px;
+}
+.pw-sub { font-size: 13px; color: rgba(255,255,255,.35); font-weight: 600; margin-bottom: 18px; line-height: 1.55; position: relative; z-index: 1; }
+
+/* Testimonials */
+.testimonials { display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; position: relative; z-index: 1; }
+.testimonial {
+  background: rgba(255,255,255,.04);
+  border-left: 3px solid var(--pink);
+  border-radius: 0 10px 10px 0;
+  padding: 10px 14px;
+}
+.testimonial:nth-child(2) { border-left-color: var(--blue); }
+.test-text { font-size: 12px; font-weight: 700; color: rgba(255,255,255,.8); margin-bottom: 4px; line-height: 1.5; }
+.test-meta { font-family: var(--mono); font-size: 10px; color: rgba(255,255,255,.25); }
+
+/* Features */
+.features { display: flex; flex-direction: column; gap: 7px; margin-bottom: 20px; position: relative; z-index: 1; }
+.feat {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  background: rgba(255,255,255,.03);
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.05);
+}
+.feat-icon { font-size: 15px; flex-shrink: 0; }
+.feat-text { font-size: 12px; font-weight: 700; color: rgba(255,255,255,.6); }
+
+/* Price */
+.price-block { text-align: center; margin-bottom: 14px; position: relative; z-index: 1; }
+.price-est { font-family: var(--mono); font-size: 11px; color: rgba(255,255,255,.2); letter-spacing: .5px; margin-bottom: 4px; }
+.price-est s { color: rgba(255,255,255,.25); }
+.price-main { font-family: var(--mono); font-size: 64px; font-weight: 500; color: var(--pink); line-height: 1; letter-spacing: -2px; }
+.price-cents { font-size: 30px; }
+.price-desc { font-size: 11px; color: rgba(255,255,255,.2); font-weight: 700; margin-top: 4px; font-family: var(--mono); letter-spacing: .5px; }
+
+/* Urgency */
+.urgency-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(244,63,143,.08);
+  border: 1px solid rgba(244,63,143,.2);
+  border-radius: 10px;
+  padding: 9px 14px;
+  margin-bottom: 12px;
+  position: relative; z-index: 1;
+}
+.u-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--pink); animation: pulse 1s infinite; flex-shrink: 0; }
+.u-text { font-family: var(--mono); font-size: 11px; color: rgba(255,255,255,.5); letter-spacing: .5px; }
+.u-time { color: var(--pink); font-weight: 500; }
+
+/* CTA */
+.pw-btn {
+  display: block;
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, var(--pink), #c026d3);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 800;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0 8px 28px rgba(244,63,143,.35), 0 0 0 1px rgba(244,63,143,.2);
+  margin-bottom: 8px;
+  position: relative; z-index: 1;
+}
+.pw-guarantee { font-family: var(--mono); text-align: center; font-size: 9px; color: rgba(255,255,255,.15); letter-spacing: 1px; position: relative; z-index: 1; margin-bottom: 14px; }
+
+/* Email fallback */
+.email-fallback { border-top: 1px solid rgba(255,255,255,.06); padding-top: 14px; position: relative; z-index: 1; }
+.email-label { text-align: center; font-size: 11px; font-weight: 700; color: rgba(255,255,255,.25); margin-bottom: 8px; }
+.email-row { display: flex; gap: 8px; }
+.email-inp {
+  flex: 1;
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 9px;
+  padding: 10px 13px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text);
+}
+.email-inp::placeholder { color: rgba(255,255,255,.2); }
+.email-btn {
+  padding: 10px 14px;
+  background: rgba(244,63,143,.15);
+  border: 1px solid rgba(244,63,143,.3);
+  border-radius: 9px;
+  color: var(--pink);
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+</style>
+</head>
+<body>
+
+<div class="stage">
+
+  <!-- Doc Header -->
+  <div class="doc-header">
+    <div class="doc-label">Pet IQ Lab · UI Exploration</div>
+    <div class="doc-title">Redesign v2 — <span>Science Direction</span></div>
+    <div class="doc-line"></div>
+  </div>
+
+  <!-- 01 INTRO -->
+  <div class="screen-section">
+    <div class="screen-label">01 — Intro</div>
+    <div class="phone">
+      <div class="ticker-bar">
+        <div class="ticker-inner">
+          <span class="ticker-item">🐶 Buddy tested — <b>Quick Learner ⚡</b></span>
+          <span class="ticker-item">🐱 Luna tested — <b>top 22% 🏆</b></span>
+          <span class="ticker-item">🐶 Max tested — <b>Canine Genius 🧠</b></span>
+          <span class="ticker-item">🐱 Mochi tested — <b>Composed Observer ⚖️</b></span>
+          <span class="ticker-item">🐶 Buddy tested — <b>Quick Learner ⚡</b></span>
+          <span class="ticker-item">🐱 Luna tested — <b>top 22% 🏆</b></span>
+          <span class="ticker-item">🐶 Max tested — <b>Canine Genius 🧠</b></span>
+          <span class="ticker-item">🐱 Mochi tested — <b>Composed Observer ⚖️</b></span>
+        </div>
+      </div>
+      <div class="nav-bar">
+        <div class="nav-brand">🧠 PET<span>IQ</span></div>
+        <div class="nav-pips">
+          <div class="pip active"></div>
+          <div class="pip"></div>
+          <div class="pip"></div>
+        </div>
+      </div>
+      <div class="intro-body">
+        <div class="intro-badge">
+          <span class="pill pill-blue">🔬 Science-backed · Free · 3 min</span>
+        </div>
+        <h1 class="hero-title">Is your pet <em>secretly a genius?</em></h1>
+        <p class="hero-sub">12 questions based on real animal cognition research. Find out where your pet ranks — in 3 minutes.</p>
+
+        <div class="sp-row">
+          <div>
+            <div class="sp-stars">★★★★★</div>
+            <div class="sp-text"><b>1,240 pets tested</b> this month</div>
+          </div>
+          <div class="sp-avatars">
+            <div class="sp-av">🐶</div>
+            <div class="sp-av">🐱</div>
+            <div class="sp-av">🐶</div>
+          </div>
+        </div>
+
+        <p style="font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;">Who's taking the test?</p>
+        <div class="pet-row">
+          <div class="pet-card active">
+            <span class="pet-emoji">🐶</span>
+            <span class="pet-label">Dog</span>
+          </div>
+          <div class="pet-card">
+            <span class="pet-emoji">😼</span>
+            <span class="pet-label">Cat</span>
+          </div>
+        </div>
+
+        <input class="name-input" placeholder="Their name…" value="Rex">
+        <button class="cta-btn">Find out how smart they are 🐾</button>
+
+        <div class="trust-row">
+          <span class="trust-item">🧬 5 dimensions</span>
+          <span class="trust-item">📚 Peer-reviewed</span>
+          <span class="trust-item">4.9/5 ⭐</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 QUIZ -->
+  <div class="screen-section">
+    <div class="screen-label">02 — Quiz</div>
+    <div class="phone">
+      <div class="nav-bar">
+        <div class="nav-brand">🧠 PET<span>IQ</span></div>
+        <div class="nav-pips">
+          <div class="pip"></div>
+          <div class="pip active"></div>
+          <div class="pip"></div>
+        </div>
+      </div>
+      <div class="progress-bar-wrap"><div class="progress-bar-fill"></div></div>
+
+      <div class="quiz-body">
+        <div class="dim-header">
+          <div class="dim-pill-row">
+            <span class="pill pill-blue">🧠 Memory · 1/5</span>
+            <span style="font-family:var(--mono);font-size:10px;color:var(--muted)">5 / 12</span>
+          </div>
+          <div class="dim-name">Memory & Learning</div>
+          <div class="dim-source">📚 Coren 1994 · Tulving</div>
+        </div>
+
+        <div class="q-card">
+          <div class="q-num">Question 05 / 12</div>
+          <div class="q-text">You hide a treat under 1 of 3 cups. Distract Rex for 30 seconds. They find it:</div>
+          <div class="options">
+            <div class="option selected">
+              <div class="opt-dot"><div class="opt-dot-inner"></div></div>
+              <div class="opt-text">First try — no hesitation. 🎯</div>
+            </div>
+            <div class="option">
+              <div class="opt-dot"></div>
+              <div class="opt-text">After checking 2 cups.</div>
+            </div>
+            <div class="option">
+              <div class="opt-dot"></div>
+              <div class="opt-text">Eventually, 3+ attempts.</div>
+            </div>
+            <div class="option">
+              <div class="opt-dot"></div>
+              <div class="opt-text">Sits there. Classic Rex.</div>
+            </div>
+          </div>
+          <div class="reaction-pill">✓ Wow, impressive! 🔥</div>
+        </div>
+
+        <div class="q-nav">
+          <button class="btn-back-q">← back</button>
+          <span class="q-counter">5 / 12</span>
+          <button class="btn-next-q">Next →</button>
+        </div>
+      </div>
+
+      <div class="mid-teaser">
+        <div class="teaser-icon">📊</div>
+        <div>
+          <div class="teaser-title">Rex's profile is taking shape…</div>
+          <div class="teaser-sub">Halfway — first results locked in. Keep going.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 03 ANALYSIS -->
+  <div class="screen-section">
+    <div class="screen-label">03 — Analysis</div>
+    <div class="phone">
+      <div class="nav-bar">
+        <div class="nav-brand">🧠 PET<span>IQ</span></div>
+        <div class="nav-pips">
+          <div class="pip"></div>
+          <div class="pip active"></div>
+          <div class="pip"></div>
+        </div>
+      </div>
+      <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:90%;background:linear-gradient(90deg,var(--pink),var(--blue),var(--teal));box-shadow:0 0 12px rgba(45,212,191,.4);"></div></div>
+
+      <div class="analysis-body">
+        <div class="a-phase">
+          <div class="a-phase-dot"></div>
+          Mapping cognitive profile
+        </div>
+
+        <div class="radar-wrap">
+          <svg viewBox="0 0 200 200" width="200" height="200">
+            <!-- BG arcs -->
+            <circle cx="100" cy="100" r="30" fill="none" stroke="#818cf8" stroke-width="4" stroke-opacity=".1"/>
+            <circle cx="100" cy="100" r="40" fill="none" stroke="#f43f8f" stroke-width="4" stroke-opacity=".1"/>
+            <circle cx="100" cy="100" r="50" fill="none" stroke="#fb923c" stroke-width="4" stroke-opacity=".1"/>
+            <circle cx="100" cy="100" r="60" fill="none" stroke="#34d399" stroke-width="4" stroke-opacity=".1"/>
+            <circle cx="100" cy="100" r="70" fill="none" stroke="#facc15" stroke-width="4" stroke-opacity=".1"/>
+            <!-- Fill arcs -->
+            <circle cx="100" cy="100" r="30" fill="none" stroke="#818cf8" stroke-width="4" stroke-linecap="round"
+              stroke-dasharray="188" stroke-dashoffset="50" transform="rotate(-90 100 100)"
+              style="transition:stroke-dashoffset 1.4s;filter:drop-shadow(0 0 4px #818cf8)"/>
+            <circle cx="100" cy="100" r="40" fill="none" stroke="#f43f8f" stroke-width="4" stroke-linecap="round"
+              stroke-dasharray="251" stroke-dashoffset="70" transform="rotate(-90 100 100)"
+              style="transition:stroke-dashoffset 1.4s;filter:drop-shadow(0 0 4px #f43f8f)"/>
+            <circle cx="100" cy="100" r="50" fill="none" stroke="#fb923c" stroke-width="4" stroke-linecap="round"
+              stroke-dasharray="314" stroke-dashoffset="130" transform="rotate(-90 100 100)"
+              style="transition:stroke-dashoffset 1.4s;filter:drop-shadow(0 0 4px #fb923c)"/>
+            <circle cx="100" cy="100" r="60" fill="none" stroke="#34d399" stroke-width="4" stroke-linecap="round"
+              stroke-dasharray="377" stroke-dashoffset="180" transform="rotate(-90 100 100)"
+              style="transition:stroke-dashoffset 1.4s;filter:drop-shadow(0 0 4px #34d399)"/>
+            <circle cx="100" cy="100" r="70" fill="none" stroke="#facc15" stroke-width="4" stroke-linecap="round"
+              stroke-dasharray="440" stroke-dashoffset="250" transform="rotate(-90 100 100)"
+              style="transition:stroke-dashoffset 1.4s;filter:drop-shadow(0 0 4px #facc15)"/>
+          </svg>
+          <div class="orb">🐶</div>
+        </div>
+
+        <div class="a-title">Analysing Rex…</div>
+        <div class="a-sub">PROCESSING 12 BEHAVIOURAL SIGNALS</div>
+
+        <div class="insight-card">
+          <div class="insight-label">🔍 Social intelligence scan</div>
+          <div class="insight-text">Rex shows exceptional social intelligence — reads human emotion better than most dogs tested.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 RESULTS -->
+  <div class="screen-section">
+    <div class="screen-label">04 — Results</div>
+    <div class="phone">
+      <div class="nav-bar">
+        <div class="nav-brand">🧠 PET<span>IQ</span></div>
+        <div class="nav-pips">
+          <div class="pip"></div>
+          <div class="pip"></div>
+          <div class="pip active"></div>
+        </div>
+      </div>
+      <div class="results-body">
+        <div class="score-hero">
+          <div class="score-label-top">INTELLIGENCE SCORE — REX</div>
+          <span class="score-emoji-big">⚡</span>
+          <div class="score-profile-name">The Quick Learner</div>
+          <div class="score-tagline">Rex surprises you on a regular basis.</div>
+          <div class="percentile-blur-wrap">
+            <div class="percentile-num">87%</div>
+            <div class="percentile-lock">🔒 Unlock to reveal</div>
+          </div>
+          <div class="percentile-sub">better than ??% of dogs tested</div>
+        </div>
+
+        <div class="locked-card">
+          <div class="locked-card-header">
+            <div class="locked-card-title">Breakdown by dimension</div>
+            <div class="locked-badge-count">🔒 3 locked</div>
+          </div>
+
+          <!-- Unlocked: Memory -->
+          <div class="dim-row">
+            <div class="dim-icon">🧠</div>
+            <div class="dim-bar-wrap">
+              <div class="dim-bar-label">Memory & Learning <span class="unlocked-tag">🔓 VISIBLE</span></div>
+              <div class="dim-bar"><div class="dim-bar-fill" style="background:#818cf8;width:83%"></div></div>
+            </div>
+            <div class="dim-score" style="color:#818cf8;">5/6</div>
+          </div>
+
+          <!-- Unlocked: Social -->
+          <div class="dim-row">
+            <div class="dim-icon">👁️</div>
+            <div class="dim-bar-wrap">
+              <div class="dim-bar-label">Social Intelligence <span class="unlocked-tag">🔓 VISIBLE</span></div>
+              <div class="dim-bar"><div class="dim-bar-fill" style="background:#f43f8f;width:89%"></div></div>
+            </div>
+            <div class="dim-score" style="color:#f43f8f;">8/9</div>
+          </div>
+
+          <!-- Locked: Problem Solving -->
+          <div class="dim-row">
+            <div class="dim-icon">🔧</div>
+            <div class="dim-bar-wrap">
+              <div class="dim-bar-label">Problem Solving</div>
+              <div class="dim-bar">
+                <div class="dim-bar-fill" style="background:#fb923c;width:67%"></div>
+                <div class="dim-bar-overlay">🔒 LOCKED</div>
+              </div>
+            </div>
+            <div class="dim-score blurred">6/9</div>
+          </div>
+
+          <!-- Locked: Self-Control -->
+          <div class="dim-row">
+            <div class="dim-icon">🧘</div>
+            <div class="dim-bar-wrap">
+              <div class="dim-bar-label">Self-Control</div>
+              <div class="dim-bar">
+                <div class="dim-bar-fill" style="background:#34d399;width:75%"></div>
+                <div class="dim-bar-overlay">🔒 LOCKED</div>
+              </div>
+            </div>
+            <div class="dim-score blurred">4/6</div>
+          </div>
+
+          <!-- Locked: Adaptability -->
+          <div class="dim-row" style="margin-bottom:0">
+            <div class="dim-icon">🌍</div>
+            <div class="dim-bar-wrap">
+              <div class="dim-bar-label">Adaptability</div>
+              <div class="dim-bar">
+                <div class="dim-bar-fill" style="background:#facc15;width:50%"></div>
+                <div class="dim-bar-overlay">🔒 LOCKED</div>
+              </div>
+            </div>
+            <div class="dim-score blurred">3/6</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 05 PAYWALL -->
+  <div class="screen-section">
+    <div class="screen-label">05 — Paywall</div>
+    <div class="phone">
+      <div class="paywall-body">
+        <div class="paywall-card">
+          <div class="pw-title">Rex's score is ready 🔒</div>
+          <div class="pw-sub">Unlock the percentile, the full breakdown, and everything the data says about Rex's mind.</div>
+
+          <div class="testimonials">
+            <div class="testimonial">
+              <div class="test-text">"I finally understand why Max learns so fast — this is spot on."</div>
+              <div class="test-meta">Sarah M. 🇬🇧 · Golden Retriever</div>
+            </div>
+            <div class="testimonial">
+              <div class="test-text">"Luna is officially top 8%. Worth every cent."</div>
+              <div class="test-meta">Thomas K. 🇩🇪 · British Shorthair</div>
+            </div>
+          </div>
+
+          <div class="features">
+            <div class="feat"><span class="feat-icon">📊</span><span class="feat-text">Complete dimension breakdown — all 5 scores explained</span></div>
+            <div class="feat"><span class="feat-icon">🧬</span><span class="feat-text">Unique cognitive profile for Rex</span></div>
+            <div class="feat"><span class="feat-icon">🎯</span><span class="feat-text">Personalised exercises to boost each dimension</span></div>
+            <div class="feat"><span class="feat-icon">📚</span><span class="feat-text">Science-backed insights from peer-reviewed research</span></div>
+            <div class="feat"><span class="feat-icon">📩</span><span class="feat-text">PDF delivered instantly to your inbox</span></div>
+          </div>
+
+          <div class="price-block">
+            <div class="price-est">Est. value <s>€19.99</s></div>
+            <div class="price-main">€4<span class="price-cents">.99</span></div>
+            <div class="price-desc">ONE-TIME · INSTANT DELIVERY · 7-DAY GUARANTEE</div>
+          </div>
+
+          <div class="urgency-bar">
+            <div class="u-dot"></div>
+            <div class="u-text">⏳ Rex's score expires in <span class="u-time">23:41:07</span></div>
+          </div>
+
+          <button class="pw-btn">🔓 Reveal Rex's score + full report →</button>
+          <div class="pw-guarantee">🔒 SECURE PAYMENT · PADDLE · INSTANT DELIVERY</div>
+
+          <div class="email-fallback">
+            <div class="email-label">Can't pay right now? Lock in your results 📩</div>
+            <div class="email-row">
+              <input class="email-inp" placeholder="your@email.com">
+              <button class="email-btn">Save →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
