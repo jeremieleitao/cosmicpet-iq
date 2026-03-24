@@ -1013,68 +1013,99 @@ const TOTAL_MAX=DIM_MAX.reduce((a,b)=>a+b,0); // 36
 
 const Qs=[
   // ── DIM 0: Memory (2 questions) ──
-  {d:0,live:{ins:(n)=>`Hide a treat under one of 3 cups right in front of ${n}. Distract them 30 sec. GO! 🏃`,secs:30},
+  {d:0,
+   source:'Fiset et al. 2003',
+   tip:'Fiset et al. (2003) measured how long dogs retain a hidden object\'s location without interference. This exact 30-second delay with distraction is their core working memory paradigm.',
+   live:{ins:(n)=>`Hide a treat under one of 3 cups right in front of ${n}. Distract them 30 sec. GO! 🏃`,secs:30},
    q:(n)=>`You hide a treat under 1 of 3 cups. Distract ${n} for 30 seconds. They find it:`,
    o:[{t:'First try — no hesitation. 🎯',s:3},{t:'After checking 2 cups.',s:2},{t:'Eventually, 3+ attempts.',s:1},{t:`Sits there. Classic ${null}.`,s:0,n:true}]},
 
   {d:0,
+   source:'Coren 1994',
+   tip:'Coren\'s (1994) landmark ranking of breeds used exactly this metric — repetitions to learn a new command — as the primary measure of working & procedural memory.',
    qdog:(n)=>`How many repetitions for ${n} to learn a new command?`,
    qcat:(n)=>`How quickly does ${n} learn to associate a sound or gesture with something they want?`,
    odog:[{t:'Under 5 reps. Frighteningly fast. 🤯',s:3},{t:'5 to 15 repetitions.',s:2},{t:'15 to 40 repetitions.',s:1},{t:'They invent their own rules.',s:0}],
    ocat:[{t:'Instantly — if the reward is good enough. 🎯',s:3},{t:'After a few tries, consistently.',s:2},{t:'Sometimes, inconsistently.',s:1},{t:'Selective amnesia. Every time.',s:0}]},
 
   // ── DIM 1: Social Intelligence (3 questions) ──
-  {d:1,live:{ins:(n)=>pet==='cat'?`Say ${n}'s name once, softly. Watch for any ear or eye movement. 👂`:`Point at an object on the floor — don't say anything. Just point. Watch ${n} 👀`,secs:10},
+  {d:1,
+   source:'Hare & Tomasello 2005 · Saito 2013',
+   tip:'Hare & Tomasello (2005) showed dogs follow distal pointing better than primates. Saito & Shinozuka (2013) confirmed cats discriminate their own name from similar words.',
+   live:{ins:(n)=>pet==='cat'?`Say ${n}'s name once, softly. Watch for any ear or eye movement. 👂`:`Point at an object on the floor — don't say anything. Just point. Watch ${n} 👀`,secs:10},
    qdog:(n)=>`You point at an object on the floor. ${n}:`,
    qcat:(n)=>`Say ${n}'s name once, softly, while they're relaxed and not focused on anything. ${n}:`,
    odog:[{t:'Goes straight to the object. 🎯',s:3},{t:'Looks at your hand, not the object.',s:2},{t:'Stares deeply into your eyes.',s:1},{t:'Ignores the gesture completely.',s:0}],
    ocat:[{t:'Ear rotates + slight head turn toward you. 👂',s:3},{t:'One ear clearly moves in your direction.',s:2},{t:'Subtle eye or pupil movement — barely there.',s:1},{t:'No observable response. Master of stillness.',s:0}]},
 
   {d:1,
+   source:'Miklósi et al. 1998 · Takagi et al. 2021',
+   tip:'Miklósi et al. (1998) documented gaze-following in dogs as a marker of social cognition. Takagi et al. (2021) showed cats mentally track object trajectories behind barriers.',
    qdog:(n)=>`You stare at an object without pointing or speaking. ${n}:`,
    qcat:(n)=>`You drop something interesting (toy, pen) and it lands behind or under something. ${n}:`,
    odog:[{t:'Follows your gaze and investigates. 👁️',s:3},{t:'Looks in the general direction.',s:2},{t:'Glances at you, then away.',s:1},{t:'Zero reaction. Fully unbothered.',s:0}],
    ocat:[{t:'Looks immediately where it should land — predicted the trajectory. 🎯',s:3},{t:'Follows the movement and finds where it landed.',s:2},{t:'Tracks with eyes, then loses interest.',s:1},{t:'Startled, then fully unbothered.',s:0}]},
 
   {d:1,
+   source:'Custance & Mayer 2012',
+   tip:'Custance & Mayer (2012) found dogs orient toward and approach distressed humans more than non-distressed ones — the first controlled evidence of empathic-like response in dogs.',
    qdog:(n)=>`When you're sad or crying, ${n}:`,
    qcat:(n)=>`When you're upset or unwell, ${n}:`,
    odog:[{t:'Comes to comfort you. Every single time. 💕',s:3},{t:'Approaches and stays close.',s:2},{t:'Seems to notice, no clear reaction.',s:1},{t:'Completely unbothered. (Respect.)',s:0}],
    ocat:[{t:'Stays unusually close, watches you carefully. 🌙',s:3},{t:'Approaches, sits nearby.',s:2},{t:'Something seems slightly different in their behaviour.',s:1},{t:'Business as usual.',s:0}]},
 
   // ── DIM 2: Problem Solving (3 questions) ──
-  {d:2,live:{ins:(n)=>`Put a treat under low furniture — just out of reach. Start the timer and watch ${n} work! 🔧`,secs:120},
+  {d:2,
+   source:'Miklósi et al. 2003',
+   tip:'Miklósi et al. (2003) found dogs — unlike wolves — quickly abandon independent attempts and look back at humans for help. The score 1 response here is exactly that behaviour.',
+   live:{ins:(n)=>`Put a treat under low furniture — just out of reach. Start the timer and watch ${n} work! 🔧`,secs:120},
    q:(n)=>`A treat is under low furniture — out of direct reach. ${n}:`,
    o:[{t:'Solves it in under 2 min. 🛠️',s:3},{t:'Actively tries multiple approaches.',s:2},{t:'Tries once, then looks at you.',s:1},{t:'Gives up immediately.',s:0}]},
 
   {d:2,
+   source:'Pongrácz et al. 2001',
+   tip:'Pongrácz et al. (2001) used detour tasks with barriers to test dogs\' spatial problem-solving. Independently navigating an obstacle — without demonstration — is their highest-scoring outcome.',
    qdog:(n)=>`A half-open door blocks ${n}'s path. They:`,
    qcat:(n)=>`A closed door blocks ${n}'s access to a room they want. They:`,
    odog:[{t:'Push or pull it open alone. 🚪',s:3},{t:'Tries multiple times, eventually gets it.',s:2},{t:'Tries once, then waits for help.',s:1},{t:"Doesn't attempt it.",s:0}],
    ocat:[{t:'Figures out the handle or gap quickly. Solves it. 🚪',s:3},{t:'Rattles, paws, and eventually opens or creates a gap.',s:2},{t:'Sits and meows persistently until you open it.',s:1},{t:'Loses interest and leaves.',s:0}]},
 
-  {d:2,live:{ins:(n)=>`Hold ${n}'s favourite treat visible behind a glass door or window. Watch what they do! 🪟`,secs:30},
+  {d:2,
+   source:'Osthaus et al. 2005',
+   tip:'Osthaus et al. (2005) tested whether dogs understand physical barriers using a transparent-cylinder detour paradigm — directly equivalent to this question.',
+   live:{ins:(n)=>`Hold ${n}'s favourite treat visible behind a glass door or window. Watch what they do! 🪟`,secs:30},
    q:(n)=>`Favourite treat is visible but inaccessible behind glass. ${n}:`,
    o:[{t:'Goes around to the other side immediately. ⚡',s:3},{t:'Goes around after some scratching at the glass.',s:2},{t:'Keeps scratching the glass indefinitely.',s:1},{t:'Gives up almost instantly.',s:0}]},
 
   // ── DIM 3: Self-Control (2 questions) ──
-  {d:3,live:{ins:(n)=>pet==='cat'?`Put some food in ${n}'s bowl, then gently bring your hand close while they eat. Watch their reaction. 🍽️`:`Treat on the floor. Say "wait" firmly. Step back 3 paces. Can ${n} resist? 🍖`,secs:10},
+  {d:3,
+   source:'Bray, MacLean & Hare 2014',
+   tip:'Bray et al. (2014) used this exact "wait" paradigm to test inhibitory control in dogs. They found performance here predicts broader cognitive flexibility across tasks.',
+   live:{ins:(n)=>pet==='cat'?`Put some food in ${n}'s bowl, then gently bring your hand close while they eat. Watch their reaction. 🍽️`:`Treat on the floor. Say "wait" firmly. Step back 3 paces. Can ${n} resist? 🍖`,secs:10},
    qdog:(n)=>`Treat on the floor, you say "wait" firmly and step back 3 paces. After 10 seconds, ${n}:`,
    qcat:(n)=>`You gently move your hand close to ${n}'s food bowl while they're eating. ${n}:`,
    odog:[{t:'Still waiting. Iron willpower. 🧊',s:3},{t:'Waited 5-7s then slowly inched forward.',s:2},{t:'Approached in under 5 seconds.',s:1},{t:'Gone before you finished the word.',s:0}],
    ocat:[{t:'Continues eating calmly. Totally unbothered. 🧘',s:3},{t:'Pauses briefly, then resumes.',s:2},{t:'Steps back, waits for you to move.',s:1},{t:'Stops immediately — defensive or retreats.',s:0}]},
 
   {d:3,
+   source:'Bray et al. 2014 — context specificity',
+   tip:'Bray et al. (2014) showed that dogs\' inhibitory control is context-specific: resisting distraction from a competing stimulus is a separate, harder test than a simple "wait" command.',
    qdog:(n)=>`With a very exciting distraction nearby (other dog, ball), you give a known command. ${n}:`,
    qcat:(n)=>`You call ${n}'s name while they're intensely focused on something (bird, toy). They:`,
    odog:[{t:'Obeys immediately, distraction ignored. 🎖️',s:3},{t:'Obeys after 1-2 repetitions.',s:2},{t:'Only if you physically intervene.',s:1},{t:'The distraction wins. Every time.',s:0}],
    ocat:[{t:'Ears flick, then turns to look at you. Remarkable. 🎖️',s:3},{t:'Brief acknowledgement, then returns to focus.',s:2},{t:'Flicks an ear — technically a response.',s:1},{t:'Complete radio silence.',s:0}]},
 
   // ── DIM 4: Adaptability (2 questions) ──
-  {d:4,q:(n)=>`In a completely new environment (hotel, new house). ${n}:`,
+  {d:4,
+   source:'Svartberg & Forkman 2002',
+   tip:'Svartberg & Forkman (2002) identified "curiosity/fearlessness" as the strongest personality predictor of adaptive intelligence — measured directly by how fast a pet settles in novel environments.',
+   q:(n)=>`In a completely new environment (hotel, new house). ${n}:`,
    o:[{t:'Explores calmly, settled in under an hour. 🌿',s:3},{t:'Cautious, adapted within a few hours.',s:2},{t:'Stressed the first day, normal after 2-3.',s:1},{t:'Many days to stabilise. Very sensitive.',s:0}]},
 
-  {d:4,q:(n)=>`Faced with a totally new object (robot vacuum, umbrella…). ${n}:`,
+  {d:4,
+   source:'Svartberg & Forkman 2002',
+   tip:'Svartberg & Forkman (2002) used novel object exploration as a key test of neophilia — Coren\'s "adaptive intelligence" dimension. Immediate approach vs. retreat is the decisive marker.',
+   q:(n)=>`Faced with a totally new object (robot vacuum, umbrella…). ${n}:`,
    o:[{t:'Inspects it with curiosity. Completely unfazed. 🔍',s:3},{t:'Approaches cautiously after a few minutes.',s:2},{t:'Circles it, never quite gets close.',s:1},{t:'Full retreat. The vacuum is evil.',s:0}]},
 ];
 
@@ -1333,8 +1364,9 @@ function renderQ(idx){
   document.getElementById('dim-pill').textContent=`${dim.icon} ${dim.name} · ${qdata.d+1}/5`;
   document.getElementById('dim-name').textContent=dim.name;
   const srcEl=document.getElementById('dim-source');
-  srcEl.querySelector('.src-label').textContent=dim.source;
-  srcEl.querySelector('.src-tip').textContent=dim.tip;
+  const qdata=getQ(idx);
+  srcEl.querySelector('.src-label').textContent=qdata.source||dim.source;
+  srcEl.querySelector('.src-tip').textContent=qdata.tip||dim.tip;
   srcEl.classList.remove('tip-open');
   document.getElementById('q-num').textContent=`Question ${idx+1} / 12`;
   document.getElementById('q-counter').textContent=`${idx+1} / 12`;
