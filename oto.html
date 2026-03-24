@@ -573,6 +573,7 @@ const species  = params.get('species') || 'dog';
 const iqScore  = params.get('iq')      || '';
 const token    = params.get('token')   || '';
 const emailPre = params.get('email')   || '';
+const paidOTO  = params.get('success') === '1';
 
 // dimension metadata
 const DIM_META = {
@@ -609,6 +610,23 @@ const DIM_META = {
   // pre-fill email if passed
   if (emailPre) {
     document.getElementById('upsell-email').value = emailPre;
+  }
+
+  // payment completed via redirect — show email form immediately
+  if (paidOTO) {
+    track('oto_convert_redirect', { weak_dim: dimKey, iq_score: Number(iqScore)||0 });
+    const emailSection = document.getElementById('email-form-section');
+    if (emailSection) {
+      emailSection.style.display = 'block';
+      setTimeout(() => emailSection.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
+    }
+    // hide CTA button since payment is done
+    const cta = document.getElementById('main-cta');
+    if (cta) {
+      cta.textContent = '✅ Payment confirmed — enter your email above';
+      cta.disabled = true;
+      cta.style.opacity = '0.5';
+    }
   }
 })();
 
@@ -660,21 +678,18 @@ if (urgencyBanner && 'IntersectionObserver' in window) {
 // ── PADDLE INIT ──
 Paddle.Initialize({
   token: 'live_60db96c6f8ccd301d8076d1f84e',
-  eventCallback: function(data) {
-    if (data.name === 'checkout.completed') {
-      const email = data.data?.customer?.email;
-      if (email) submitOTOAfterPayment(email);
-    }
-  }
 });
 
 // ── CTA HANDLER ──
 function handleCTA() {
   track('oto_cta_click', { weak_dim: dimKey });
+  const successUrl = `${window.location.origin}/oto.html?` + new URLSearchParams({
+    pet: petName, dim: dimKey, species, iq: iqScore, token, success: '1',
+  }).toString();
   const opts = {
     items: [{ priceId: 'pri_01kkyvs3zekwvfvy9gn7hmavsv', quantity: 1 }],
     customData: { flow: 'oto', petName, species, weakDim: dimKey, iqScore, token },
-    settings: { displayMode: 'overlay', theme: 'dark', locale: 'en' },
+    settings: { displayMode: 'redirect', successUrl },
   };
   if (emailPre) opts.customer = { email: emailPre };
   Paddle.Checkout.open(opts);

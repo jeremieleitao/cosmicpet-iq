@@ -1623,17 +1623,7 @@ const API_URL = '';
 
 // ── PADDLE INIT ──
 let _pendingOTOParams = null;
-Paddle.Initialize({
-  token: 'live_60db96c6f8ccd301d8076d1f84e',
-  eventCallback: function(ev) {
-    if (ev.name === 'checkout.completed') {
-      track('report_unlock', { pet_type: pet });
-      const email = ev.data?.customer?.email || '';
-      if (_pendingOTOParams && email) _pendingOTOParams.set('email', email);
-      window.location.href = `/oto.html?${_pendingOTOParams?.toString() || ''}`;
-    }
-  }
-});
+Paddle.Initialize({ token: 'live_60db96c6f8ccd301d8076d1f84e' });
 
 // ── PAYWALL INSIGHT TEASERS ──
 function dimInsightTeaser(dimIdx, score, petName, species) {
@@ -1761,10 +1751,11 @@ async function checkout() {
 
     track('checkout_open', { pet_type: pet, iq_score: iqScore });
 
+    const successUrl = `${window.location.origin}/oto.html?${_pendingOTOParams.toString()}`;
     Paddle.Checkout.open({
       items: [{ priceId: data.priceId, quantity: 1 }],
       customData: { sessionToken: data.sessionToken },
-      settings: { displayMode: 'overlay', theme: 'dark', locale: 'en' },
+      settings: { displayMode: 'redirect', successUrl },
     });
 
   } catch (err) {
