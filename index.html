@@ -137,38 +137,60 @@ body {
   margin-bottom:14px;
 }
 
-/* Breed select */
-.breed-select {
-  width:100%;padding:12px 16px;border-radius:12px;
+/* Breed autocomplete */
+.breed-search-wrap { position:relative;margin-bottom:14px; }
+.breed-search-input-wrap { position:relative; }
+.breed-search-input {
+  width:100%;padding:12px 36px 12px 16px;border-radius:12px;
   border:2px solid rgba(244,114,182,.15);
-  font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;
-  background:#fafafa;color:var(--muted);outline:none;
-  cursor:pointer;transition:border-color .2s;margin-bottom:14px;
-  -webkit-appearance:none;appearance:none;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23aaa' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;
+  font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;
+  background:#fafafa;color:var(--dark);outline:none;
+  transition:border-color .2s,background .2s;
 }
-.breed-select:focus { border-color:var(--pink); }
-.breed-select.has-value { color:var(--dark); }
+.breed-search-input:focus { border-color:var(--pink);background:white; }
+.breed-search-input::placeholder { color:var(--muted);font-weight:400; }
+.breed-clear {
+  position:absolute;right:10px;top:50%;transform:translateY(-50%);
+  background:none;border:none;cursor:pointer;color:var(--muted);
+  font-size:16px;padding:4px 6px;line-height:1;border-radius:50%;
+  transition:color .15s;
+}
+.breed-clear:hover { color:var(--pink); }
+.breed-dropdown {
+  position:absolute;top:calc(100% + 4px);left:0;right:0;
+  background:white;border-radius:12px;
+  border:1.5px solid rgba(244,114,182,.2);
+  box-shadow:0 8px 24px rgba(0,0,0,.1);
+  max-height:196px;overflow-y:auto;z-index:200;
+  -webkit-overflow-scrolling:touch;
+}
+.breed-option {
+  padding:11px 16px;cursor:pointer;
+  font-size:14px;font-weight:500;color:var(--dark);
+  transition:background .1s;
+}
+.breed-option:hover,.breed-option.highlighted { background:var(--pink-light); }
 
 /* Photo upload */
-.photo-upload-area {
-  display:flex;align-items:center;gap:14px;margin-bottom:16px;
+.photo-upload-area { margin-bottom:16px; }
+.photo-upload-card {
+  display:flex;align-items:center;gap:14px;
+  padding:13px 16px;border-radius:12px;
+  border:2px dashed rgba(244,114,182,.3);background:#fafafa;
+  cursor:pointer;transition:all .2s;
 }
-.photo-circle {
-  width:58px;height:58px;border-radius:50%;flex-shrink:0;
-  border:2.5px dashed rgba(232,24,94,.25);background:#fafafa;
-  cursor:pointer;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:2px;
-  transition:all .2s;overflow:hidden;position:relative;
+.photo-upload-card:hover { border-color:var(--pink);background:var(--pink-light); }
+.photo-upload-card.has-photo { border-style:solid;border-color:var(--pink);background:var(--pink-light); }
+.photo-upload-preview {
+  width:46px;height:46px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;overflow:hidden;background:white;
+  border:1.5px solid rgba(244,114,182,.15);
 }
-.photo-circle:hover { border-color:var(--pink);background:var(--pink-light); }
-.photo-circle.has-photo { border-style:solid;border-color:var(--pink); }
-.photo-circle-icon { font-size:20px;line-height:1; }
-.photo-circle-lbl { font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px; }
-.photo-circle img { position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%; }
-.photo-hint { font-size:13px;color:var(--muted);font-weight:400;line-height:1.5; }
-.photo-hint strong { color:var(--dark);font-weight:700; }
+.photo-upload-preview img { width:100%;height:100%;object-fit:cover;border-radius:50%; }
+.photo-upload-text { display:flex;flex-direction:column;gap:2px; }
+.photo-upload-text strong { font-size:14px;font-weight:700;color:var(--dark); }
+.photo-upload-text span { font-size:12px;color:var(--muted); }
 .name-input:focus { border-color:var(--pink);background:white;box-shadow:0 0 0 4px rgba(244,114,182,.08); }
 .name-input::placeholder { color:#d1d5db; }
 
@@ -733,11 +755,20 @@ body.dark-screen .analysis-phase {
           <span class="pet-emoji">😼</span><span class="pet-label">Cat</span>
         </div>
       </div>
-      <!-- Breed selector (shown after pet selected) -->
+      <!-- Breed autocomplete (shown after pet selected) -->
       <div id="breed-wrap" style="display:none">
-        <select class="breed-select" id="breed-select" onchange="onBreedChange(this)">
-          <option value="">Breed (optional)</option>
-        </select>
+        <div class="breed-search-wrap">
+          <div class="breed-search-input-wrap">
+            <input type="text" class="breed-search-input" id="breed-input"
+              placeholder="Search breed (optional)"
+              autocomplete="off" autocorrect="off" spellcheck="false"
+              oninput="onBreedInput(this)"
+              onfocus="onBreedFocus()"
+              onkeydown="onBreedKey(event)">
+            <button class="breed-clear" id="breed-clear" onclick="clearBreed()" style="display:none" tabindex="-1">✕</button>
+          </div>
+          <div class="breed-dropdown" id="breed-dropdown" style="display:none"></div>
+        </div>
       </div>
 
       <input class="name-input" id="pet-name" type="text" placeholder="Their name..." maxlength="20"
@@ -745,14 +776,14 @@ body.dark-screen .analysis-phase {
 
       <!-- Photo upload (shown after name entered) -->
       <div class="photo-upload-area" id="photo-upload-area" style="display:none">
-        <div class="photo-circle" id="photo-circle" onclick="document.getElementById('photo-input').click()" title="Add a photo">
-          <span class="photo-circle-icon" id="photo-icon">📷</span>
-          <span class="photo-circle-lbl" id="photo-lbl">Add photo</span>
-          <img id="photo-preview" alt="pet photo" style="display:none">
-        </div>
-        <div class="photo-hint">
-          <strong>Add <span id="photo-name-hint">your pet</span>'s photo</strong><br>
-          Optional — makes your result card shareable on social
+        <div class="photo-upload-card" id="photo-upload-card" onclick="document.getElementById('photo-input').click()">
+          <div class="photo-upload-preview" id="photo-upload-preview">
+            <span id="photo-icon">📷</span>
+          </div>
+          <div class="photo-upload-text">
+            <strong>Add <span id="photo-name-hint">your pet</span>'s photo</strong>
+            <span>Optional — makes your result shareable</span>
+          </div>
         </div>
         <input type="file" id="photo-input" accept="image/*" style="display:none" onchange="handlePhotoUpload(event)">
       </div>
@@ -1099,20 +1130,89 @@ function selectPet(p){
   selectedBreed='';
   document.getElementById('pet-dog').classList.toggle('active',p==='dog');
   document.getElementById('pet-cat').classList.toggle('active',p==='cat');
-  // Populate + show breed dropdown
-  const breedWrap=document.getElementById('breed-wrap');
-  const breedSel=document.getElementById('breed-select');
-  breedSel.innerHTML='<option value="">Breed (optional)</option>';
-  (BREEDS[p]||[]).forEach(b=>{
-    const o=document.createElement('option');o.value=b;o.textContent=b;breedSel.appendChild(o);
-  });
-  breedWrap.style.display='block';
+  // Reset + show breed autocomplete
+  const inp=document.getElementById('breed-input');
+  if(inp){ inp.value=''; }
+  document.getElementById('breed-clear').style.display='none';
+  document.getElementById('breed-dropdown').style.display='none';
+  document.getElementById('breed-wrap').style.display='block';
   checkStart();
 }
-function onBreedChange(sel){
-  selectedBreed=sel.value;
-  sel.classList.toggle('has-value',!!sel.value);
+
+let _breedHighlight=-1;
+function _breedList(){ return BREEDS[pet]||[]; }
+
+function _renderBreedDropdown(items){
+  const dd=document.getElementById('breed-dropdown');
+  if(!items.length){ dd.style.display='none'; return; }
+  dd.innerHTML=items.map((b,i)=>
+    `<div class="breed-option" data-breed="${b}" onmousedown="selectBreedOption('${b.replace(/'/g,"\\'")}')">
+      ${b}
+    </div>`
+  ).join('');
+  _breedHighlight=-1;
+  dd.style.display='block';
 }
+
+function onBreedInput(inp){
+  const q=inp.value.trim().toLowerCase();
+  document.getElementById('breed-clear').style.display=inp.value?'block':'none';
+  if(!q){ selectedBreed=''; _renderBreedDropdown(_breedList()); return; }
+  const filtered=_breedList().filter(b=>b.toLowerCase().includes(q));
+  _renderBreedDropdown(filtered);
+}
+
+function onBreedFocus(){
+  const inp=document.getElementById('breed-input');
+  const q=inp.value.trim().toLowerCase();
+  const items=q?_breedList().filter(b=>b.toLowerCase().includes(q)):_breedList();
+  _renderBreedDropdown(items);
+}
+
+function onBreedKey(e){
+  const dd=document.getElementById('breed-dropdown');
+  const opts=dd.querySelectorAll('.breed-option');
+  if(!opts.length) return;
+  if(e.key==='ArrowDown'){
+    e.preventDefault();
+    _breedHighlight=Math.min(_breedHighlight+1,opts.length-1);
+  } else if(e.key==='ArrowUp'){
+    e.preventDefault();
+    _breedHighlight=Math.max(_breedHighlight-1,-1);
+  } else if(e.key==='Enter'&&_breedHighlight>=0){
+    e.preventDefault();
+    selectBreedOption(opts[_breedHighlight].dataset.breed);
+    return;
+  } else if(e.key==='Escape'){
+    dd.style.display='none'; return;
+  }
+  opts.forEach((o,i)=>o.classList.toggle('highlighted',i===_breedHighlight));
+  if(_breedHighlight>=0) opts[_breedHighlight].scrollIntoView({block:'nearest'});
+}
+
+function selectBreedOption(b){
+  selectedBreed=b;
+  document.getElementById('breed-input').value=b;
+  document.getElementById('breed-clear').style.display='block';
+  document.getElementById('breed-dropdown').style.display='none';
+}
+
+function clearBreed(){
+  selectedBreed='';
+  const inp=document.getElementById('breed-input');
+  inp.value='';
+  document.getElementById('breed-clear').style.display='none';
+  document.getElementById('breed-dropdown').style.display='none';
+  inp.focus();
+}
+
+// Close dropdown on outside click
+document.addEventListener('click',function(e){
+  if(!e.target.closest('.breed-search-wrap')){
+    const dd=document.getElementById('breed-dropdown');
+    if(dd) dd.style.display='none';
+  }
+});
 function checkStart(){
   const n=document.getElementById('pet-name').value.trim();
   name=n;
@@ -1146,14 +1246,13 @@ function handlePhotoUpload(e){
   const reader=new FileReader();
   reader.onload=ev=>{
     petPhotoDataURL=ev.target.result;
-    const preview=document.getElementById('photo-preview');
+    const preview=document.getElementById('photo-upload-preview');
     const icon=document.getElementById('photo-icon');
-    const lbl=document.getElementById('photo-lbl');
-    const circle=document.getElementById('photo-circle');
-    if(preview){ preview.src=petPhotoDataURL; preview.style.display='block'; }
-    if(icon) icon.style.display='none';
-    if(lbl) lbl.style.display='none';
-    if(circle) circle.classList.add('has-photo');
+    const card=document.getElementById('photo-upload-card');
+    if(preview){
+      preview.innerHTML=`<img src="${petPhotoDataURL}" alt="pet photo">`;
+    }
+    if(card) card.classList.add('has-photo');
   };
   reader.readAsDataURL(file);
 }
@@ -2038,6 +2137,13 @@ function reset(){
   document.getElementById('start-btn').disabled=true;
   document.getElementById('breed-wrap').style.display='none';
   document.getElementById('photo-upload-area').style.display='none';
+  const _bInp=document.getElementById('breed-input');
+  if(_bInp) _bInp.value='';
+  document.getElementById('breed-clear').style.display='none';
+  const _card=document.getElementById('photo-upload-card');
+  if(_card){ _card.classList.remove('has-photo'); }
+  const _prev=document.getElementById('photo-upload-preview');
+  if(_prev) _prev.innerHTML='<span id="photo-icon">📷</span>';
   petPhotoDataURL=null; selectedBreed='';
   setProgress(0);setPips(1);showScreen('s-intro');updateSidebar('intro');
 }
