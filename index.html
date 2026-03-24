@@ -231,12 +231,35 @@ body {
 .dim-name { font-family:'Fraunces',serif;font-size:24px;font-weight:800;font-style:italic;margin-bottom:3px; }
 .dim-source {
   display:inline-flex;align-items:center;gap:6px;
-  background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.18);
-  border-radius:6px;padding:4px 10px;
-  font-family:'DM Mono',monospace;font-size:10px;font-weight:600;
-  color:rgba(109,40,217,.85);letter-spacing:.3px;
+  background:rgba(124,58,237,.12);border:1.5px solid rgba(124,58,237,.3);
+  border-radius:8px;padding:5px 12px 5px 8px;
+  font-family:'DM Mono',monospace;font-size:11px;font-weight:700;
+  color:rgba(109,40,217,.95);letter-spacing:.2px;
+  cursor:pointer;position:relative;user-select:none;
+  transition:background .15s,border-color .15s;
 }
-.dim-source::before { content:'📄'; font-size:11px; }
+.dim-source:hover { background:rgba(124,58,237,.2);border-color:rgba(124,58,237,.5); }
+.dim-source .src-i {
+  display:inline-flex;align-items:center;justify-content:center;
+  width:15px;height:15px;border-radius:50%;
+  background:rgba(109,40,217,.18);border:1px solid rgba(109,40,217,.35);
+  font-size:9px;font-weight:900;font-style:italic;color:rgba(109,40,217,.9);
+  flex-shrink:0;
+}
+.dim-source .src-tip {
+  display:none;position:absolute;bottom:calc(100% + 8px);left:0;
+  width:260px;background:#1e1035;border:1px solid rgba(124,58,237,.4);
+  border-radius:10px;padding:10px 12px;z-index:100;
+  font-family:'DM Sans',sans-serif;font-size:12px;font-weight:400;
+  color:rgba(240,240,255,.85);line-height:1.55;letter-spacing:0;
+  box-shadow:0 8px 24px rgba(0,0,0,.4);pointer-events:none;
+}
+.dim-source .src-tip::after {
+  content:'';position:absolute;top:100%;left:16px;
+  border:6px solid transparent;border-top-color:#1e1035;
+}
+.dim-source.tip-open .src-tip,
+.dim-source:hover .src-tip { display:block; }
 
 /* ── LIVE BADGE (compact) ── */
 .live-badge {
@@ -819,7 +842,11 @@ body.dark-screen .analysis-phase {
     <div style="margin-bottom:18px;animation:fadeUp .35s ease both">
       <div class="dim-pill" id="dim-pill">🧠 Memory · 1/5</div>
       <div class="dim-name" id="dim-name">Memory & Learning</div>
-      <div class="dim-source" id="dim-source">Coren 1994 · Tulving</div>
+      <div class="dim-source" id="dim-source" onclick="toggleSourceTip(this)">
+        <span class="src-i">i</span>
+        <span class="src-label">Coren 1994 · Tulving</span>
+        <span class="src-tip"></span>
+      </div>
     </div>
     <div id="live-wrap"></div>
     <div id="mid-teaser-wrap"></div>
@@ -964,11 +991,16 @@ function getShuffleOrder(idx){
 
 // ── DATA ──
 const DIMS=[
-  {icon:'🧠',name:'Memory & Learning',   color:'#818cf8',source:'Coren 1994 · Tulving'},
-  {icon:'👁️',name:'Social Intelligence', color:'#f472b6',source:'Hare & Tomasello 2005'},
-  {icon:'🔧',name:'Problem Solving',      color:'#fb923c',source:'Miklósi 2003 · Osthaus'},
-  {icon:'🧘',name:'Self-Control',         color:'#4ade80',source:'Bray, MacLean & Hare 2014'},
-  {icon:'🌍',name:'Adaptability',         color:'#facc15',source:'Coren adaptive intelligence'},
+  {icon:'🧠',name:'Memory & Learning',   color:'#818cf8',source:'Coren 1994 · Tulving',
+   tip:'Coren (1994) ranked breeds by recall speed. Tulving showed pets encode experiences as episodic memory — this question tests exactly that binding.'},
+  {icon:'👁️',name:'Social Intelligence', color:'#f472b6',source:'Hare & Tomasello 2005',
+   tip:'Hare & Tomasello (2005) found dogs read human cues better than chimps. This question measures that same gaze-following and referential understanding.'},
+  {icon:'🔧',name:'Problem Solving',      color:'#fb923c',source:'Miklósi 2003 · Osthaus',
+   tip:'Miklósi (2003) documented how dogs use human help to solve novel problems. Osthaus tested physical reasoning — both are at play in this question.'},
+  {icon:'🧘',name:'Self-Control',         color:'#4ade80',source:'Bray, MacLean & Hare 2014',
+   tip:'Bray et al. (2014) linked impulse inhibition to broader cognitive flexibility in dogs. Waiting behaviour here directly mirrors their experimental paradigm.'},
+  {icon:'🌍',name:'Adaptability',         color:'#facc15',source:'Coren adaptive intelligence',
+   tip:'Coren\'s "adaptive intelligence" measures independent problem-solving without training. Neophilia — comfort with novelty — is its strongest predictor.'},
 ];
 
 // Questions with species variants where science differs.
@@ -1300,7 +1332,10 @@ function renderQ(idx){
 
   document.getElementById('dim-pill').textContent=`${dim.icon} ${dim.name} · ${qdata.d+1}/5`;
   document.getElementById('dim-name').textContent=dim.name;
-  document.getElementById('dim-source').textContent=dim.source;
+  const srcEl=document.getElementById('dim-source');
+  srcEl.querySelector('.src-label').textContent=dim.source;
+  srcEl.querySelector('.src-tip').textContent=dim.tip;
+  srcEl.classList.remove('tip-open');
   document.getElementById('q-num').textContent=`Question ${idx+1} / 12`;
   document.getElementById('q-counter').textContent=`${idx+1} / 12`;
   // qdata.text is a function
@@ -1811,6 +1846,15 @@ function probit(p){
   return-(((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5])/((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);
 }
 function percentileToIQ(pct){ return Math.round(100+15*probit(Math.max(1,Math.min(99,pct))/100)); }
+
+// ── SOURCE TOOLTIP (mobile tap / desktop hover) ──
+function toggleSourceTip(el){
+  el.classList.toggle('tip-open');
+}
+document.addEventListener('click', e=>{
+  const src=document.getElementById('dim-source');
+  if(src && !src.contains(e.target)) src.classList.remove('tip-open');
+});
 
 // ── SCROLL TO PAYWALL ──
 function scrollToPaywall() {
