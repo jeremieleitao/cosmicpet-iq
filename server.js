@@ -453,7 +453,7 @@ app.post('/api/checkout', async (req, res) => {
   if (rateLimit(ip, 10, 60000)) return res.status(429).json({ error: 'Too many requests' });
 
   try {
-    const { petName, petType, normScore, percentile, profileName, profileEmoji, dimScores } = req.body;
+    const { petName, petType, breed, normScore, percentile, iqScore, profileName, profileEmoji, dimScores } = req.body;
     if (!petName || !petType || normScore === undefined) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
@@ -461,8 +461,10 @@ app.post('/api/checkout', async (req, res) => {
     const orderData = {
       petName:      String(petName).slice(0, 50).replace(/[<>"]/g, ''),
       petType:      petType === 'cat' ? 'cat' : 'dog',
+      breed:        String(breed || '').slice(0, 80),
       normScore:    Number(normScore),
       percentile:   Number(percentile),
+      iqScore:      Number(iqScore) || 0,
       profileName:  String(profileName || '').slice(0, 80),
       profileEmoji: String(profileEmoji || '').slice(0, 10),
       dimScores:    dimScores || {},
@@ -709,7 +711,8 @@ app.post('/api/webhook', async (req, res) => {
     // Récupère les données quiz depuis Firestore
     const sessionToken = data?.custom_data?.sessionToken;
     if (!sessionToken) {
-      console.error('❌ No sessionToken in webhook custom_data');
+      // Transaction OTO (flow: 'oto') ou autre — gérée côté client, rien à faire ici
+      console.log(`ℹ️ Webhook transaction ${orderId} — no sessionToken (flow: ${data?.custom_data?.flow || 'unknown'}), skipping`);
       return;
     }
 

@@ -1620,6 +1620,21 @@ function sendFreeEmail(){
 // ── API ──
 const API_URL = '';
 
+// ── PADDLE INIT ──
+let _pendingOTOParams = null;
+Paddle.Environment.set('production');
+Paddle.Initialize({
+  token: 'live_60db96c6f8ccd301d8076d1f84e',
+  eventCallback: function(ev) {
+    if (ev.name === 'checkout.completed') {
+      track('report_unlock', { pet_type: pet });
+      const email = ev.data?.customer?.email || '';
+      if (_pendingOTOParams && email) _pendingOTOParams.set('email', email);
+      window.location.href = `/oto.html?${_pendingOTOParams?.toString() || ''}`;
+    }
+  }
+});
+
 // ── PAYWALL INSIGHT TEASERS ──
 function dimInsightTeaser(dimIdx, score, petName, species) {
   const pct = Math.round((score / DIM_MAX[dimIdx]) * 100);
@@ -1691,36 +1706,74 @@ function probit(p){
 }
 function percentileToIQ(pct){ return Math.round(100+15*probit(Math.max(1,Math.min(99,pct))/100)); }
 
-// ── CHECKOUT — TEST MODE (pas de Paddle) ──
-function checkout() {
-  // Remplace le bouton paywall par un form email direct
+// ── CHECKOUT — Paddle ──
+async function checkout() {
   const btn = document.querySelector('.paywall-btn');
-  if (!btn) return;
+  if (!btn || btn.dataset.loading === 'true') return;
+  btn.dataset.loading = 'true';
+  const origHTML = btn.innerHTML;
+  btn.innerHTML = '⏳ Loading secure checkout…';
+  btn.disabled = true;
 
-  // Évite double-click
-  if (btn.dataset.expanded === 'true') return;
-  btn.dataset.expanded = 'true';
+  try {
+    const ds         = dimScores();
+    const rawTotal   = ds.reduce((a, b) => a + b, 0);
+    const normTotal  = normalizedScore(rawTotal);
+    const profile    = getProfile(normTotal);
+    const percentile = calibratedPercentile(rawTotal, pet, selectedBreed);
+    const iqScore    = percentileToIQ(percentile);
 
-  btn.insertAdjacentHTML('afterend', `
-    <div id="test-checkout" style="margin-top:12px;animation:fadeUp .3s ease both">
-      <div style="font-size:12px;font-weight:800;color:rgba(255,255,255,.4);text-align:center;margin-bottom:10px;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:1px">
-        Enter your email to receive the report
-      </div>
-      <div style="display:flex;gap:8px">
-        <input id="checkout-email" type="email" placeholder="your@email.com"
-          style="flex:1;padding:14px 16px;border-radius:10px;border:1.5px solid rgba(232,24,94,.3);background:rgba(255,255,255,.07);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;color:white;outline:none"
-          onkeydown="if(event.key==='Enter')submitGenerate()">
-        <button onclick="submitGenerate()"
-          style="padding:14px 20px;border-radius:10px;background:linear-gradient(135deg,#e8185e,#1d6ef5);border:none;color:white;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:900;cursor:pointer;white-space:nowrap">
-          Send →
-        </button>
-      </div>
-      <div id="checkout-status" style="margin-top:8px;text-align:center;font-size:12px;font-weight:700;display:none"></div>
-    </div>`);
+    const r = await fetch(`${API_URL}/api/checkout`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        petName:      name,
+        petType:      pet,
+        breed:        selectedBreed,
+        normScore:    normTotal,
+        percentile,
+        iqScore,
+        profileName:  profile.name,
+        profileEmoji: profile.emoji,
+        dimScores: {
+          memory:       ds[0],
+          social:       ds[1],
+          problem:      ds[2],
+          selfcontrol:  ds[3],
+          adaptability: ds[4],
+        },
+      }),
+    });
 
-  btn.style.opacity = '.4';
-  btn.style.pointerEvents = 'none';
-  document.getElementById('checkout-email').focus();
+    const data = await r.json();
+    if (!data.sessionToken) throw new Error('No session token');
+
+    // Préparer les params OTO (utilisés dans eventCallback après paiement)
+    const dimKeys = ['memory', 'social', 'problem', 'selfcontrol', 'adaptability'];
+    const dimPcts = ds.map((s, i) => s / DIM_MAX[i]);
+    const weakIdx = [0, 1, 2, 3, 4].reduce((a, b) => dimPcts[a] < dimPcts[b] ? a : b);
+    _pendingOTOParams = new URLSearchParams({
+      pet:     name,
+      dim:     dimKeys[weakIdx],
+      species: pet,
+      iq:      String(iqScore),
+    });
+
+    track('checkout_open', { pet_type: pet, iq_score: iqScore });
+
+    Paddle.Checkout.open({
+      items: [{ priceId: data.priceId, quantity: 1 }],
+      customData: { sessionToken: data.sessionToken },
+      settings: { displayMode: 'overlay', theme: 'dark', locale: 'en' },
+    });
+
+  } catch (err) {
+    console.error('checkout error:', err);
+  }
+
+  btn.innerHTML = origHTML;
+  btn.disabled = false;
+  btn.dataset.loading = 'false';
 }
 
 async function submitGenerate() {

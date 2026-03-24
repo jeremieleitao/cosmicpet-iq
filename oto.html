@@ -8,6 +8,8 @@
 <meta property="og:description" content="Personalised cognitive training for your pet, delivered by email. Based on your IQ quiz results.">
 <meta property="og:image" content="https://iq.thecosmicpet.com/og-image.png">
 <meta name="robots" content="noindex">
+<!-- Paddle.js v2 -->
+<script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
 <!-- GA4 -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-HPPHSLH5F9"></script>
 <script>
@@ -473,8 +475,8 @@ body::before {
     <!-- price -->
     <div class="price-row">
       <div>
-        <div class="price-was">€29.99</div>
-        <div class="price-now">€19.99 <sub>one time</sub></div>
+        <div class="price-was">€19.99</div>
+        <div class="price-now">€9.90 <sub>one time</sub></div>
       </div>
       <div class="price-badge">−50% TODAY</div>
     </div>
@@ -655,21 +657,60 @@ if (urgencyBanner && 'IntersectionObserver' in window) {
   obs.observe(urgencyBanner);
 }
 
+// ── PADDLE INIT ──
+Paddle.Environment.set('production');
+Paddle.Initialize({
+  token: 'live_60db96c6f8ccd301d8076d1f84e',
+  eventCallback: function(data) {
+    if (data.name === 'checkout.completed') {
+      const email = data.data?.customer?.email;
+      if (email) submitOTOAfterPayment(email);
+    }
+  }
+});
+
 // ── CTA HANDLER ──
-// Right now: shows email form and scrolls to it.
-// When Paddle is ready: replace with Paddle.Checkout.open(...)
 function handleCTA() {
   track('oto_cta_click', { weak_dim: dimKey });
+  const opts = {
+    items: [{ priceId: 'pri_01kkyvs3zekwvfvy9gn7hmavsv', quantity: 1 }],
+    customData: { flow: 'oto', petName, species, weakDim: dimKey, iqScore, token },
+    settings: { displayMode: 'overlay', theme: 'dark', locale: 'en' },
+  };
+  if (emailPre) opts.customer = { email: emailPre };
+  Paddle.Checkout.open(opts);
+}
+
+// ── POST-PAYMENT HANDLER ──
+async function submitOTOAfterPayment(email) {
+  track('oto_convert', { weak_dim: dimKey, iq_score: Number(iqScore)||0 });
+  try {
+    await fetch(`${API_URL}/api/upsell-generate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email,
+        petName,
+        species,
+        breed: params.get('breed') || '',
+        weakDim: dimKey,
+        iqScore,
+        token,
+      }),
+    });
+  } catch (e) {
+    console.error('Programme generation error:', e);
+  }
+  // Afficher la confirmation
   const form = document.getElementById('email-form-section');
+  const confirm = document.getElementById('email-confirm');
+  const wrap = document.querySelector('.email-input-wrap');
+  const note = document.querySelector('.email-note');
   form.style.display = 'block';
-  setTimeout(() => {
-    form.scrollIntoView({ behavior:'smooth', block:'center' });
-    document.getElementById('upsell-email')?.focus();
-  }, 50);
-  // TODO: replace with Paddle checkout when live:
-  // Paddle.Environment.set('production');
-  // Paddle.Initialize({ token: 'YOUR_CLIENT_TOKEN' });
-  // Paddle.Checkout.open({ items:[{ priceId:'pri_xxx', quantity:1 }], ... });
+  if (wrap) wrap.style.display = 'none';
+  if (note) note.style.display = 'none';
+  if (confirm) confirm.style.display = 'block';
+  form.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 // ── EMAIL SUBMIT ──
