@@ -1248,6 +1248,7 @@ function pickOpt(qi,origIdx){
   renderOpts(qi);
   document.getElementById('btn-next').disabled=false;
   updateSidebar('quiz');
+  setTimeout(()=>nextQ(), 400);
   clearInterval(timerIv);
   const qdata=getQ(qi);
   const s=qdata.opts[origIdx].s;
