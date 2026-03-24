@@ -8,8 +8,7 @@
 <meta property="og:description" content="Personalised cognitive training for your pet, delivered by email. Based on your IQ quiz results.">
 <meta property="og:image" content="https://iq.thecosmicpet.com/og-image.png">
 <meta name="robots" content="noindex">
-<!-- Paddle.js v2 -->
-<script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+<!-- Paddle.js non requis — checkout côté serveur via API Paddle -->
 <!-- GA4 -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-HPPHSLH5F9"></script>
 <script>
@@ -675,24 +674,30 @@ if (urgencyBanner && 'IntersectionObserver' in window) {
   obs.observe(urgencyBanner);
 }
 
-// ── PADDLE INIT ──
-Paddle.Initialize({
-  token: 'live_60db96c6f8ccd301d8076d1f84e',
-});
+// Paddle.js retiré — checkout géré côté serveur
 
 // ── CTA HANDLER ──
-function handleCTA() {
+async function handleCTA() {
   track('oto_cta_click', { weak_dim: dimKey });
-  const successUrl = `${window.location.origin}/oto.html?` + new URLSearchParams({
-    pet: petName, dim: dimKey, species, iq: iqScore, token, success: '1',
-  }).toString();
-  const opts = {
-    items: [{ priceId: 'pri_01kkyvs3zekwvfvy9gn7hmavsv', quantity: 1 }],
-    customData: { flow: 'oto', petName, species, weakDim: dimKey, iqScore, token },
-    settings: { displayMode: 'redirect', successUrl },
-  };
-  if (emailPre) opts.customer = { email: emailPre };
-  Paddle.Checkout.open(opts);
+  const btn = document.getElementById('main-cta');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Loading checkout…'; }
+
+  try {
+    const r = await fetch('/api/oto-checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ petName, species, weakDim: dimKey, iqScore, token }),
+    });
+    const data = await r.json();
+    if (!data.checkoutUrl) throw new Error('No checkout URL');
+    window.location.href = data.checkoutUrl;
+  } catch (err) {
+    console.error('OTO checkout error:', err);
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = `🔓 Start ${petName}'s programme →`;
+    }
+  }
 }
 
 // ── POST-PAYMENT HANDLER ──

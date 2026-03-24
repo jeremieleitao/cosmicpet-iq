@@ -28,7 +28,7 @@
 <meta name="twitter:image"      content="https://iq.thecosmicpet.com/og-image.png">
 <meta name="description"        content="Science-backed pet intelligence quiz. Find out your dog or cat's IQ score — memory, social intel, problem-solving, self-control & adaptability. Free, 3 minutes.">
 
-<script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+<!-- Paddle.js non requis — checkout créé côté serveur via API Paddle -->
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&family=DM+Mono:wght@400;500&family=Fraunces:ital,wght@0,700;1,600;1,700;1,800&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -1621,9 +1621,7 @@ function sendFreeEmail(){
 // ── API ──
 const API_URL = '';
 
-// ── PADDLE INIT ──
-let _pendingOTOParams = null;
-Paddle.Initialize({ token: 'live_60db96c6f8ccd301d8076d1f84e' });
+// Paddle.js retiré — checkout géré côté serveur
 
 // ── PAYWALL INSIGHT TEASERS ──
 function dimInsightTeaser(dimIdx, score, petName, species) {
@@ -1736,27 +1734,10 @@ async function checkout() {
     });
 
     const data = await r.json();
-    if (!data.sessionToken) throw new Error('No session token');
-
-    // Préparer les params OTO (utilisés dans eventCallback après paiement)
-    const dimKeys = ['memory', 'social', 'problem', 'selfcontrol', 'adaptability'];
-    const dimPcts = ds.map((s, i) => s / DIM_MAX[i]);
-    const weakIdx = [0, 1, 2, 3, 4].reduce((a, b) => dimPcts[a] < dimPcts[b] ? a : b);
-    _pendingOTOParams = new URLSearchParams({
-      pet:     name,
-      dim:     dimKeys[weakIdx],
-      species: pet,
-      iq:      String(iqScore),
-    });
+    if (!data.checkoutUrl) throw new Error('No checkout URL');
 
     track('checkout_open', { pet_type: pet, iq_score: iqScore });
-
-    const successUrl = `${window.location.origin}/oto.html?${_pendingOTOParams.toString()}`;
-    Paddle.Checkout.open({
-      items: [{ priceId: data.priceId, quantity: 1 }],
-      customData: { sessionToken: data.sessionToken },
-      settings: { displayMode: 'redirect', successUrl },
-    });
+    window.location.href = data.checkoutUrl;
 
   } catch (err) {
     console.error('checkout error:', err);
