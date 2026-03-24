@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f1b35"/>
+      <stop offset="100%" stop-color="#060b18"/>
+    </linearGradient>
+    <linearGradient id="iq" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#f43f8f"/>
+      <stop offset="100%" stop-color="#e879f9"/>
+    </linearGradient>
+    <linearGradient id="glow" cx="50%" cy="40%" r="50%" gradientUnits="objectBoundingBox">
+      <stop offset="0%" stop-color="#f43f8f" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#f43f8f" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="glow-r" cx="50%" cy="42%" r="50%">
+      <stop offset="0%" stop-color="#f43f8f" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#f43f8f" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="400" height="400" rx="48" fill="url(#bg)"/>
+
+  <!-- Pink glow -->
+  <ellipse cx="200" cy="170" rx="160" ry="140" fill="url(#glow-r)"/>
+
+  <!-- Brain outline — left lobe -->
+  <path d="M130 155 C110 155 96 168 98 185 C90 190 86 204 94 212 C90 222 96 236 108 238 C108 245 116 250 124 250 L200 250 L200 155 Z"
+        fill="rgba(244,63,143,0.08)" stroke="url(#iq)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Brain outline — right lobe -->
+  <path d="M270 155 C290 155 304 168 302 185 C310 190 314 204 306 212 C310 222 304 236 292 238 C292 245 284 250 276 250 L200 250 L200 155 Z"
+        fill="rgba(232,121,249,0.06)" stroke="url(#iq)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Top curve connecting lobes -->
+  <path d="M130 155 C130 128 160 115 200 116 C240 115 270 128 270 155"
+        fill="none" stroke="url(#iq)" stroke-width="3.5" stroke-linecap="round"/>
+
+  <!-- Center divider -->
+  <line x1="200" y1="116" x2="200" y2="250" stroke="rgba(244,63,143,0.25)" stroke-width="2" stroke-dasharray="6,5"/>
+
+  <!-- Neural nodes — left -->
+  <circle cx="148" cy="178" r="5" fill="#f43f8f" opacity="0.9"/>
+  <circle cx="136" cy="208" r="4" fill="#e879f9" opacity="0.7"/>
+  <circle cx="155" cy="232" r="4" fill="#f43f8f" opacity="0.6"/>
+
+  <!-- Neural nodes — right -->
+  <circle cx="252" cy="178" r="5" fill="#e879f9" opacity="0.9"/>
+  <circle cx="264" cy="208" r="4" fill="#f43f8f" opacity="0.7"/>
+  <circle cx="245" cy="232" r="4" fill="#e879f9" opacity="0.6"/>
+
+  <!-- Neural connections -->
+  <line x1="148" y1="178" x2="136" y2="208" stroke="rgba(244,63,143,0.3)" stroke-width="1.5"/>
+  <line x1="136" y1="208" x2="155" y2="232" stroke="rgba(244,63,143,0.3)" stroke-width="1.5"/>
+  <line x1="252" y1="178" x2="264" y2="208" stroke="rgba(232,121,249,0.3)" stroke-width="1.5"/>
+  <line x1="264" y1="208" x2="245" y2="232" stroke="rgba(232,121,249,0.3)" stroke-width="1.5"/>
+
+  <!-- "IQ" text -->
+  <text x="200" y="318" text-anchor="middle"
+        font-family="Georgia, 'Times New Roman', serif"
+        font-size="72" font-weight="700" font-style="italic"
+        fill="url(#iq)" letter-spacing="-2">IQ</text>
+
+  <!-- "PET · LAB" small label -->
+  <text x="200" y="350" text-anchor="middle"
+        font-family="-apple-system, 'Helvetica Neue', Arial, sans-serif"
+        font-size="18" font-weight="700" letter-spacing="6"
+        fill="rgba(240,244,255,0.35)">PET · LAB</text>
+</svg>
