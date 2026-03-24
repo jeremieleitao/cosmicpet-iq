@@ -510,12 +510,7 @@ app.post('/api/checkout', async (req, res) => {
       return res.status(502).json({ error: 'Could not create Paddle transaction' });
     }
 
-    // URL du checkout hébergé par Paddle (fournie directement par l'API)
-    const checkoutUrl = paddleJson.data?.checkout?.url;
-    if (!checkoutUrl) {
-      console.error('Paddle checkout URL manquante:', JSON.stringify(paddleJson.data?.checkout));
-      return res.status(502).json({ error: 'Could not get Paddle checkout URL' });
-    }
+    const checkoutUrl = `https://buy.paddle.com/?_ptxn=${txnId}`;
     console.log(`💳 Paddle txn ${txnId} — checkout: ${checkoutUrl}`);
 
     res.json({ checkoutUrl });
@@ -559,8 +554,7 @@ app.post('/api/oto-checkout', async (req, res) => {
       return res.status(502).json({ error: 'Could not create Paddle transaction' });
     }
 
-    const checkoutUrl = paddleJson.data?.checkout?.url;
-    if (!checkoutUrl) return res.status(502).json({ error: 'Could not get Paddle checkout URL' });
+    const checkoutUrl = `https://buy.paddle.com/?_ptxn=${txnId}`;
     res.json({ checkoutUrl });
   } catch (err) {
     console.error('POST /api/oto-checkout:', err);
