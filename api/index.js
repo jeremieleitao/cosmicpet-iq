@@ -371,6 +371,7 @@ async function generateAndSend(email, orderData) {
 
 app.get('/health', (_req, res) => res.json({ ok: true, service: 'petiq-api' }));
 
+
 app.get('/api/stats', async (_req, res) => {
   try {
     const snap = await db.collection('petiq_meta').doc('counters').get();
