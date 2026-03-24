@@ -8,7 +8,15 @@
 <meta property="og:description" content="Personalised cognitive training for your pet, delivered by email. Based on your IQ quiz results.">
 <meta property="og:image" content="https://iq.thecosmicpet.com/og-image.png">
 <meta name="robots" content="noindex">
-<!-- Paddle.js non requis — checkout côté serveur via API Paddle -->
+<!-- Meta Pixel -->
+<script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','1277106597673252');fbq('track','PageView');</script>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1277106597673252&ev=PageView&noscript=1"/></noscript>
+<!-- End Meta Pixel -->
+
+<!-- TikTok Pixel -->
+<script>!function(w,d,t){w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.length;i++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script");n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};ttq.load('D6LF1PRC77U5049K09JG');ttq.page()}(window,document,'ttq');</script>
+<!-- End TikTok Pixel -->
+
 <!-- GA4 -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-HPPHSLH5F9"></script>
 <script>
@@ -586,6 +594,12 @@ const DIM_META = {
 // ── POPULATE PAGE ──
 (function init() {
   track('oto_view', { iq_score: Number(iqScore)||0, weak_dim: dimKey, pet_type: species });
+
+  // Purchase event si Paddle a redirigé ici après paiement
+  if (params.get('_ptxn')) {
+    if (typeof fbq !== 'undefined') fbq('track', 'Purchase', { value: 9.90, currency: 'EUR', content_ids: ['petiq-report'], content_type: 'product' });
+    if (typeof ttq !== 'undefined') ttq.track('CompletePayment', { value: 9.90, currency: 'EUR', content_id: 'petiq-report', content_type: 'product' });
+  }
   // pet name
   document.querySelectorAll('#pet-name-title, #cta-pet-name').forEach(el => {
     el.textContent = petName;
