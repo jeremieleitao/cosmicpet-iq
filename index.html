@@ -826,7 +826,6 @@ body.dark-screen .analysis-phase {
     <div class="nav-row">
       <button class="btn-back" id="btn-back" onclick="prevQ()" disabled>← back</button>
       <span class="q-counter" id="q-counter">1 / 12</span>
-      <button class="btn-next" id="btn-next" onclick="nextQ()" disabled>Next →</button>
     </div>
   </div>
 
@@ -1326,8 +1325,6 @@ function renderQ(idx){
   renderOpts(idx);
 
   document.getElementById('btn-back').disabled=idx===0;
-  document.getElementById('btn-next').disabled=ans[idx]===null;
-  document.getElementById('btn-next').textContent=idx===11?'See my results ✨':'Next →';
 
   setProgress((idx/12)*80);
 
@@ -1355,9 +1352,8 @@ function pickOpt(qi,origIdx){
   // Store original option index (not display position) for correct scoring
   ans[qi]=origIdx;
   renderOpts(qi);
-  document.getElementById('btn-next').disabled=false;
   updateSidebar('quiz');
-  setTimeout(()=>nextQ(), 400);
+  setTimeout(()=>nextQ(), 300);
   clearInterval(timerIv);
   const qdata=getQ(qi);
   const s=qdata.opts[origIdx].s;
@@ -1559,10 +1555,11 @@ function showTeaser(){
       <span class="score-emoji">${profile.emoji}</span>
       <div class="score-profile" style="margin-bottom:8px">${profile.name}</div>
       <div class="score-tagline" style="margin-bottom:20px">${profile.tagline(name)}</div>
+      <div style="font-size:11px;font-weight:800;letter-spacing:2.5px;color:rgba(255,255,255,.5);text-transform:uppercase;margin-bottom:6px;">${name}'s IQ Score</div>
       <div style="cursor:pointer;margin-bottom:4px;" onclick="scrollToPaywall()">
-        <div class="score-percentile" style="user-select:none;letter-spacing:6px;opacity:0.5;">${'?'.repeat(String(iqScore).length)}</div>
+        <div class="score-percentile" style="filter:blur(12px);user-select:none;pointer-events:none;">${iqScore}</div>
       </div>
-      <div class="score-percentile-label" style="user-select:none;opacity:0.45;margin-bottom:12px;">top ??% of ${breedLabel} tested</div>
+      <div class="score-percentile-label" style="filter:blur(6px);user-select:none;margin-bottom:12px;">top ??% of ${breedLabel} tested</div>
       <div onclick="scrollToPaywall()" style="display:inline-flex;align-items:center;gap:7px;background:rgba(244,63,143,.18);border:1.5px solid rgba(244,63,143,.35);border-radius:50px;padding:8px 18px;cursor:pointer;margin-bottom:4px;">
         <span style="font-size:14px">🔒</span>
         <span style="font-size:13px;font-weight:800;color:rgba(255,255,255,.9);">Unlock to reveal</span>
