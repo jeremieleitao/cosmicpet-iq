@@ -2110,11 +2110,21 @@ function updateSidebar(mode){
     const percentile=calibratedPercentile(rawTotal,pet,selectedBreed);
     const iqScore=percentileToIQ(percentile);
     const speciesLabel=pet==='cat'?'cats':'dogs';
-    // Bars at final values — hide % (paywall)
-    const finalPcts=[0,0,0,0,0];
-    ans.forEach((origIdx,i)=>{if(origIdx!==null)finalPcts[getQ(i).d]+=getQ(i).opts[origIdx].s;});
-    sbSetDimBars(finalPcts);
-    document.querySelectorAll('#sb-main .sb-dim-pct').forEach(el=>{ el.textContent='🔒'; el.style.opacity='0.3'; el.style.fontSize='10px'; });
+    // Bars at final values — only top 2 dims unlocked (same logic as paywall card)
+    const finalDs=[0,0,0,0,0];
+    ans.forEach((origIdx,i)=>{if(origIdx!==null)finalDs[getQ(i).d]+=getQ(i).opts[origIdx].s;});
+    sbSetDimBars(finalDs);
+    const sorted=[0,1,2,3,4].sort((a,b)=>(finalDs[b]/DIM_MAX[b])-(finalDs[a]/DIM_MAX[a]));
+    const pcts=document.querySelectorAll('#sb-main .sb-dim-pct');
+    pcts.forEach((el,i)=>{
+      if(sorted.indexOf(i)<2){
+        el.textContent=`${finalDs[i]}/${DIM_MAX[i]}`;
+        el.style.opacity='1'; el.style.fontSize='11px';
+      } else {
+        el.innerHTML='<span style="font-size:9px;opacity:0.4;font-weight:600;letter-spacing:.5px">🔒 locked</span>';
+        el.style.opacity='1'; el.style.fontSize='11px';
+      }
+    });
     const qfill=sb.querySelector('.sb-q-progress-fill');
     if(qfill) qfill.style.width='100%';
     const cnt=sb.querySelector('.sb-q-count');
