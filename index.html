@@ -381,7 +381,7 @@ body {
 .score-tagline { font-size:14px;color:rgba(255,255,255,.5);font-weight:700;line-height:1.55;max-width:380px;margin:0 auto;position:relative;z-index:1; }
 
 /* ── LOCKED DIMS ── */
-.locked-card { background:white;border-radius:var(--radius);padding:26px;margin-bottom:16px;border:1.5px solid rgba(244,114,182,.08);box-shadow:0 4px 20px rgba(244,114,182,.06); }
+.locked-card { background:white;border-radius:var(--radius);padding:26px;margin-bottom:16px;border:1.5px solid rgba(244,114,182,.08);box-shadow:0 4px 20px rgba(244,114,182,.06);cursor:pointer; }
 .locked-header { display:flex;align-items:center;justify-content:space-between;margin-bottom:18px; }
 .locked-title-txt { font-family:'Fraunces',serif;font-size:20px;font-weight:800;font-style:italic; }
 .locked-badge { background:var(--dark);color:var(--pink);font-size:11px;font-weight:800;padding:6px 12px;border-radius:50px; }
@@ -391,7 +391,7 @@ body {
 .locked-bar-label { font-size:12px;font-weight:800;margin-bottom:5px; }
 .locked-bar { height:8px;background:rgba(244,114,182,.08);border-radius:4px;overflow:hidden;position:relative; }
 .locked-bar-fill { height:100%;border-radius:4px; }
-.locked-overlay { position:absolute;inset:0;background:rgba(255,255,255,.8);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:var(--muted);letter-spacing:1px; }
+.locked-overlay { position:absolute;inset:0;background:rgba(255,255,255,.8);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:var(--muted);letter-spacing:1px;cursor:pointer; }
 .locked-score { font-family:'Fraunces',serif;font-size:20px;font-weight:800;filter:blur(5px);color:var(--muted);flex-shrink:0;user-select:none; }
 .locked-cta-hint { text-align:center;font-size:13px;font-weight:700;color:var(--muted);margin-top:10px; }
 
@@ -488,10 +488,12 @@ body {
 }
 .insight-teaser-text { font-size:13px;color:rgba(255,255,255,.75);line-height:1.6;font-weight:400; }
 .insight-teaser.locked .insight-teaser-text { filter:blur(4px);user-select:none;pointer-events:none; }
+.insight-teaser.locked { cursor:pointer; }
 .insight-teaser-lock {
   position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
   font-size:12px;font-weight:800;color:rgba(255,255,255,.5);
   background:rgba(11,31,58,.3);border-radius:8px;backdrop-filter:blur(2px);
+  cursor:pointer;
 }
 
 /* ── PAYWALL DISCOVERIES ── */
@@ -1549,7 +1551,7 @@ function showTeaser(){
       <span class="score-emoji">${profile.emoji}</span>
       <div class="score-profile" style="margin-bottom:8px">${profile.name}</div>
       <div class="score-tagline" style="margin-bottom:20px">${profile.tagline(name)}</div>
-      <div style="position:relative;display:inline-block;margin-bottom:6px;">
+      <div style="position:relative;display:inline-block;margin-bottom:6px;cursor:pointer;" onclick="scrollToPaywall()">
         <div class="score-percentile" style="filter:blur(12px);user-select:none;pointer-events:none;">${iqScore}</div>
         <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:8px;">
           <span style="font-size:15px;font-weight:800;color:rgba(255,255,255,.7);">🔒 Unlock to reveal</span>
@@ -1598,14 +1600,14 @@ function showTeaser(){
         <div class="insight-teaser-dim">${DIMS[s2].icon} ${DIMS[s2].name}</div>
         <div class="insight-teaser-text">${i2}</div>
       </div>
-      <div class="insight-teaser locked">
+      <div class="insight-teaser locked" onclick="scrollToPaywall()">
         <div class="insight-teaser-dim">🔒 Unexpected finding</div>
         <div class="insight-teaser-text">${hooks[weak]}</div>
         <div class="insight-teaser-lock">Unlock to read →</div>
       </div>
     </div>
 
-    <div class="locked-card" style="animation:fadeUp .5s .15s ease both">
+    <div class="locked-card" style="animation:fadeUp .5s .15s ease both" onclick="scrollToPaywall()">
       <div class="locked-header">
         <div class="locked-title-txt">Dimension breakdown</div>
         <div class="locked-badge">🔒 3 insights locked</div>
@@ -1619,7 +1621,7 @@ function showTeaser(){
             <div class="locked-bar-label">${dim.name}</div>
             <div class="locked-bar">
               <div class="locked-bar-fill" style="background:${dim.color};width:${p}%"></div>
-              ${isUnlocked?'':'<div class="locked-overlay">🔒 insight locked</div>'}
+              ${isUnlocked?'':'<div class="locked-overlay" onclick="scrollToPaywall()">🔒 insight locked</div>'}
             </div>
           </div>
           <div class="locked-score" style="${isUnlocked?'filter:none;color:var(--dark);':'filter:blur(5px);color:var(--muted);'}">${ds[i]}/${DIM_MAX[i]}</div>
@@ -1796,6 +1798,12 @@ function probit(p){
   return-(((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5])/((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);
 }
 function percentileToIQ(pct){ return Math.round(100+15*probit(Math.max(1,Math.min(99,pct))/100)); }
+
+// ── SCROLL TO PAYWALL ──
+function scrollToPaywall() {
+  const btn = document.querySelector('.paywall-btn');
+  if (btn) btn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
 
 // ── CHECKOUT — Paddle ──
 async function checkout() {
