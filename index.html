@@ -1364,7 +1364,6 @@ function renderQ(idx){
   document.getElementById('dim-pill').textContent=`${dim.icon} ${dim.name} · ${qdata.d+1}/5`;
   document.getElementById('dim-name').textContent=dim.name;
   const srcEl=document.getElementById('dim-source');
-  const qdata=getQ(idx);
   srcEl.querySelector('.src-label').textContent=qdata.source||dim.source;
   srcEl.querySelector('.src-tip').textContent=qdata.tip||dim.tip;
   srcEl.classList.remove('tip-open');
