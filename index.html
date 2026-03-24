@@ -1555,11 +1555,11 @@ function showTeaser(){
       <span class="score-emoji">${profile.emoji}</span>
       <div class="score-profile" style="margin-bottom:8px">${profile.name}</div>
       <div class="score-tagline" style="margin-bottom:20px">${profile.tagline(name)}</div>
-      <div style="font-size:11px;font-weight:800;letter-spacing:2.5px;color:rgba(255,255,255,.5);text-transform:uppercase;margin-bottom:6px;">${name}'s IQ Score</div>
-      <div style="cursor:pointer;margin-bottom:4px;" onclick="scrollToPaywall()">
-        <div class="score-percentile" style="filter:blur(12px);user-select:none;pointer-events:none;">${iqScore}</div>
+      <div style="cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:10px;" onclick="scrollToPaywall()">
+        <span class="score-percentile" style="color:var(--pink);filter:none;user-select:none;">IQ</span>
+        <span class="score-percentile" style="filter:blur(16px);user-select:none;pointer-events:none;">${iqScore}</span>
       </div>
-      <div class="score-percentile-label" style="filter:blur(6px);user-select:none;margin-bottom:12px;">top ??% of ${breedLabel} tested</div>
+      <div class="score-percentile-label" style="filter:blur(7px);user-select:none;margin-bottom:12px;">top ??% of ${breedLabel} tested</div>
       <div onclick="scrollToPaywall()" style="display:inline-flex;align-items:center;gap:7px;background:rgba(244,63,143,.18);border:1.5px solid rgba(244,63,143,.35);border-radius:50px;padding:8px 18px;cursor:pointer;margin-bottom:4px;">
         <span style="font-size:14px">🔒</span>
         <span style="font-size:13px;font-weight:800;color:rgba(255,255,255,.9);">Unlock to reveal</span>
