@@ -2110,10 +2110,11 @@ function updateSidebar(mode){
     const percentile=calibratedPercentile(rawTotal,pet,selectedBreed);
     const iqScore=percentileToIQ(percentile);
     const speciesLabel=pet==='cat'?'cats':'dogs';
-    // Bars at final values
+    // Bars at final values — hide % (paywall)
     const finalPcts=[0,0,0,0,0];
     ans.forEach((origIdx,i)=>{if(origIdx!==null)finalPcts[getQ(i).d]+=getQ(i).opts[origIdx].s;});
     sbSetDimBars(finalPcts);
+    document.querySelectorAll('#sb-main .sb-dim-pct').forEach(el=>{ el.textContent='🔒'; el.style.opacity='0.3'; el.style.fontSize='10px'; });
     const qfill=sb.querySelector('.sb-q-progress-fill');
     if(qfill) qfill.style.width='100%';
     const cnt=sb.querySelector('.sb-q-count');
