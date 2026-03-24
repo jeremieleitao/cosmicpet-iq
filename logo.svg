@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="280" height="72" viewBox="0 0 280 72">
+  <defs>
+    <linearGradient id="iq-grad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#f43f8f"/>
+      <stop offset="100%" stop-color="#e879f9"/>
+    </linearGradient>
+    <linearGradient id="icon-grad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1a2744"/>
+      <stop offset="100%" stop-color="#0d1628"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Icon bg -->
+  <rect x="0" y="4" width="64" height="64" rx="16" fill="url(#icon-grad)"/>
+  <rect x="0" y="4" width="64" height="64" rx="16" fill="none" stroke="rgba(244,63,143,0.45)" stroke-width="1.5"/>
+
+  <!-- Brain icon (simplified) -->
+  <!-- Left lobe -->
+  <path d="M19 28 C14 28 11 32 12 37 C10 38 9 41 11 43 C10 46 12 49 15 49 C15 51 17 52 19 52 L32 52 L32 28 Z"
+        fill="none" stroke="#f43f8f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Right lobe -->
+  <path d="M45 28 C50 28 53 32 52 37 C54 38 55 41 53 43 C54 46 52 49 49 49 C49 51 47 52 45 52 L32 52 L32 28 Z"
+        fill="none" stroke="#e879f9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Top curve -->
+  <path d="M19 28 C19 20 26 17 32 18 C38 17 45 20 45 28"
+        fill="none" stroke="#f43f8f" stroke-width="2" stroke-linecap="round"/>
+  <!-- Center line -->
+  <line x1="32" y1="18" x2="32" y2="52" stroke="rgba(244,63,143,0.3)" stroke-width="1.5" stroke-dasharray="3,3"/>
+  <!-- Neural dots -->
+  <circle cx="23" cy="34" r="2" fill="#f43f8f" opacity="0.8"/>
+  <circle cx="27" cy="42" r="2" fill="#e879f9" opacity="0.6"/>
+  <circle cx="41" cy="34" r="2" fill="#e879f9" opacity="0.8"/>
+  <circle cx="37" cy="42" r="2" fill="#f43f8f" opacity="0.6"/>
+
+  <!-- "PET" label -->
+  <text x="82" y="28" font-family="-apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="800" letter-spacing="3.5" fill="#94a3b8">PET</text>
+
+  <!-- "IQ" pink italic -->
+  <text x="80" y="58" font-family="Georgia, 'Times New Roman', serif" font-size="32" font-weight="700" font-style="italic" fill="url(#iq-grad)">IQ</text>
+
+  <!-- "Lab" dark italic -->
+  <text x="126" y="58" font-family="Georgia, 'Times New Roman', serif" font-size="32" font-weight="700" font-style="italic" fill="#1e293b">Lab</text>
+</svg>

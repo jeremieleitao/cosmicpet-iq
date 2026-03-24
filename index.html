@@ -1865,7 +1865,7 @@ async function checkout() {
     Paddle.Checkout.open({
       items: [{ priceId: data.priceId, quantity: 1 }],
       customData: { sessionToken: data.sessionToken },
-      settings: { displayMode: 'redirect', successUrl },
+      settings: { displayMode: 'redirect', successUrl, theme: 'light' },
     });
 
   } catch (err) {
