@@ -661,6 +661,7 @@ body.dark-screen .analysis-phase {
   animation:sb-eq var(--dur,1s) ease-in-out infinite alternate;
 }
 </style>
+<script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
 </head>
 <body>
 
@@ -1621,7 +1622,9 @@ function sendFreeEmail(){
 // ── API ──
 const API_URL = '';
 
-// Paddle.js retiré — checkout géré côté serveur
+// ── PADDLE INIT ──
+let _pendingOTOParams = null;
+Paddle.Initialize({ token: 'live_60db96c6f8ccd301d8076d1f84e' });
 
 // ── PAYWALL INSIGHT TEASERS ──
 function dimInsightTeaser(dimIdx, score, petName, species) {
@@ -1734,10 +1737,28 @@ async function checkout() {
     });
 
     const data = await r.json();
-    if (!data.checkoutUrl) throw new Error('No checkout URL');
+    if (!data.sessionToken) throw new Error('No session token');
+
+    // Préparer les params OTO pour la page de succès
+    const dimKeys = ['memory', 'social', 'problem', 'selfcontrol', 'adaptability'];
+    const dimPcts = ds.map((s, i) => s / DIM_MAX[i]);
+    const weakIdx = [0, 1, 2, 3, 4].reduce((a, b) => dimPcts[a] < dimPcts[b] ? a : b);
+    _pendingOTOParams = new URLSearchParams({
+      pet:     name,
+      dim:     dimKeys[weakIdx],
+      species: pet,
+      iq:      String(iqScore),
+      token:   data.sessionToken,
+    });
 
     track('checkout_open', { pet_type: pet, iq_score: iqScore });
-    window.location.href = data.checkoutUrl;
+
+    const successUrl = `${window.location.origin}/oto.html?${_pendingOTOParams.toString()}`;
+    Paddle.Checkout.open({
+      items: [{ priceId: data.priceId, quantity: 1 }],
+      customData: { sessionToken: data.sessionToken },
+      settings: { displayMode: 'redirect', successUrl },
+    });
 
   } catch (err) {
     console.error('checkout error:', err);

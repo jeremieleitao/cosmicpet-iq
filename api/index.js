@@ -448,7 +448,7 @@ app.get('/api/report/:token', async (req, res) => {
   }
 });
 
-// POST /api/checkout — sauvegarde quiz data, crée transaction Paddle côté serveur, retourne checkoutUrl
+// POST /api/checkout — sauvegarde quiz data dans Firestore, retourne sessionToken + priceId pour Paddle.js
 app.post('/api/checkout', async (req, res) => {
   const ip = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || req.ip;
   if (rateLimit(ip, 10, 60000)) return res.status(429).json({ error: 'Too many requests' });
@@ -472,48 +472,11 @@ app.post('/api/checkout', async (req, res) => {
       created_at:   new Date(),
     };
 
-    // Trouver la dimension la plus faible pour l'OTO
-    const DIM_MAX_MAP = { memory: 6, social: 9, problem: 9, selfcontrol: 6, adaptability: 6 };
-    const dimKeys = Object.keys(DIM_MAX_MAP);
-    const weakDim = dimKeys.reduce((a, b) =>
-      ((orderData.dimScores[a] || 0) / DIM_MAX_MAP[a] < (orderData.dimScores[b] || 0) / DIM_MAX_MAP[b]) ? a : b
-    );
-
     const sessionToken = crypto.randomUUID();
     await db.collection('petiq_pending').doc(sessionToken).set(orderData);
     console.log(`📝 Session saved: ${sessionToken} for ${orderData.petName}`);
 
-    // Créer la transaction Paddle côté serveur (bypass restriction domaine client)
-    const paddleRes = await fetch(`${PADDLE_BASE}/transactions`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${PADDLE_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        items: [{ price_id: PADDLE_PRICE_ID, quantity: 1 }],
-        custom_data: {
-          project:    'petiq',
-          sessionToken,
-          otoPet:     orderData.petName,
-          otoSpecies: orderData.petType,
-          otoDim:     weakDim,
-          otoIq:      String(orderData.iqScore || ''),
-        },
-      }),
-    });
-
-    const paddleJson = await paddleRes.json();
-    const txnId = paddleJson.data?.id;
-    if (!txnId) {
-      console.error('Paddle transaction error:', JSON.stringify(paddleJson));
-      return res.status(502).json({ error: 'Could not create Paddle transaction' });
-    }
-
-    const checkoutUrl = `https://buy.paddle.com/?_ptxn=${txnId}`;
-    console.log(`💳 Paddle txn ${txnId} — checkout: ${checkoutUrl}`);
-
-    res.json({ checkoutUrl });
+    res.json({ sessionToken, priceId: PADDLE_PRICE_ID });
   } catch (err) {
     console.error('POST /api/checkout:', err);
     res.status(500).json({ error: 'Server error' });
