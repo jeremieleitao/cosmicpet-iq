@@ -1167,7 +1167,7 @@ function getQ(idx){
   const q=Qs[idx];
   const text = pet==='cat' ? (q.qcat||q.q) : (q.qdog||q.q);
   const opts = pet==='cat' ? (q.ocat||q.o) : (q.odog||q.o);
-  return {text, opts, live:q.live, d:q.d};
+  return {text, opts, live:q.live, d:q.d, source:q.source, tip:q.tip};
 }
 
 const BADGES=[
