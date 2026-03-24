@@ -1546,7 +1546,7 @@ function showTeaser(){
       <div class="paywall-price">
         <div style="font-size:12px;color:rgba(255,255,255,.2);margin-bottom:4px;">Est. value <span style="text-decoration:line-through">€19.99</span></div>
         <div style="font-size:11px;color:rgba(255,255,255,.15);margin-bottom:4px;">Today only</div>
-        <div class="price-tag">€4<span class="price-cents">.99</span></div>
+        <div class="price-tag">€9<span class="price-cents">.90</span></div>
         <div class="price-desc">One-time · Instant delivery · 7-day guarantee</div>
       </div>
       <div class="urgency-wrap">
@@ -1622,7 +1622,6 @@ const API_URL = '';
 
 // ── PADDLE INIT ──
 let _pendingOTOParams = null;
-Paddle.Environment.set('production');
 Paddle.Initialize({
   token: 'live_60db96c6f8ccd301d8076d1f84e',
   eventCallback: function(ev) {
