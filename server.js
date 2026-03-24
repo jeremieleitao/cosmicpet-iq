@@ -490,6 +490,7 @@ app.post('/api/checkout', async (req, res) => {
       body: JSON.stringify({
         items: [{ price_id: PADDLE_PRICE_ID, quantity: 1 }],
         custom_data: {
+          project:    'petiq',
           sessionToken,
           otoPet:     orderData.petName,
           otoSpecies: orderData.petType,
@@ -569,7 +570,16 @@ app.get('/api/payment-done', async (req, res) => {
     const txnJson = await txnRes.json();
     const cd = txnJson.data?.custom_data || {};
 
-    if (cd.flow === 'oto') {
+    if (cd.project === 'astral') {
+      return res.redirect(
+        'https://astral.thecosmicpet.com/merci?' + new URLSearchParams({
+          name:   cd.pet_name || '',
+          lang:   cd.lang || 'en',
+          st:     cd.session_token || '',
+          _ptxn:  txnId,
+        }).toString()
+      );
+    } else if (cd.flow === 'oto') {
       return res.redirect(
         `${BASE_URL}/oto.html?` + new URLSearchParams({
           pet: cd.petName || '', dim: cd.weakDim || '',
