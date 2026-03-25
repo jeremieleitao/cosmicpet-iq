@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
-<!-- GA4 -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-HPPHSLH5F9"></script>
 <script>
   window.dataLayer=window.dataLayer||[];
@@ -15,135 +14,80 @@
 <title>🧠 Cognitive Report — Pet IQ Lab</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&family=DM+Mono:wght@400;500&family=Fraunces:ital,wght@0,700;1,600;1,700;1,800&display=swap" rel="stylesheet">
 <style>
-:root {
-  --pink:   #f43f8f;
-  --blue:   #1d6ef5;
-  --dark:   #0b1f3a;
-  --ink:    #1a2e4a;
-  --muted:  #8a8ea8;
-  --border: rgba(11,31,58,.08);
-  --cream:  #f2ede6;
-  --white:  #ffffff;
-  --c-memory:      #818cf8;
-  --c-social:      #f472b6;
-  --c-problem:     #fb923c;
-  --c-selfcontrol: #4ade80;
-  --c-adaptability:#facc15;
+:root{
+  --pink:#f43f8f;--blue:#1d6ef5;--dark:#0b1f3a;--ink:#1a2e4a;
+  --muted:#8a8ea8;--border:rgba(11,31,58,.08);--cream:#f2ede6;--white:#ffffff;
+  --c-memory:#818cf8;--c-social:#f472b6;--c-problem:#fb923c;
+  --c-selfcontrol:#4ade80;--c-adaptability:#facc15;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
 body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased;}
 
-/* ── REPORT HEADER ── */
+/* ── PROGRESS BAR ── */
+#read-progress{
+  position:fixed;top:57px;left:0;height:2px;width:0%;z-index:99;
+  background:linear-gradient(90deg,#f43f8f,#818cf8);
+  transition:width .08s linear;pointer-events:none;
+}
+
+/* ── HEADER ── */
 .report-header{
   position:sticky;top:0;z-index:100;
-  background:rgba(255,255,255,.9);backdrop-filter:blur(16px);
+  background:rgba(255,255,255,.92);backdrop-filter:blur(16px);
   border-bottom:1px solid rgba(11,31,58,.07);
-  padding:12px 20px;
-  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 20px;display:flex;align-items:center;justify-content:space-between;
 }
-.report-header-brand{font-weight:900;font-size:15px;color:var(--pink);text-decoration:none;letter-spacing:-.2px;}
+.report-header-brand{font-weight:900;font-size:15px;color:var(--pink);text-decoration:none;}
 .report-header-quiz{
   font-size:11px;font-weight:700;color:var(--muted);font-family:'DM Mono',monospace;
   text-decoration:none;padding:7px 14px;border-radius:50px;
-  border:1.5px solid var(--border);transition:all .2s;letter-spacing:.3px;
+  border:1.5px solid var(--border);transition:all .2s;
 }
 .report-header-quiz:hover{color:var(--dark);border-color:rgba(11,31,58,.25);}
 
 /* ── HERO ── */
 .hero{
-  background:linear-gradient(160deg,#060d1a 0%,#0b1f3a 100%);
+  background:#060d1a;
+  background-image:linear-gradient(160deg,#060d1a 0%,#0b1f3a 100%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Ccircle cx='14' cy='14' r='1' fill='rgba(255,255,255,0.04)'/%3E%3C/svg%3E");
   padding:56px 24px 64px;text-align:center;position:relative;overflow:hidden;
-  background-image:
-    linear-gradient(160deg,#060d1a 0%,#0b1f3a 100%),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Ccircle cx='14' cy='14' r='1' fill='rgba(255,255,255,0.045)'/%3E%3C/svg%3E");
-  background-blend-mode:normal,normal;
 }
-.hero::before{
-  content:'';position:absolute;top:-120px;right:-100px;width:400px;height:400px;
-  border-radius:50%;background:radial-gradient(circle,rgba(244,63,143,.16),transparent 60%);pointer-events:none;
-}
-.hero::after{
-  content:'';position:absolute;bottom:-100px;left:-80px;width:320px;height:320px;
-  border-radius:50%;background:radial-gradient(circle,rgba(129,140,248,.12),transparent 60%);pointer-events:none;
-}
-.hero-brand{
-  font-size:9px;letter-spacing:4px;text-transform:uppercase;font-family:'DM Mono',monospace;
-  color:rgba(255,255,255,.2);margin-bottom:32px;
-}
+.hero::before{content:'';position:absolute;top:-120px;right:-100px;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(244,63,143,.16),transparent 60%);pointer-events:none;}
+.hero::after{content:'';position:absolute;bottom:-100px;left:-80px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(129,140,248,.12),transparent 60%);pointer-events:none;}
+.hero-brand{font-size:9px;letter-spacing:4px;text-transform:uppercase;font-family:'DM Mono',monospace;color:rgba(255,255,255,.2);margin-bottom:32px;}
 .hero-avatar-ring{
   width:88px;height:88px;border-radius:50%;margin:0 auto 20px;
   display:flex;align-items:center;justify-content:center;
   background:rgba(244,63,143,.1);
-  box-shadow:0 0 0 1px rgba(244,63,143,.2),0 0 32px rgba(244,63,143,.15),0 0 80px rgba(244,63,143,.06);
+  box-shadow:0 0 0 1px rgba(244,63,143,.2),0 0 40px rgba(244,63,143,.16),0 0 80px rgba(244,63,143,.06);
   animation:float 4.5s ease-in-out infinite;font-size:44px;line-height:1;
 }
-.hero-title{
-  font-family:'Fraunces',serif;font-style:italic;font-weight:700;
-  font-size:clamp(24px,5.5vw,36px);color:rgba(255,255,255,.97);line-height:1.2;margin-bottom:5px;
-}
-.hero-profile{
-  font-family:'Fraunces',serif;font-style:italic;font-weight:500;
-  font-size:16px;color:var(--pink);margin-bottom:32px;opacity:.9;
-}
+.hero-title{font-family:'Fraunces',serif;font-style:italic;font-weight:700;font-size:clamp(24px,5.5vw,36px);color:rgba(255,255,255,.97);line-height:1.2;margin-bottom:5px;}
+.hero-profile{font-family:'Fraunces',serif;font-style:italic;font-weight:500;font-size:16px;color:var(--pink);margin-bottom:32px;opacity:.9;}
 .hero-gauge-wrap{display:flex;flex-direction:column;align-items:center;margin:0 auto;}
 .hero-gauge-svg{display:block;overflow:visible;}
 .gauge-track{fill:none;stroke:rgba(255,255,255,.07);stroke-linecap:round;}
-.gauge-arc{
-  fill:none;stroke-linecap:round;
-  stroke-dasharray:var(--dash-total);
-  stroke-dashoffset:var(--dash-total);
-  animation:gaugeIn 1.3s cubic-bezier(.22,1,.36,1) .4s forwards;
-}
+.gauge-arc{fill:none;stroke-linecap:round;stroke-dasharray:var(--dash-total);stroke-dashoffset:var(--dash-total);animation:gaugeIn 1.3s cubic-bezier(.22,1,.36,1) .4s forwards;}
 @keyframes gaugeIn{to{stroke-dashoffset:var(--dash-offset);}}
-.gauge-tick{stroke:rgba(255,255,255,.15);stroke-width:2;}
-.gauge-iq-num{
-  font-family:'Fraunces',serif;font-weight:700;font-size:48px;fill:white;
-  dominant-baseline:middle;text-anchor:middle;
-}
-.gauge-iq-label{
-  font-family:'DM Mono',monospace;font-size:9px;fill:rgba(255,255,255,.28);
-  letter-spacing:3px;text-anchor:middle;
-}
-.gauge-scale-label{font-family:'DM Mono',monospace;font-size:8px;fill:rgba(255,255,255,.22);text-anchor:middle;}
-
-.hero-pills{
-  display:flex;align-items:center;margin:22px auto 0;
-  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);
-  border-radius:50px;overflow:hidden;width:fit-content;
-}
-.hero-pill{
-  font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,.45);
-  padding:9px 18px;letter-spacing:.5px;
-}
+.gauge-tick{stroke:rgba(255,255,255,.14);stroke-width:2;}
+.gauge-iq-num{font-family:'Fraunces',serif;font-weight:700;font-size:48px;fill:white;dominant-baseline:middle;text-anchor:middle;}
+.gauge-iq-label{font-family:'DM Mono',monospace;font-size:9px;fill:rgba(255,255,255,.28);letter-spacing:3px;text-anchor:middle;}
+.gauge-scale-label{font-family:'DM Mono',monospace;font-size:8px;fill:rgba(255,255,255,.2);text-anchor:middle;}
+.hero-pills{display:flex;align-items:center;margin:22px auto 0;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:50px;overflow:hidden;width:fit-content;}
+.hero-pill{font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,.45);padding:9px 18px;letter-spacing:.5px;}
 .hero-pill+.hero-pill{border-left:1px solid rgba(255,255,255,.09);}
 .hero-pill strong{color:rgba(255,255,255,.75);font-weight:500;}
 
-/* ── PAGE WRAP ── */
+/* ── LAYOUT ── */
 .page-wrap{max-width:660px;margin:0 auto;padding:0 16px 100px;}
+.s-label{font-size:9px;letter-spacing:3px;text-transform:uppercase;font-family:'DM Mono',monospace;color:var(--muted);margin-bottom:18px;}
+.card{background:var(--white);border-radius:24px;border:1px solid rgba(11,31,58,.07);box-shadow:0 2px 16px rgba(11,31,58,.04),0 1px 3px rgba(11,31,58,.05);margin-top:16px;}
 
-/* ── SECTION LABEL ── */
-.s-label{
-  font-size:9px;letter-spacing:3px;text-transform:uppercase;font-family:'DM Mono',monospace;
-  color:var(--muted);margin-bottom:18px;
-}
-
-/* ── CARD BASE ── */
-.card{
-  background:var(--white);border-radius:24px;
-  border:1px solid rgba(11,31,58,.07);
-  box-shadow:0 2px 16px rgba(11,31,58,.04),0 1px 3px rgba(11,31,58,.05);
-  margin-top:16px;
-}
-
-/* ── OVERVIEW CARD ── */
+/* ── OVERVIEW ── */
 .overview-card{padding:28px;}
-.overview-inner{
-  display:grid;grid-template-columns:240px 1fr;gap:28px;align-items:start;
-}
-@media(max-width:560px){
-  .overview-inner{grid-template-columns:1fr;}
-}
+.overview-inner{display:grid;grid-template-columns:240px 1fr;gap:28px;align-items:start;}
+@media(max-width:560px){.overview-inner{grid-template-columns:1fr;}}
 .radar-wrap{display:flex;flex-direction:column;align-items:center;}
 #radarCanvas{display:block;}
 .dim-list{display:flex;flex-direction:column;gap:14px;padding-top:4px;}
@@ -155,178 +99,127 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
 .dim-bar-track{height:5px;background:rgba(11,31,58,.07);border-radius:3px;overflow:hidden;}
 .dim-bar-fill{height:100%;border-radius:3px;transition:width 1.1s cubic-bezier(.4,0,.2,1);}
 .dim-row-foot{display:flex;align-items:center;justify-content:space-between;}
-.dim-badge{
-  display:inline-block;font-size:8px;letter-spacing:1.2px;text-transform:uppercase;
-  font-family:'DM Mono',monospace;padding:2px 8px;border-radius:50px;font-weight:500;
-}
+.dim-badge{display:inline-block;font-size:8px;letter-spacing:1.2px;text-transform:uppercase;font-family:'DM Mono',monospace;padding:2px 8px;border-radius:50px;font-weight:500;}
 .dim-badge.peak{background:rgba(74,222,128,.14);color:#15803d;}
 .dim-badge.strong{background:rgba(29,110,245,.1);color:#1d4ed8;}
 .dim-badge.average{background:rgba(138,142,168,.1);color:var(--muted);}
 .dim-badge.weak{background:rgba(251,146,60,.12);color:#c2410c;}
+.dim-delta{font-size:9px;font-family:'DM Mono',monospace;padding:2px 7px;border-radius:50px;font-weight:600;}
+.dim-delta.pos{color:#15803d;background:rgba(74,222,128,.1);}
+.dim-delta.neg{color:#c2410c;background:rgba(251,146,60,.1);}
+.dim-delta.neu{color:var(--muted);background:rgba(11,31,58,.04);}
 
-/* ── BELL CURVE CARD ── */
+/* ── BELL CURVE ── */
 .bell-card{padding:28px;}
-.bell-title{
-  font-family:'Fraunces',serif;font-style:italic;font-weight:700;
-  font-size:20px;color:var(--dark);margin-bottom:20px;
-}
+.bell-title{font-family:'Fraunces',serif;font-style:italic;font-weight:700;font-size:20px;color:var(--dark);margin-bottom:20px;}
 #bellCanvas{display:block;width:100%;height:auto;}
-.bell-desc{
-  font-size:13.5px;color:#4b5563;line-height:1.75;margin-top:16px;
-}
+.bell-desc{font-size:13.5px;color:#4b5563;line-height:1.75;margin-top:16px;}
 .bell-desc strong{color:var(--dark);font-weight:600;}
 
-/* ── CHAPTER CARDS ── */
-.chapter-card{
-  background:var(--white);border-radius:24px;
-  border:1px solid rgba(11,31,58,.07);
-  box-shadow:0 2px 16px rgba(11,31,58,.04),0 1px 3px rgba(11,31,58,.05);
-  margin-top:12px;
-  overflow:hidden;
-  border-left:3px solid var(--c-dim);
+/* ── PRIORITY #1 ── */
+.priority-card{
+  background:linear-gradient(135deg,#fff8fc 0%,var(--white) 60%);
+  border-radius:24px;border:1.5px solid rgba(244,63,143,.14);
+  padding:28px;margin-top:12px;position:relative;overflow:hidden;
 }
-.chapter-head{
-  display:flex;align-items:center;gap:10px;
-  padding:20px 24px 0;
+.priority-card::before{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(244,63,143,.08),transparent 70%);}
+.priority-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(244,63,143,.08);border:1px solid rgba(244,63,143,.14);border-radius:50px;padding:5px 12px;font-size:9px;font-family:'DM Mono',monospace;color:var(--pink);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px;}
+.priority-title{font-family:'Fraunces',serif;font-style:italic;font-weight:700;font-size:20px;color:var(--dark);margin-bottom:12px;line-height:1.3;}
+.priority-action{font-size:14.5px;line-height:1.82;color:#374151;}
+.priority-action strong{color:var(--dark);font-weight:600;}
+.priority-dim-pill{display:inline-flex;align-items:center;gap:7px;margin-top:16px;padding:8px 14px;border-radius:50px;font-size:12px;font-weight:600;background:rgba(11,31,58,.04);color:var(--ink);border:1px solid var(--border);}
+
+/* ── SCENARIOS ── */
+.scenarios-card{padding:28px;}
+.scenarios-grid{display:flex;flex-direction:column;gap:12px;margin-top:4px;}
+.scenario-item{background:rgba(11,31,58,.025);border-radius:16px;border:1px solid rgba(11,31,58,.06);padding:18px 20px;}
+.scenario-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.scenario-emoji{font-size:20px;}
+.scenario-context{font-size:10px;font-family:'DM Mono',monospace;font-weight:700;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;}
+.scenario-text{font-size:14px;line-height:1.8;color:#374151;}
+.scenario-text strong{color:var(--dark);font-weight:600;}
+
+/* ── COGNITIVE TWIN ── */
+.twin-card{
+  background:linear-gradient(135deg,#060d1a 0%,#0d2040 50%,#060d1a 100%);
+  border-radius:24px;padding:28px;margin-top:12px;
+  position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.04);
 }
-.chapter-num{
-  font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);
-  letter-spacing:1px;flex-shrink:0;
-}
-.chapter-pill{
-  display:inline-flex;align-items:center;gap:6px;
-  padding:4px 12px 4px 8px;border-radius:50px;
-  font-size:11px;font-weight:600;color:var(--ink);
-  border:1px solid var(--border);background:rgba(11,31,58,.02);
-}
-.chapter-score-tag{
-  margin-left:auto;font-size:10px;font-family:'DM Mono',monospace;color:var(--muted);
-  flex-shrink:0;
-}
+.twin-card::before{content:'';position:absolute;bottom:-50px;right:-50px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(129,140,248,.18),transparent 70%);}
+.twin-eyebrow{font-size:9px;letter-spacing:3px;text-transform:uppercase;font-family:'DM Mono',monospace;color:rgba(129,140,248,.8);margin-bottom:14px;}
+.twin-inner{display:flex;align-items:flex-start;gap:18px;}
+.twin-emoji{font-size:44px;line-height:1;flex-shrink:0;margin-top:2px;}
+.twin-content{}
+.twin-breed{font-family:'Fraunces',serif;font-style:italic;font-weight:700;font-size:22px;color:white;line-height:1.2;margin-bottom:6px;}
+.twin-trait{font-size:14px;color:rgba(255,255,255,.55);line-height:1.7;}
+.twin-trait strong{color:rgba(255,255,255,.85);font-weight:600;}
+
+/* ── CHAPTERS ── */
+.chapter-card{background:var(--white);border-radius:24px;border:1px solid rgba(11,31,58,.07);box-shadow:0 2px 16px rgba(11,31,58,.04),0 1px 3px rgba(11,31,58,.05);margin-top:12px;overflow:hidden;border-left:3px solid var(--c-dim);}
+.chapter-head{display:flex;align-items:center;gap:10px;padding:20px 24px 0;}
+.chapter-num{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px;flex-shrink:0;}
+.chapter-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 12px 4px 8px;border-radius:50px;font-size:11px;font-weight:600;color:var(--ink);border:1px solid var(--border);background:rgba(11,31,58,.02);}
+.chapter-score-tag{margin-left:auto;font-size:10px;font-family:'DM Mono',monospace;color:var(--muted);flex-shrink:0;}
 .chapter-body{padding:16px 24px 24px;}
-.chapter-callout{
-  font-family:'Fraunces',serif;font-style:italic;font-weight:600;
-  font-size:15.5px;color:var(--dark);line-height:1.6;
-  background:var(--callout-bg,rgba(244,63,143,.04));
-  border-left:3px solid var(--c-dim);
-  border-radius:0 10px 10px 0;
-  padding:14px 16px;margin-bottom:18px;
-}
-.chapter-text p{
-  font-size:14.5px;line-height:1.88;color:#374151;margin-bottom:14px;
-}
+.chapter-callout{font-family:'Fraunces',serif;font-style:italic;font-weight:600;font-size:15.5px;color:var(--dark);line-height:1.6;background:var(--callout-bg,rgba(244,63,143,.04));border-left:3px solid var(--c-dim);border-radius:0 10px 10px 0;padding:14px 16px;margin-bottom:18px;}
+.chapter-text p{font-size:14.5px;line-height:1.88;color:#374151;margin-bottom:14px;}
 .chapter-text p:last-child{margin-bottom:0;}
 .chapter-text strong{color:var(--dark);font-weight:600;}
 .chapter-text em{color:var(--blue);font-style:italic;}
-.chapter-exercise{
-  margin-top:20px;padding:16px 18px;
-  background:rgba(11,31,58,.025);
-  border:1px solid rgba(11,31,58,.07);
-  border-radius:14px;
-}
-.exercise-label{
-  font-size:8px;letter-spacing:2.5px;text-transform:uppercase;font-family:'DM Mono',monospace;
-  color:var(--blue);margin-bottom:8px;
-}
+.chapter-exercise{margin-top:20px;padding:16px 18px;background:rgba(11,31,58,.025);border:1px solid rgba(11,31,58,.07);border-radius:14px;}
+.exercise-label{font-size:8px;letter-spacing:2.5px;text-transform:uppercase;font-family:'DM Mono',monospace;color:var(--blue);margin-bottom:8px;}
 .exercise-text{font-size:13.5px;line-height:1.72;color:#374151;}
 .exercise-text strong{font-weight:600;color:var(--dark);}
 
 /* ── SIGNATURE ── */
-.signature-card{
-  background:linear-gradient(135deg,#060d1a 0%,#0d2040 50%,#060d1a 100%);
-  border-radius:24px;padding:36px 32px;margin-top:12px;
-  position:relative;overflow:hidden;
-  border:1px solid rgba(255,255,255,.04);
-}
-.signature-card::before{
-  content:'';position:absolute;top:-60px;right:-60px;width:220px;height:220px;
-  border-radius:50%;background:radial-gradient(circle,rgba(244,63,143,.2),transparent 65%);pointer-events:none;
-}
-.signature-card::after{
-  content:'';position:absolute;bottom:-60px;left:-60px;width:180px;height:180px;
-  border-radius:50%;background:radial-gradient(circle,rgba(29,110,245,.18),transparent 65%);pointer-events:none;
-}
-.sig-eyebrow{
-  font-size:9px;letter-spacing:3px;text-transform:uppercase;font-family:'DM Mono',monospace;
-  color:var(--pink);margin-bottom:18px;position:relative;
-}
-.sig-body p{
-  font-size:15.5px;line-height:1.9;color:rgba(255,255,255,.72);margin-bottom:14px;position:relative;
-}
+.signature-card{background:linear-gradient(135deg,#060d1a 0%,#0d2040 50%,#060d1a 100%);border-radius:24px;padding:36px 32px;margin-top:12px;position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.04);}
+.signature-card::before{content:'';position:absolute;top:-60px;right:-60px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(244,63,143,.2),transparent 65%);pointer-events:none;}
+.signature-card::after{content:'';position:absolute;bottom:-60px;left:-60px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(29,110,245,.18),transparent 65%);pointer-events:none;}
+.sig-eyebrow{font-size:9px;letter-spacing:3px;text-transform:uppercase;font-family:'DM Mono',monospace;color:var(--pink);margin-bottom:18px;position:relative;}
+.sig-body p{font-size:15.5px;line-height:1.9;color:rgba(255,255,255,.72);margin-bottom:14px;position:relative;}
 .sig-body p:last-child{margin-bottom:0;}
 .sig-body strong{color:rgba(255,255,255,.97);font-weight:600;}
 
 /* ── REFS ── */
 .refs-card{padding:22px 24px;}
 .refs-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px;}
-.ref-chip{
-  font-size:9px;font-family:'DM Mono',monospace;color:var(--muted);
-  background:rgba(11,31,58,.03);padding:5px 11px;border-radius:50px;
-  border:1px solid rgba(11,31,58,.08);letter-spacing:.3px;
-}
+.ref-chip{font-size:9px;font-family:'DM Mono',monospace;color:var(--muted);background:rgba(11,31,58,.03);padding:5px 11px;border-radius:50px;border:1px solid rgba(11,31,58,.08);}
 
-/* ── SHARE CARD ── */
-.share-card{
-  padding:32px 28px;margin-top:12px;
-  background:linear-gradient(135deg,rgba(244,63,143,.04) 0%,rgba(255,255,255,1) 60%);
-  text-align:center;
-}
-.share-title{
-  font-family:'Fraunces',serif;font-style:italic;font-weight:700;
-  font-size:22px;color:var(--dark);margin-bottom:6px;
-}
-.share-sub{font-size:13px;color:var(--muted);margin-bottom:6px;}
-.share-social{font-size:12px;color:rgba(244,63,143,.7);font-family:'DM Mono',monospace;letter-spacing:.3px;margin-bottom:22px;}
-.share-btn{
-  display:inline-flex;align-items:center;gap:9px;
-  background:var(--dark);color:white;border:none;
-  padding:13px 26px;border-radius:50px;font-size:13px;font-weight:600;
-  cursor:pointer;font-family:'DM Sans',sans-serif;
-  transition:transform .2s,box-shadow .2s;
-  box-shadow:0 4px 14px rgba(11,31,58,.18);
-}
+/* ── SHARE ── */
+.share-card{padding:32px 28px;margin-top:12px;background:linear-gradient(135deg,rgba(244,63,143,.04) 0%,var(--white) 60%);text-align:center;}
+.share-title{font-family:'Fraunces',serif;font-style:italic;font-weight:700;font-size:22px;color:var(--dark);margin-bottom:6px;}
+.share-sub{font-size:13px;color:var(--muted);margin-bottom:4px;}
+.share-social{font-size:11px;color:rgba(244,63,143,.6);font-family:'DM Mono',monospace;margin-bottom:22px;}
+.share-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.share-btn{display:inline-flex;align-items:center;gap:8px;background:var(--dark);color:white;border:none;padding:13px 22px;border-radius:50px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 14px rgba(11,31,58,.18);}
 .share-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(11,31,58,.24);}
+.share-btn.dl{background:linear-gradient(135deg,#f43f8f,#e0287d);box-shadow:0 4px 14px rgba(244,63,143,.3);}
+.share-btn.dl:hover{box-shadow:0 8px 24px rgba(244,63,143,.4);}
 
 /* ── UPSELL ── */
-.upsell-card{
-  background:linear-gradient(160deg,#0a1828 0%,#0e2540 100%);
-  border-radius:24px;padding:32px 28px;margin-top:12px;
-  text-align:center;position:relative;overflow:hidden;
-  border:1px solid rgba(255,255,255,.04);
-}
-.upsell-card::before{
-  content:'';position:absolute;top:-50px;right:-50px;width:180px;height:180px;
-  border-radius:50%;background:radial-gradient(circle,rgba(244,63,143,.15),transparent 70%);pointer-events:none;
-}
+.upsell-card{background:linear-gradient(160deg,#0a1828 0%,#0e2540 100%);border-radius:24px;padding:32px 28px;margin-top:12px;text-align:center;position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.04);}
+.upsell-card::before{content:'';position:absolute;top:-50px;right:-50px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(244,63,143,.15),transparent 70%);}
 .upsell-eyebrow{font-size:9px;letter-spacing:3px;text-transform:uppercase;font-family:'DM Mono',monospace;color:var(--pink);margin-bottom:10px;}
 .upsell-title{font-family:'Fraunces',serif;font-style:italic;font-weight:700;font-size:21px;color:white;line-height:1.3;margin-bottom:8px;}
 .upsell-sub{font-size:13px;color:rgba(255,255,255,.4);margin-bottom:22px;line-height:1.65;}
-.upsell-cta{
-  display:inline-block;background:linear-gradient(135deg,#f43f8f,#e0287d);
-  color:white;text-decoration:none;padding:14px 30px;border-radius:12px;
-  font-size:14px;font-weight:800;box-shadow:0 4px 20px rgba(244,63,143,.32);
-  transition:all .2s;
-}
+.upsell-cta{display:inline-block;background:linear-gradient(135deg,#f43f8f,#e0287d);color:white;text-decoration:none;padding:14px 30px;border-radius:12px;font-size:14px;font-weight:800;box-shadow:0 4px 20px rgba(244,63,143,.32);transition:all .2s;}
 .upsell-cta:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(244,63,143,.44);}
 
 /* ── FOOTER ── */
-.trust-footer{
-  text-align:center;padding:40px 16px 0;font-size:11px;color:var(--muted);
-  font-weight:400;line-height:2;font-family:'DM Mono',monospace;letter-spacing:.2px;
-}
+.trust-footer{text-align:center;padding:40px 16px 0;font-size:11px;color:var(--muted);font-weight:400;line-height:2;font-family:'DM Mono',monospace;}
 .trust-footer a{color:var(--muted);text-decoration:none;}
 
 /* ── LOADING / ERROR ── */
-.loading-wrap{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  min-height:80vh;text-align:center;padding:40px 24px;
-}
+.loading-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80vh;text-align:center;padding:40px 24px;}
 .loading-emoji{font-size:44px;margin-bottom:18px;animation:float 2.5s ease-in-out infinite;}
 .loading-txt{font-size:16px;font-weight:600;color:var(--dark);margin-bottom:6px;}
 .loading-sub{font-size:13px;color:var(--muted);}
 .error-wrap{text-align:center;padding:80px 24px;}
 .error-txt{font-size:16px;font-weight:600;color:var(--dark);margin-bottom:6px;}
 .error-sub{font-size:13px;color:var(--muted);}
+
+/* ── CONFETTI ── */
+#confetti-canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:999;}
 
 /* ── ANIMATIONS ── */
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
@@ -336,13 +229,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
 .fade-in-2{animation:fadeUp .5s ease .1s both;}
 .fade-in-3{animation:fadeUp .5s ease .2s both;}
 .fade-in-4{animation:fadeUp .5s ease .3s both;}
-
-/* ── SECTION SPACING ── */
-#dim-summary-wrap,#radar-wrap,#iq-context-wrap,#chapters-wrap,
-#signature-wrap,#refs-wrap,#share-wrap,#upsell-wrap{margin-top:0;}
 </style>
 </head>
 <body>
+
+<div id="read-progress"></div>
 
 <div class="report-header">
   <a href="/" class="report-header-brand">🧠 Pet IQ Lab</a>
@@ -375,8 +266,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
   <div id="hero-wrap"></div>
   <div class="page-wrap">
     <div id="dim-summary-wrap"></div>
-    <div id="radar-wrap"></div>
     <div id="iq-context-wrap"></div>
+    <div id="priority-wrap"></div>
+    <div id="scenarios-wrap"></div>
+    <div id="twin-wrap"></div>
     <div id="chapters-wrap"></div>
     <div id="signature-wrap"></div>
     <div id="refs-wrap"></div>
@@ -409,12 +302,34 @@ function probit(p){
 function percentileToIQ(pct){ return Math.round(100+15*probit(Math.max(1,Math.min(99,pct))/100)); }
 
 const DIMS = [
-  { key:'memory',       label:'Memory & Learning',  icon:'🧠', color:'#818cf8', max:6 },
-  { key:'social',       label:'Social Intelligence', icon:'👁️', color:'#f472b6', max:9 },
-  { key:'problem',      label:'Problem Solving',     icon:'🔧', color:'#fb923c', max:9 },
-  { key:'selfcontrol',  label:'Self-Control',        icon:'🧘', color:'#4ade80', max:6 },
-  { key:'adaptability', label:'Adaptability',        icon:'🌍', color:'#facc15', max:6 },
+  { key:'memory',       label:'Memory & Learning',   icon:'🧠', color:'#818cf8', max:6 },
+  { key:'social',       label:'Social Intelligence',  icon:'👁️', color:'#f472b6', max:9 },
+  { key:'problem',      label:'Problem Solving',      icon:'🔧', color:'#fb923c', max:9 },
+  { key:'selfcontrol',  label:'Self-Control',         icon:'🧘', color:'#4ade80', max:6 },
+  { key:'adaptability', label:'Adaptability',         icon:'🌍', color:'#facc15', max:6 },
 ];
+
+// Breed dimension profiles (0–1 expected percentages)
+const BREED_PROFILES = {
+  'Border Collie':       {memory:.88,social:.76,problem:.95,selfcontrol:.80,adaptability:.86},
+  'Golden Retriever':    {memory:.75,social:.92,problem:.70,selfcontrol:.76,adaptability:.80},
+  'German Shepherd':     {memory:.82,social:.72,problem:.82,selfcontrol:.78,adaptability:.76},
+  'Labrador':            {memory:.72,social:.88,problem:.68,selfcontrol:.66,adaptability:.76},
+  'Poodle':              {memory:.86,social:.80,problem:.86,selfcontrol:.76,adaptability:.82},
+  'Australian Shepherd': {memory:.82,social:.76,problem:.86,selfcontrol:.76,adaptability:.82},
+  'Husky':               {memory:.66,social:.58,problem:.72,selfcontrol:.44,adaptability:.62},
+  'Jack Russell':        {memory:.72,social:.64,problem:.82,selfcontrol:.38,adaptability:.72},
+  'Beagle':              {memory:.66,social:.72,problem:.62,selfcontrol:.44,adaptability:.56},
+  'Bulldog':             {memory:.50,social:.66,problem:.44,selfcontrol:.68,adaptability:.44},
+  'Chihuahua':           {memory:.62,social:.52,problem:.56,selfcontrol:.40,adaptability:.44},
+  'Pug':                 {memory:.54,social:.72,problem:.44,selfcontrol:.56,adaptability:.50},
+  'Dachshund':           {memory:.66,social:.60,problem:.66,selfcontrol:.38,adaptability:.54},
+  'Shih Tzu':            {memory:.54,social:.66,problem:.50,selfcontrol:.60,adaptability:.50},
+  'Maine Coon':          {memory:.80,social:.78,problem:.76,selfcontrol:.70,adaptability:.72},
+  'Siamese':             {memory:.72,social:.86,problem:.70,selfcontrol:.50,adaptability:.62},
+  'Persian':             {memory:.58,social:.60,problem:.52,selfcontrol:.72,adaptability:.50},
+  'Bengal':              {memory:.78,social:.66,problem:.82,selfcontrol:.44,adaptability:.76},
+};
 
 function parseSections(content) {
   const lines = content.split('\n');
@@ -459,32 +374,23 @@ function renderBody(text) {
 
 // ── IQ GAUGE SVG ──
 function buildGaugeSVG(iqScore) {
-  const W=280, H=160, cx=140, cy=148, R=108;
-  const perim = Math.PI * R; // semicircle arc length
-  const minIQ=65, maxIQ=135;
-  const t = Math.max(0,Math.min(1,(iqScore-minIQ)/(maxIQ-minIQ)));
-  const dashOffset = perim*(1-t);
-
-  // polar helper (0=right, angle increases CCW for SVG)
-  function pt(angle, r){ return { x: cx + Math.cos(angle)*r, y: cy - Math.sin(angle)*r }; }
-  function arcD(r){ const s=pt(Math.PI,r),e=pt(0,r); return `M${s.x},${s.y} A${r},${r} 0 0,1 ${e.x},${e.y}`; }
-
-  // Tick angles for IQ values 70,85,100,115,130
+  const W=280,H=160,cx=140,cy=148,R=108;
+  const perim=Math.PI*R;
+  const t=Math.max(0,Math.min(1,(iqScore-65)/70));
+  const dashOffset=perim*(1-t);
+  function pt(a,r){return{x:cx+Math.cos(a)*r,y:cy-Math.sin(a)*r};}
+  function arcD(r){const s=pt(Math.PI,r),e=pt(0,r);return `M${s.x},${s.y} A${r},${r} 0 0,1 ${e.x},${e.y}`;}
   const ticks=[70,85,100,115,130].map(v=>{
-    const ta=Math.PI*(1-((v-minIQ)/(maxIQ-minIQ)));
-    const inner=pt(ta,R-9), outer=pt(ta,R+9);
-    return `<line x1="${inner.x}" y1="${inner.y}" x2="${outer.x}" y2="${outer.y}" class="gauge-tick"/>`;
+    const ta=Math.PI*(1-((v-65)/70));
+    const i=pt(ta,R-9),o=pt(ta,R+9);
+    return `<line x1="${i.x}" y1="${i.y}" x2="${o.x}" y2="${o.y}" class="gauge-tick"/>`;
   }).join('');
-
-  const tickLabels=[70,100,130].map(v=>{
-    const ta=Math.PI*(1-((v-minIQ)/(maxIQ-minIQ)));
+  const tlabels=[70,100,130].map(v=>{
+    const ta=Math.PI*(1-((v-65)/70));
     const lp=pt(ta,R+22);
     return `<text x="${lp.x}" y="${lp.y+3}" class="gauge-scale-label">${v}</text>`;
   }).join('');
-
-  // gradient id unique
   const gid='g'+Math.random().toString(36).slice(2,7);
-
   return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" class="hero-gauge-svg">
   <defs>
     <linearGradient id="${gid}" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -496,145 +402,286 @@ function buildGaugeSVG(iqScore) {
   <path d="${arcD(R)}" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="14" stroke-linecap="round"/>
   <path d="${arcD(R)}" fill="none" stroke="url(#${gid})" stroke-width="14" stroke-linecap="round"
     class="gauge-arc" style="--dash-total:${perim.toFixed(2)};--dash-offset:${dashOffset.toFixed(2)}"/>
-  ${ticks}
-  ${tickLabels}
-  <text x="${cx}" y="${cy-26}" class="gauge-iq-num">${iqScore}</text>
+  ${ticks}${tlabels}
+  <text id="gaugeIQNum" x="${cx}" y="${cy-26}" class="gauge-iq-num">0</text>
   <text x="${cx}" y="${cy-6}" class="gauge-iq-label">PET IQ</text>
 </svg>`;
 }
 
+// ── COUNTER ANIMATION ──
+function animateCounter(el, target, duration=1100) {
+  if (!el) return;
+  const start=Date.now();
+  const tick=()=>{
+    const p=Math.min((Date.now()-start)/duration,1);
+    const ease=1-Math.pow(1-p,3);
+    el.textContent=Math.round(ease*target);
+    if(p<1) requestAnimationFrame(tick);
+    else el.textContent=target;
+  };
+  requestAnimationFrame(tick);
+}
+
 // ── RADAR CHART ──
 function drawRadar(canvas, dimData) {
-  const dpr = window.devicePixelRatio||1;
-  const size = canvas.offsetWidth||260;
-  canvas.width  = size*dpr;
-  canvas.height = size*dpr;
-  canvas.style.width  = size+'px';
-  canvas.style.height = size+'px';
-  const ctx = canvas.getContext('2d');
+  const dpr=window.devicePixelRatio||1;
+  const size=canvas.offsetWidth||240;
+  canvas.width=size*dpr; canvas.height=size*dpr;
+  canvas.style.width=size+'px'; canvas.style.height=size+'px';
+  const ctx=canvas.getContext('2d');
   ctx.scale(dpr,dpr);
-
-  const W=size, H=size, cx=W/2, cy=H/2+4, R=W/2-42, N=dimData.length;
-
-  function pt(i,r){ const a=(i/N)*Math.PI*2-Math.PI/2; return {x:cx+Math.cos(a)*r,y:cy+Math.sin(a)*r}; }
-
-  // Grid rings
+  const W=size,H=size,cx=W/2,cy=H/2+4,R=W/2-42,N=dimData.length;
+  function pt(i,r){const a=(i/N)*Math.PI*2-Math.PI/2;return{x:cx+Math.cos(a)*r,y:cy+Math.sin(a)*r};}
   [.25,.5,.75,1].forEach(f=>{
     ctx.beginPath();
     for(let i=0;i<N;i++){const p=pt(i,R*f);i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y);}
-    ctx.closePath();
-    ctx.strokeStyle=f===1?'rgba(11,31,58,.1)':'rgba(11,31,58,.05)';
-    ctx.lineWidth=1;ctx.stroke();
+    ctx.closePath();ctx.strokeStyle=f===1?'rgba(11,31,58,.1)':'rgba(11,31,58,.05)';ctx.lineWidth=1;ctx.stroke();
   });
-
-  // Axes
   for(let i=0;i<N;i++){
     const p=pt(i,R);
     ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(p.x,p.y);
     ctx.strokeStyle='rgba(11,31,58,.07)';ctx.lineWidth=1;ctx.stroke();
   }
-
-  // Fill polygon
   ctx.beginPath();
   dimData.forEach((d,i)=>{const v=d.raw/d.max,p=pt(i,R*v);i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y);});
   ctx.closePath();
-  const grad=ctx.createRadialGradient(cx,cy,0,cx,cy,R);
-  grad.addColorStop(0,'rgba(244,63,143,.25)');
-  grad.addColorStop(1,'rgba(129,140,248,.08)');
-  ctx.fillStyle=grad;ctx.fill();
+  const gr=ctx.createRadialGradient(cx,cy,0,cx,cy,R);
+  gr.addColorStop(0,'rgba(244,63,143,.22)');gr.addColorStop(1,'rgba(129,140,248,.06)');
+  ctx.fillStyle=gr;ctx.fill();
   ctx.strokeStyle='#f43f8f';ctx.lineWidth=2.5;ctx.stroke();
-
-  // Points — per-dim color
   dimData.forEach((d,i)=>{
     const v=d.raw/d.max,p=pt(i,R*v);
     ctx.beginPath();ctx.arc(p.x,p.y,5,0,Math.PI*2);
-    ctx.fillStyle=d.color;ctx.fill();
-    ctx.strokeStyle='white';ctx.lineWidth=1.5;ctx.stroke();
+    ctx.fillStyle=d.color;ctx.fill();ctx.strokeStyle='white';ctx.lineWidth=1.5;ctx.stroke();
   });
-
-  // Labels
   dimData.forEach((d,i)=>{
     const lp=pt(i,R+28);
-    ctx.font=`14px serif`;ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText(d.icon,lp.x,lp.y);
+    ctx.font='14px serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(d.icon,lp.x,lp.y);
   });
 }
 
 // ── BELL CURVE ──
 function drawBellCurve(canvas, iqScore, petName) {
   const dpr=window.devicePixelRatio||1;
-  const W=canvas.offsetWidth||580, H=110;
-  canvas.width=W*dpr;canvas.height=H*dpr;
-  canvas.style.height=H+'px';
-  const ctx=canvas.getContext('2d');
-  ctx.scale(dpr,dpr);
-
-  const mu=100,sigma=15;
-  const minX=55,maxX=145;
+  const W=canvas.offsetWidth||580,H=110;
+  canvas.width=W*dpr;canvas.height=H*dpr;canvas.style.height=H+'px';
+  const ctx=canvas.getContext('2d');ctx.scale(dpr,dpr);
+  const mu=100,sigma=15,minX=55,maxX=145;
   const pad={l:12,r:12,t:18,b:28};
-  const plotW=W-pad.l-pad.r, plotH=H-pad.t-pad.b;
-
+  const plotW=W-pad.l-pad.r,plotH=H-pad.t-pad.b;
   function gauss(x){return Math.exp(-.5*((x-mu)/sigma)**2)/(sigma*Math.sqrt(2*Math.PI));}
-  function xToCanvas(x){return pad.l+((x-minX)/(maxX-minX))*plotW;}
-  const peakY=gauss(mu);
-  function yToCanvas(y){return pad.t+plotH*(1-(y/peakY)*0.88);}
-
-  // Zone fills
-  const zones=[
-    {from:minX,to:85,color:'rgba(239,68,68,.1)'},
-    {from:85,to:100,color:'rgba(234,179,8,.09)'},
-    {from:100,to:115,color:'rgba(34,197,94,.1)'},
-    {from:115,to:maxX,color:'rgba(29,110,245,.1)'},
-  ];
-  zones.forEach(z=>{
-    ctx.beginPath();
-    const steps=60;
-    const step=(z.to-z.from)/steps;
-    ctx.moveTo(xToCanvas(z.from),yToCanvas(0));
-    for(let i=0;i<=steps;i++){const x=z.from+i*step;ctx.lineTo(xToCanvas(x),yToCanvas(gauss(x)));}
-    ctx.lineTo(xToCanvas(z.to),yToCanvas(0));
-    ctx.closePath();ctx.fillStyle=z.color;ctx.fill();
+  function xC(x){return pad.l+((x-minX)/(maxX-minX))*plotW;}
+  const pk=gauss(mu);
+  function yC(y){return pad.t+plotH*(1-(y/pk)*0.88);}
+  [{from:minX,to:85,c:'rgba(239,68,68,.1)'},{from:85,to:100,c:'rgba(234,179,8,.09)'},{from:100,to:115,c:'rgba(34,197,94,.1)'},{from:115,to:maxX,c:'rgba(29,110,245,.1)'}].forEach(z=>{
+    ctx.beginPath();const st=60,sp=(z.to-z.from)/st;
+    ctx.moveTo(xC(z.from),yC(0));
+    for(let i=0;i<=st;i++){const x=z.from+i*sp;ctx.lineTo(xC(x),yC(gauss(x)));}
+    ctx.lineTo(xC(z.to),yC(0));ctx.closePath();ctx.fillStyle=z.c;ctx.fill();
   });
-
-  // Curve
   ctx.beginPath();
-  const steps=200,step=(maxX-minX)/steps;
-  for(let i=0;i<=steps;i++){
-    const x=minX+i*step,y=gauss(x);
-    i===0?ctx.moveTo(xToCanvas(x),yToCanvas(y)):ctx.lineTo(xToCanvas(x),yToCanvas(y));
-  }
+  const st=200,sp=(maxX-minX)/st;
+  for(let i=0;i<=st;i++){const x=minX+i*sp;i===0?ctx.moveTo(xC(x),yC(gauss(x))):ctx.lineTo(xC(x),yC(gauss(x)));}
   ctx.strokeStyle='rgba(11,31,58,.18)';ctx.lineWidth=1.5;ctx.stroke();
-
-  // Baseline
-  ctx.beginPath();
-  ctx.moveTo(pad.l,pad.t+plotH);ctx.lineTo(W-pad.r,pad.t+plotH);
-  ctx.strokeStyle='rgba(11,31,58,.1)';ctx.lineWidth=1;ctx.stroke();
-
-  // Axis labels
+  ctx.beginPath();ctx.moveTo(pad.l,pad.t+plotH);ctx.lineTo(W-pad.r,pad.t+plotH);ctx.strokeStyle='rgba(11,31,58,.1)';ctx.lineWidth=1;ctx.stroke();
   [70,85,100,115,130].forEach(v=>{
-    const x=xToCanvas(v);
-    ctx.font=`${10*dpr/dpr}px 'DM Mono',monospace`;ctx.fillStyle='rgba(11,31,58,.35)';
-    ctx.textAlign='center';ctx.textBaseline='top';
-    ctx.fillText(v,x,pad.t+plotH+5);
+    ctx.font='10px sans-serif';ctx.fillStyle='rgba(11,31,58,.35)';ctx.textAlign='center';ctx.textBaseline='top';ctx.fillText(v,xC(v),pad.t+plotH+5);
   });
+  const mx=xC(Math.max(minX+2,Math.min(maxX-2,iqScore)));
+  ctx.beginPath();ctx.setLineDash([3,3]);ctx.moveTo(mx,pad.t+plotH);ctx.lineTo(mx,pad.t+4);ctx.strokeStyle='rgba(244,63,143,.5)';ctx.lineWidth=1.5;ctx.stroke();ctx.setLineDash([]);
+  ctx.beginPath();ctx.arc(mx,pad.t+plotH,5,0,Math.PI*2);ctx.fillStyle='#f43f8f';ctx.fill();ctx.strokeStyle='white';ctx.lineWidth=2;ctx.stroke();
+  const lx=Math.max(30,Math.min(W-30,mx));
+  ctx.font='bold 10px sans-serif';ctx.fillStyle='#f43f8f';ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText(petName,lx,pad.t+1);
+}
 
-  // Pet marker
-  const mx=xToCanvas(Math.max(minX+2,Math.min(maxX-2,iqScore)));
-  ctx.beginPath();
-  ctx.setLineDash([3,3]);
-  ctx.moveTo(mx,pad.t+plotH);ctx.lineTo(mx,pad.t+4);
-  ctx.strokeStyle='rgba(244,63,143,.5)';ctx.lineWidth=1.5;ctx.stroke();
-  ctx.setLineDash([]);
+// ── CONFETTI ──
+function launchConfetti() {
+  const c=document.createElement('canvas');
+  c.id='confetti-canvas';
+  document.body.appendChild(c);
+  c.width=window.innerWidth;c.height=window.innerHeight;
+  const ctx=c.getContext('2d');
+  const colors=['#f43f8f','#818cf8','#fb923c','#4ade80','#facc15','#f472b6','#60a5fa'];
+  const ps=Array.from({length:90},()=>({
+    x:Math.random()*c.width,y:-20,
+    vx:(Math.random()-.5)*4,vy:Math.random()*3+2,
+    color:colors[Math.floor(Math.random()*colors.length)],
+    size:Math.random()*8+4,rot:Math.random()*360,vr:(Math.random()-.5)*6,
+  }));
+  let frame=0;
+  function tick(){
+    ctx.clearRect(0,0,c.width,c.height);
+    ps.forEach(p=>{
+      p.x+=p.vx;p.y+=p.vy;p.vy+=.06;p.rot+=p.vr;
+      ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot*Math.PI/180);
+      ctx.fillStyle=p.color;ctx.globalAlpha=Math.max(0,1-frame/130);
+      ctx.fillRect(-p.size/2,-p.size/4,p.size,p.size/2);ctx.restore();
+    });
+    frame++;
+    if(frame<160) requestAnimationFrame(tick); else c.remove();
+  }
+  tick();
+}
 
-  ctx.beginPath();ctx.arc(mx,pad.t+plotH,5,0,Math.PI*2);
-  ctx.fillStyle='#f43f8f';ctx.fill();
-  ctx.strokeStyle='white';ctx.lineWidth=2;ctx.stroke();
+// ── DAY-TO-DAY SCENARIOS ──
+function getScenarios(name, ds) {
+  const m=ds.memory/6,s=ds.social/9,pr=ds.problem/9,c=ds.selfcontrol/6,a=ds.adaptability/6;
+  return [
+    {
+      emoji:'🏠',ctx:'At home',
+      text: c<.35
+        ? `Expect impulsive moments — <strong>${name}</strong> will go for the treat before you say "okay." But watch the recovery speed: high-drive animals often redirect faster than calmer counterparts.`
+        : c>.7
+        ? `<strong>${name}</strong> is likely a composed home presence. The self-control scores suggest they can hold a wait command and respect boundaries — a genuinely rare quality.`
+        : `<strong>${name}</strong> is reliably calm at home in familiar routines, but will test limits when understimulated. Predictable schedules reduce most friction.`,
+    },
+    {
+      emoji:'🌳',ctx:'At the park',
+      text: a<.35
+        ? `New dogs or sudden noises may give <strong>${name}</strong> pause. Don't rush introductions — give them a moment to read the situation on their own terms. Consistency in location helps.`
+        : s>.7
+        ? `<strong>${name}</strong> likely thrives in social environments. High social scores suggest they read signals well and rarely misinterpret play for aggression.`
+        : `<strong>${name}</strong> does fine in familiar outdoor contexts but may prefer a consistent route over chaotic off-leash areas.`,
+    },
+    {
+      emoji:'🎓',ctx:'During training',
+      text: m>.7 && pr>.7
+        ? `<strong>${name}</strong> should pick up new commands in under 10 repetitions. The real challenge isn't learning — it's keeping them engaged. Vary exercises frequently or they'll start inventing their own games.`
+        : m>.5
+        ? `<strong>${name}</strong> learns reliably with repetition across different contexts. A command learned in the kitchen may need refreshing in the garden.`
+        : `<strong>${name}</strong> benefits from shorter, more frequent sessions (3 min × 3 per day) over one long block. High-value treats move the needle faster than pure repetition.`,
+    },
+  ];
+}
 
-  // Pet name label
-  const labelX=Math.max(30,Math.min(W-30,mx));
-  ctx.font=`bold 10px 'DM Mono',monospace`;
-  ctx.fillStyle='#f43f8f';ctx.textAlign='center';ctx.textBaseline='bottom';
-  ctx.fillText(petName,labelX,pad.t+2);
+// ── COGNITIVE TWIN ──
+function getCognitiveTwin(ds, petType) {
+  const m=ds.memory/6,s=ds.social/9,pr=ds.problem/9,c=ds.selfcontrol/6,a=ds.adaptability/6;
+  const sorted=[{k:'memory',v:m},{k:'social',v:s},{k:'problem',v:pr},{k:'selfcontrol',v:c},{k:'adaptability',v:a}]
+    .sort((a,b)=>b.v-a.v);
+  const top1=sorted[0].k, top2=sorted[1].k, bot=sorted[4].k;
+  if(petType==='cat'){
+    if(pr>.7&&c>.6) return {emoji:'🦁',breed:'Maine Coon',trait:'methodical and deliberate — the <strong>problem-solver</strong> of the cat world'};
+    if(s>.75) return {emoji:'😸',breed:'Siamese',trait:'a <strong>relentless communicator</strong> who expects full reciprocity from their human'};
+    if(c>.65) return {emoji:'🧸',breed:'British Shorthair',trait:'composed and self-possessed — they run on <strong>internal logic</strong>, not approval'};
+    return {emoji:'🌲',breed:'Norwegian Forest Cat',trait:'<strong>independent and unhurried</strong> — doing things on their own schedule, always'};
+  }
+  if(top1==='problem'&&m>.65) return {emoji:'⚡',breed:'Border Collie',trait:'a <strong>strategic thinker</strong> with near-photographic recall for patterns and sequences'};
+  if(top1==='social'&&top2==='adaptability') return {emoji:'☀️',breed:'Golden Retriever',trait:'emotionally tuned-in and <strong>endlessly adaptable</strong> — the gold standard of social cognition'};
+  if(top1==='memory'&&top2==='selfcontrol') return {emoji:'🛡️',breed:'German Shepherd',trait:'a <strong>disciplined learner</strong> with a long memory and strong work ethic'};
+  if(bot==='selfcontrol'&&pr>.6) return {emoji:'🔥',breed:'Jack Russell Terrier',trait:'<strong>brilliant but filter-free</strong> — zero delay between thought and action'};
+  if(c>.72&&a<.4) return {emoji:'🍂',breed:'Basset Hound',trait:'<strong>steady and deliberate</strong> — moves at their own pace, and that pace is non-negotiable'};
+  if(s<.35&&pr>.6) return {emoji:'🦊',breed:'Shiba Inu',trait:'a <strong>fiercely independent problem-solver</strong> who needs no audience and wants no manager'};
+  if(top1==='adaptability'&&s>.6) return {emoji:'🌊',breed:'Labrador',trait:'<strong>socially fluent and situationally flexible</strong> — the most reliable all-terrain personality'};
+  return {emoji:'🧬',breed:'a uniquely mixed profile',trait:'a <strong>genuinely rare cognitive fingerprint</strong> that doesn\'t map cleanly to any single breed archetype'};
+}
+
+// ── PRIORITY #1 ──
+function getPriority(name, ds) {
+  const ranked=DIMS.map(d=>({...d,pct:(ds[d.key]||0)/d.max})).sort((a,b)=>a.pct-b.pct);
+  const w=ranked[0];
+  const actions={
+    memory:`Play the <strong>cup game</strong> daily for 5 minutes — hide a treat under one of 3 cups and slowly increase the delay before letting ${name} choose. Research by Fiset et al. shows this directly trains working memory retention and encodes spatial episodic memory.`,
+    social:`Start <strong>"watch me"</strong> training: reward ${name} every time they make unprompted eye contact. This builds social attunement from the ground up and directly addresses the low social intelligence score.`,
+    problem:`Introduce a <strong>puzzle feeder</strong> this week. Start easy, then tape one compartment shut to force a new approach. Frustration tolerance is the core skill — Miklósi's detour tasks show results in 5 days.`,
+    selfcontrol:`Run the <strong>"it's yer choice"</strong> protocol: hold a treat in a closed fist, only open it when ${name} voluntarily backs away. 3 minutes a day. Bray et al. (2014) found measurable inhibitory control gains within 7 sessions.`,
+    adaptability:`Introduce one <strong>novel stimulus per day</strong> this week — a bag on the floor, a new walking route, a brief encounter with a stranger. Keep each exposure short and paired with high-value reward. Coren's novelty habituation research shows rapid adaptation curves with this method.`,
+  };
+  return {dim:w, action:actions[w.key]};
+}
+
+// ── INSTAGRAM SHARE CARD ──
+async function downloadShareCard(petName, profileEmoji, profileName, iqScore, percentile, dimScores, petType) {
+  const W=1080,H=1080;
+  const canvas=document.createElement('canvas');
+  canvas.width=W;canvas.height=H;
+  const ctx=canvas.getContext('2d');
+  if(!ctx.roundRect){
+    ctx.roundRect=function(x,y,w,h,r){
+      this.moveTo(x+r,y);this.lineTo(x+w-r,y);this.quadraticCurveTo(x+w,y,x+w,y+r);
+      this.lineTo(x+w,y+h-r);this.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+      this.lineTo(x+r,y+h);this.quadraticCurveTo(x,y+h,x,y+h-r);
+      this.lineTo(x,y+r);this.quadraticCurveTo(x,y,x+r,y);this.closePath();
+    };
+  }
+  // Background
+  const bg=ctx.createLinearGradient(0,0,W,H);bg.addColorStop(0,'#060d1a');bg.addColorStop(1,'#0b1f3a');
+  ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+  // Dot grid
+  ctx.fillStyle='rgba(255,255,255,.035)';
+  for(let x=28;x<W;x+=28)for(let y=28;y<H;y+=28){ctx.beginPath();ctx.arc(x,y,1,0,Math.PI*2);ctx.fill();}
+  // Glows
+  const g1=ctx.createRadialGradient(200,200,0,200,200,450);
+  g1.addColorStop(0,'rgba(244,63,143,.2)');g1.addColorStop(1,'rgba(244,63,143,0)');
+  ctx.fillStyle=g1;ctx.fillRect(0,0,W,H);
+  const g2=ctx.createRadialGradient(880,880,0,880,880,380);
+  g2.addColorStop(0,'rgba(129,140,248,.15)');g2.addColorStop(1,'rgba(129,140,248,0)');
+  ctx.fillStyle=g2;ctx.fillRect(0,0,W,H);
+  // Brand pill
+  ctx.fillStyle='rgba(244,63,143,.12)';
+  ctx.beginPath();ctx.roundRect(64,60,200,42,21);ctx.fill();
+  ctx.strokeStyle='rgba(244,63,143,.3)';ctx.lineWidth=1.5;ctx.stroke();
+  ctx.font='bold 14px sans-serif';ctx.fillStyle='#f9a8d4';ctx.textAlign='left';ctx.fillText('🧠 PET IQ LAB',84,87);
+  // Emoji
+  ctx.font='130px serif';ctx.textAlign='center';ctx.fillText(profileEmoji,540,300);
+  // Pet name
+  ctx.font='bold italic 68px Georgia,serif';ctx.fillStyle='rgba(255,255,255,.95)';
+  ctx.fillText(`${petName}'s Intelligence Report`,540,400);
+  // Profile
+  ctx.font='italic 34px Georgia,serif';ctx.fillStyle='#f43f8f';ctx.fillText(profileName,540,456);
+  // Divider
+  ctx.strokeStyle='rgba(255,255,255,.08)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(120,490);ctx.lineTo(960,490);ctx.stroke();
+  // IQ score
+  const iqGrad=ctx.createLinearGradient(380,500,620,660);
+  iqGrad.addColorStop(0,'#f43f8f');iqGrad.addColorStop(1,'#818cf8');
+  ctx.font='bold 200px Georgia,serif';ctx.fillStyle=iqGrad;ctx.textAlign='center';
+  ctx.fillText(iqScore,540,660);
+  ctx.font='bold 18px sans-serif';ctx.fillStyle='rgba(255,255,255,.3)';ctx.letterSpacing='4px';
+  ctx.fillText('PET IQ SCORE',540,700);
+  ctx.font='20px sans-serif';ctx.fillStyle='rgba(255,255,255,.45)';
+  ctx.fillText(`Top ${100-percentile}% of ${petType}s tested · Pet IQ Lab`,540,740);
+  // Dimension bars
+  const dims=[
+    {key:'memory',label:'Memory',color:'#818cf8',max:6},
+    {key:'social',label:'Social',color:'#f472b6',max:9},
+    {key:'problem',label:'Problem Solving',color:'#fb923c',max:9},
+    {key:'selfcontrol',label:'Self-Control',color:'#4ade80',max:6},
+    {key:'adaptability',label:'Adaptability',color:'#facc15',max:6},
+  ];
+  const bx=120,bw=840,bh=14,by0=790,bsp=48;
+  dims.forEach((d,i)=>{
+    const y=by0+i*bsp,pct=(dimScores[d.key]||0)/d.max;
+    ctx.font='600 20px sans-serif';ctx.fillStyle='rgba(255,255,255,.4)';ctx.textAlign='left';
+    ctx.fillText(d.label,bx,y+bh-1);
+    ctx.fillStyle='rgba(255,255,255,.06)';
+    ctx.beginPath();ctx.roundRect(bx+180,y,bw-180,bh,7);ctx.fill();
+    ctx.fillStyle=d.color;
+    ctx.beginPath();ctx.roundRect(bx+180,y,(bw-180)*pct,bh,7);ctx.fill();
+    ctx.font='600 16px sans-serif';ctx.fillStyle=d.color;ctx.textAlign='right';
+    ctx.fillText(Math.round(pct*100)+'%',bx+bw,y+bh-1);
+  });
+  // Footer
+  ctx.font='16px sans-serif';ctx.fillStyle='rgba(255,255,255,.15)';ctx.textAlign='center';
+  ctx.fillText('iq.thecosmicpet.com',540,1054);
+  // Download
+  canvas.toBlob(blob=>{
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;a.download=`${petName.replace(/\s+/g,'-').toLowerCase()}-iq-report.png`;
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+  },'image/png');
+}
+
+// ── PROGRESS BAR ──
+function initProgressBar() {
+  const bar=document.getElementById('read-progress');
+  if(!bar) return;
+  window.addEventListener('scroll',()=>{
+    const dh=document.documentElement.scrollHeight-window.innerHeight;
+    bar.style.width=(dh>0?(window.scrollY/dh)*100:0)+'%';
+  },{passive:true});
 }
 
 async function loadReport() {
@@ -677,18 +724,22 @@ function showError() {
   document.getElementById('error').style.display   = 'block';
 }
 
+// Module-level data for share card
+let _reportData = null;
+
 function renderReport(data) {
-  const { petName, petType, profileName, profileEmoji, normScore, percentile, dimScores, content } = data;
+  _reportData = data;
+  const { petName, petType, breed, profileName, profileEmoji, normScore, percentile, dimScores, content } = data;
   const iqScore = data.iqScore || percentileToIQ(percentile);
-  const speciesLabel = petType === 'cat' ? 'cats' : 'dogs';
-  const topPct = 100 - percentile;
+  const speciesLabel = petType==='cat'?'cats':'dogs';
+  const topPct = 100-percentile;
 
   let iqBandLabel;
-  if      (iqScore >= 130) iqBandLabel = 'Very Superior';
-  else if (iqScore >= 115) iqBandLabel = 'Above Average';
-  else if (iqScore >= 100) iqBandLabel = 'Average';
-  else if (iqScore >= 85)  iqBandLabel = 'Low Average';
-  else                     iqBandLabel = 'Below Average';
+  if(iqScore>=130) iqBandLabel='Very Superior';
+  else if(iqScore>=115) iqBandLabel='Above Average';
+  else if(iqScore>=100) iqBandLabel='Average';
+  else if(iqScore>=85)  iqBandLabel='Low Average';
+  else                  iqBandLabel='Below Average';
 
   // ── HERO ──
   document.getElementById('hero-wrap').innerHTML = `
@@ -697,48 +748,51 @@ function renderReport(data) {
       <div class="hero-avatar-ring">${profileEmoji}</div>
       <div class="hero-title">${petName}'s Intelligence Report</div>
       <div class="hero-profile">${profileName}</div>
-      <div class="hero-gauge-wrap">
-        ${buildGaugeSVG(iqScore)}
-      </div>
+      <div class="hero-gauge-wrap">${buildGaugeSVG(iqScore)}</div>
       <div class="hero-pills">
         <div class="hero-pill">Top <strong>${topPct}%</strong></div>
-        <div class="hero-pill"><strong>${petType === 'cat' ? 'Cat' : 'Dog'}</strong></div>
+        <div class="hero-pill"><strong>${petType==='cat'?'Cat':'Dog'}</strong></div>
+        ${breed?`<div class="hero-pill"><strong>${breed}</strong></div>`:''}
         <div class="hero-pill"><strong>${iqBandLabel}</strong></div>
       </div>
     </div>`;
 
-  // ── OVERVIEW: radar + dim list ──
-  const dimListHtml = DIMS.map(d => {
-    const raw = dimScores[d.key] || 0;
-    const pct = Math.round((raw/d.max)*100);
-    let badge, badgeClass;
-    if      (pct >= 75) { badge='Peak';    badgeClass='peak';    }
-    else if (pct >= 50) { badge='Strong';  badgeClass='strong';  }
-    else if (pct >= 35) { badge='Average'; badgeClass='average'; }
-    else                { badge='Weak';    badgeClass='weak';    }
+  // ── OVERVIEW (radar + dim list) ──
+  const breedProfile = breed ? BREED_PROFILES[breed] : null;
+  const dimListHtml = DIMS.map(d=>{
+    const raw=dimScores[d.key]||0,pct=Math.round((raw/d.max)*100);
+    let badge,bc;
+    if(pct>=75){badge='Peak';bc='peak';}
+    else if(pct>=50){badge='Strong';bc='strong';}
+    else if(pct>=35){badge='Average';bc='average';}
+    else{badge='Weak';bc='weak';}
+    let deltaHtml='';
+    if(breedProfile&&breedProfile[d.key]!==undefined){
+      const exp=Math.round(breedProfile[d.key]*d.max);
+      const delta=raw-exp;
+      const dc=delta>0?'pos':delta<0?'neg':'neu';
+      const sign=delta>0?'+':'';
+      deltaHtml=`<span class="dim-delta ${dc}">${sign}${delta} vs avg ${breed}</span>`;
+    }
     return `<div class="dim-row-item">
       <div class="dim-row-top">
         <span class="dim-row-icon">${d.icon}</span>
         <span class="dim-row-label">${d.label}</span>
         <span class="dim-row-score">${raw}/${d.max}</span>
       </div>
-      <div class="dim-bar-track">
-        <div class="dim-bar-fill" style="width:${pct}%;background:${d.color};"></div>
-      </div>
+      <div class="dim-bar-track"><div class="dim-bar-fill" style="width:${pct}%;background:${d.color};"></div></div>
       <div class="dim-row-foot">
-        <span class="dim-badge ${badgeClass}">${badge}</span>
-        <span style="font-size:10px;font-family:'DM Mono',monospace;color:var(--muted)">${pct}%</span>
+        <span class="dim-badge ${bc}">${badge}</span>
+        ${deltaHtml||`<span style="font-size:10px;font-family:'DM Mono',monospace;color:var(--muted)">${pct}%</span>`}
       </div>
     </div>`;
   }).join('');
 
   document.getElementById('dim-summary-wrap').innerHTML = `
     <div class="card overview-card fade-in-2" style="margin-top:24px;">
-      <div class="s-label">Cognitive Overview</div>
+      <div class="s-label">Cognitive Overview${breedProfile?` · vs avg ${breed}`:''}</div>
       <div class="overview-inner">
-        <div class="radar-wrap">
-          <canvas id="radarCanvas" width="240" height="240" style="width:240px;height:240px;"></canvas>
-        </div>
+        <div class="radar-wrap"><canvas id="radarCanvas" width="240" height="240" style="width:240px;height:240px;"></canvas></div>
         <div class="dim-list">${dimListHtml}</div>
       </div>
     </div>`;
@@ -756,55 +810,83 @@ function renderReport(data) {
       </p>
     </div>`;
 
+  // ── PRIORITY #1 ──
+  const {dim:wd, action:wa} = getPriority(petName, dimScores);
+  document.getElementById('priority-wrap').innerHTML = `
+    <div class="priority-card fade-in-3">
+      <div class="priority-badge">🎯 This week's priority</div>
+      <div class="priority-title">Focus on ${wd.label}</div>
+      <div class="priority-action">${wa}</div>
+      <div class="priority-dim-pill" style="border-color:${wd.color}33;background:${wd.color}0a;">
+        ${wd.icon} ${wd.label} · ${Math.round(((dimScores[wd.key]||0)/wd.max)*100)}% — lowest score
+      </div>
+    </div>`;
+
+  // ── DAY-TO-DAY SCENARIOS ──
+  const scenarios = getScenarios(petName, dimScores);
+  const scenariosHtml = scenarios.map(sc=>`
+    <div class="scenario-item">
+      <div class="scenario-header">
+        <span class="scenario-emoji">${sc.emoji}</span>
+        <span class="scenario-context">${sc.ctx}</span>
+      </div>
+      <div class="scenario-text">${sc.text}</div>
+    </div>`).join('');
+  document.getElementById('scenarios-wrap').innerHTML = `
+    <div class="card scenarios-card fade-in-4" style="margin-top:12px;">
+      <div class="s-label">What this means day-to-day</div>
+      <div class="scenarios-grid">${scenariosHtml}</div>
+    </div>`;
+
+  // ── COGNITIVE TWIN ──
+  const twin = getCognitiveTwin(dimScores, petType);
+  document.getElementById('twin-wrap').innerHTML = `
+    <div class="twin-card fade-in-4">
+      <div class="twin-eyebrow">Cognitive twin</div>
+      <div class="twin-inner">
+        <div class="twin-emoji">${twin.emoji}</div>
+        <div class="twin-content">
+          <div class="twin-breed">Cognitively, ${petName} is closest to ${twin.breed}</div>
+          <div class="twin-trait">${twin.trait}.</div>
+        </div>
+      </div>
+    </div>`;
+
   // ── CHAPTERS ──
-  const sections = parseSections(content);
-  const dimSections = sections.filter((_,i) => i < 5);
-  const sigSection  = sections.find(s => s.title.toLowerCase().includes('signature') || s.title.includes('🏆'));
-
-  const chaptersHtml = dimSections.map((sec,i) => {
-    const dim = DIMS[i] || DIMS[0];
-    const raw = dimScores[dim.key] || 0;
-    const pct = Math.round((raw/dim.max)*100);
-    const { callout, bodyText, exercise } = parseChapterBody(sec.body);
-    const num = String(i+1).padStart(2,'0');
-
-    // Callout background per dimension
-    const calloutBg = dim.color+'12'; // very subtle tint
-
-    return `<div class="chapter-card fade-in-4" style="--c-dim:${dim.color};--callout-bg:${calloutBg};margin-top:12px;">
+  const sections=parseSections(content);
+  const dimSections=sections.filter((_,i)=>i<5);
+  const sigSection=sections.find(s=>s.title.toLowerCase().includes('signature')||s.title.includes('🏆'));
+  const chaptersHtml=dimSections.map((sec,i)=>{
+    const dim=DIMS[i]||DIMS[0];
+    const raw=dimScores[dim.key]||0,pct=Math.round((raw/dim.max)*100);
+    const {callout,bodyText,exercise}=parseChapterBody(sec.body);
+    const num=String(i+1).padStart(2,'0');
+    return `<div class="chapter-card fade-in-4" style="--c-dim:${dim.color};--callout-bg:${dim.color}10;">
       <div class="chapter-head">
         <span class="chapter-num">${num}</span>
         <span class="chapter-pill" style="border-color:${dim.color}33;background:${dim.color}0a;">${dim.icon} <span>${dim.label}</span></span>
         <span class="chapter-score-tag">${raw}/${dim.max} · ${pct}%</span>
       </div>
       <div class="chapter-body">
-        ${callout ? `<div class="chapter-callout">${renderInline(callout)}</div>` : ''}
+        ${callout?`<div class="chapter-callout">${renderInline(callout)}</div>`:''}
         <div class="chapter-text">${renderBody(bodyText)}</div>
-        ${exercise ? `<div class="chapter-exercise">
-          <div class="exercise-label">Try this</div>
-          <div class="exercise-text">${renderInline(exercise)}</div>
-        </div>` : ''}
+        ${exercise?`<div class="chapter-exercise"><div class="exercise-label">Try this</div><div class="exercise-text">${renderInline(exercise)}</div></div>`:''}
       </div>
     </div>`;
   }).join('');
-
-  document.getElementById('chapters-wrap').innerHTML = chaptersHtml;
+  document.getElementById('chapters-wrap').innerHTML=chaptersHtml;
 
   // ── SIGNATURE ──
-  if (sigSection) {
-    document.getElementById('signature-wrap').innerHTML = `
+  if(sigSection){
+    document.getElementById('signature-wrap').innerHTML=`
       <div class="signature-card fade-in-4">
         <div class="sig-eyebrow">🏆 Cognitive Signature</div>
-        <div class="sig-body">
-          ${sigSection.body.join('\n').split('\n')
-            .filter(l=>l.trim())
-            .map(l=>`<p>${renderInline(l)}</p>`).join('')}
-        </div>
+        <div class="sig-body">${sigSection.body.join('\n').split('\n').filter(l=>l.trim()).map(l=>`<p>${renderInline(l)}</p>`).join('')}</div>
       </div>`;
   }
 
   // ── REFS ──
-  document.getElementById('refs-wrap').innerHTML = `
+  document.getElementById('refs-wrap').innerHTML=`
     <div class="card refs-card fade-in-4" style="margin-top:12px;">
       <div class="s-label">Scientific References</div>
       <div class="refs-chips">
@@ -814,29 +896,29 @@ function renderReport(data) {
         <span class="ref-chip">Miklósi et al. 2003 · Animal Cognition</span>
         <span class="ref-chip">Bray et al. 2014 · Animal Behaviour</span>
         <span class="ref-chip">Osthaus et al. 2005 · Animal Cognition</span>
+        <span class="ref-chip">Fiset et al. 2003 · Learning & Behavior</span>
         <span class="ref-chip">Takagi et al. 2017 · Episodic Memory</span>
         <span class="ref-chip">Arden & Adams 2016 · Intelligence</span>
       </div>
     </div>`;
 
   // ── SHARE ──
-  document.getElementById('share-wrap').innerHTML = `
-    <div class="card share-card fade-in-4" style="margin-top:12px;">
+  document.getElementById('share-wrap').innerHTML=`
+    <div class="card share-card fade-in-4">
       <div class="share-title">Share ${petName}'s results</div>
       <div class="share-sub">Challenge your friends to test their pets</div>
       <div class="share-social">⭐ Join 1,240+ pet owners who shared their results</div>
-      <button class="share-btn" onclick="copyLink()">🔗 Copy report link</button>
+      <div class="share-btns">
+        <button class="share-btn" onclick="copyLink()">🔗 Copy link</button>
+        <button class="share-btn dl" onclick="triggerDownload()">⬇ Download card</button>
+      </div>
     </div>`;
 
   // ── UPSELL ──
-  const weakDim = Object.entries(dimScores||{})
-    .sort((a,b)=>{
-      const dims={memory:6,social:9,problem:9,selfcontrol:6,adaptability:6};
-      return (a[1]/(dims[a[0]]||1))-(b[1]/(dims[b[0]]||1));
-    })[0]?.[0]||'memory';
-  const token = new URLSearchParams(window.location.search).get('token')||'';
-  const otoParams = new URLSearchParams({pet:petName,dim:weakDim,species:petType,iq:iqScore,token});
-  document.getElementById('upsell-wrap').innerHTML = `
+  const weakDim=Object.entries(dimScores||{}).sort((a,b)=>{const dm={memory:6,social:9,problem:9,selfcontrol:6,adaptability:6};return(a[1]/(dm[a[0]]||1))-(b[1]/(dm[b[0]]||1));})[0]?.[0]||'memory';
+  const token=new URLSearchParams(window.location.search).get('token')||'';
+  const otoParams=new URLSearchParams({pet:petName,dim:weakDim,species:petType,iq:iqScore,token});
+  document.getElementById('upsell-wrap').innerHTML=`
     <div class="upsell-card fade-in-4">
       <div class="upsell-eyebrow">21-Day Training Programme</div>
       <div class="upsell-title">Want to boost ${petName}'s weakest dimension?</div>
@@ -844,81 +926,69 @@ function renderReport(data) {
       <a href="/oto.html?${otoParams.toString()}" class="upsell-cta">🎯 Get ${petName}'s training plan →</a>
     </div>`;
 
-  document.getElementById('loading').style.display = 'none';
-  document.getElementById('report').style.display  = 'block';
-  document.title = `${petName}'s IQ Report · ${profileName}`;
+  document.getElementById('loading').style.display='none';
+  document.getElementById('report').style.display='block';
+  document.title=`${petName}'s IQ Report · ${profileName}`;
 
-  // ── Draw canvas elements after DOM paint ──
-  setTimeout(() => {
-    // Radar
-    const radarCanvas = document.getElementById('radarCanvas');
-    if (radarCanvas) {
-      const dimData = DIMS.map(d => ({
-        raw:  dimScores[d.key] || 0,
-        max:  d.max,
-        icon: d.icon,
-        color:d.color,
-      }));
-      drawRadar(radarCanvas, dimData);
-    }
+  // Confetti for high scores
+  if(iqScore>=115) setTimeout(launchConfetti, 600);
 
-    // Bell curve
-    const bellCanvas = document.getElementById('bellCanvas');
-    if (bellCanvas) {
-      drawBellCurve(bellCanvas, iqScore, petName);
-    }
-  }, 80);
+  // Canvas elements
+  setTimeout(()=>{
+    const rc=document.getElementById('radarCanvas');
+    if(rc) drawRadar(rc,DIMS.map(d=>({raw:dimScores[d.key]||0,max:d.max,icon:d.icon,color:d.color})));
+    const bc=document.getElementById('bellCanvas');
+    if(bc) drawBellCurve(bc,iqScore,petName);
+    // Animated IQ counter
+    const numEl=document.getElementById('gaugeIQNum');
+    if(numEl) animateCounter(numEl, iqScore, 1100);
+  }, 100);
 
-  // Redraw on resize
-  let resizeTimer;
-  window.addEventListener('resize', () => {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => {
-      const rc = document.getElementById('radarCanvas');
-      const bc = document.getElementById('bellCanvas');
-      if (rc) drawRadar(rc, DIMS.map(d=>({raw:dimScores[d.key]||0,max:d.max,icon:d.icon,color:d.color})));
-      if (bc) drawBellCurve(bc, iqScore, petName);
-    }, 150);
+  // Resize
+  let rt;
+  window.addEventListener('resize',()=>{
+    clearTimeout(rt);rt=setTimeout(()=>{
+      const rc=document.getElementById('radarCanvas'),bc=document.getElementById('bellCanvas');
+      if(rc) drawRadar(rc,DIMS.map(d=>({raw:dimScores[d.key]||0,max:d.max,icon:d.icon,color:d.color})));
+      if(bc) drawBellCurve(bc,iqScore,petName);
+    },150);
   });
 
-  track('report_view', { pet_type:petType, iq_score:iqScore, profile_name:profileName, percentile });
+  // Progress bar
+  initProgressBar();
 
-  // Scroll depth tracking
-  const reportEl = document.getElementById('report');
-  const depthObserver = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        track('report_scroll_depth', { depth_pct:Number(entry.target.dataset.depth), pet_type:petType });
-        depthObserver.unobserve(entry.target);
-      }
-    });
-  }, { threshold:0.1 });
-  [50,100].forEach(d => {
-    const m=document.createElement('div');
-    m.dataset.depth=d;
-    m.style.cssText='position:absolute;pointer-events:none;height:1px;width:1px;';
-    m.style.top=d+'%';
-    reportEl.style.position=reportEl.style.position||'relative';
-    reportEl.appendChild(m);
-    depthObserver.observe(m);
+  track('report_view',{pet_type:petType,iq_score:iqScore,profile_name:profileName,percentile});
+
+  const reportEl=document.getElementById('report');
+  const dobs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting){track('report_scroll_depth',{depth_pct:Number(e.target.dataset.depth),pet_type:petType});dobs.unobserve(e.target);}});
+  },{threshold:.1});
+  [50,100].forEach(d=>{
+    const m=document.createElement('div');m.dataset.depth=d;
+    m.style.cssText='position:absolute;pointer-events:none;height:1px;width:1px;';m.style.top=d+'%';
+    reportEl.style.position=reportEl.style.position||'relative';reportEl.appendChild(m);dobs.observe(m);
   });
-
-  setTimeout(() => {
-    document.querySelector('.upsell-cta')?.addEventListener('click', () => {
-      track('report_upsell_click', {pet_type:petType,weak_dim:weakDim,iq_score:iqScore});
-    });
-  }, 0);
+  setTimeout(()=>{document.querySelector('.upsell-cta')?.addEventListener('click',()=>track('report_upsell_click',{pet_type:petType,weak_dim:weakDim,iq_score:iqScore}));},0);
 }
 
 function copyLink() {
-  track('report_share_click', { method:'copy_link' });
-  navigator.clipboard.writeText(window.location.href).then(() => {
-    const btn = document.querySelector('.share-btn');
-    if (btn) {
-      btn.textContent = '✅ Copied!';
-      setTimeout(() => btn.innerHTML = '🔗 Copy report link', 2000);
-    }
+  track('report_share_click',{method:'copy_link'});
+  navigator.clipboard.writeText(window.location.href).then(()=>{
+    const btn=document.querySelectorAll('.share-btn')[0];
+    if(btn){btn.textContent='✅ Copied!';setTimeout(()=>{btn.innerHTML='🔗 Copy link';},2000);}
   });
+}
+
+function triggerDownload() {
+  if(!_reportData) return;
+  const {petName,petType,profileName,profileEmoji,percentile,dimScores}=_reportData;
+  const iqScore=_reportData.iqScore||percentileToIQ(percentile);
+  const btn=document.querySelectorAll('.share-btn')[1];
+  if(btn){btn.textContent='⏳ Generating…';btn.disabled=true;}
+  setTimeout(async ()=>{
+    await downloadShareCard(petName,profileEmoji,profileName,iqScore,percentile,dimScores,petType);
+    if(btn){btn.innerHTML='⬇ Download card';btn.disabled=false;}
+  },50);
 }
 
 loadReport();

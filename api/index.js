@@ -438,10 +438,12 @@ app.get('/api/report/:token', async (req, res) => {
     res.json({
       petName:      data.petName,
       petType:      data.petType,
+      breed:        data.breed || null,
       profileName:  data.profileName,
       profileEmoji: data.profileEmoji,
       normScore:    data.normScore,
       percentile:   data.percentile,
+      iqScore:      data.iqScore || null,
       dimScores:    data.dimScores,
       content:      data.content,
       created_at:   data.created_at,
