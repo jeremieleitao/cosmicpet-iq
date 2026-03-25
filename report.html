@@ -57,11 +57,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
 .hero::after{content:'';position:absolute;bottom:-100px;left:-80px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(129,140,248,.12),transparent 60%);pointer-events:none;}
 .hero-brand{font-size:9px;letter-spacing:4px;text-transform:uppercase;font-family:'DM Mono',monospace;color:rgba(255,255,255,.2);margin-bottom:32px;}
 .hero-avatar-ring{
-  width:88px;height:88px;border-radius:50%;margin:0 auto 20px;
+  width:100px;height:100px;border-radius:50%;margin:0 auto 20px;
   display:flex;align-items:center;justify-content:center;
-  background:rgba(244,63,143,.1);
-  box-shadow:0 0 0 1px rgba(244,63,143,.2),0 0 40px rgba(244,63,143,.16),0 0 80px rgba(244,63,143,.06);
-  animation:float 4.5s ease-in-out infinite;font-size:44px;line-height:1;
+  background:rgba(244,63,143,.09);
+  box-shadow:0 0 0 1px rgba(244,63,143,.25),0 0 0 6px rgba(244,63,143,.06),0 0 60px rgba(244,63,143,.2),0 0 120px rgba(244,63,143,.07);
+  animation:float 4.5s ease-in-out infinite;font-size:54px;line-height:1;
 }
 .hero-title{font-family:'Fraunces',serif;font-style:italic;font-weight:700;font-size:clamp(24px,5.5vw,36px);color:rgba(255,255,255,.97);line-height:1.2;margin-bottom:5px;}
 .hero-profile{font-family:'Fraunces',serif;font-style:italic;font-weight:500;font-size:16px;color:var(--pink);margin-bottom:32px;opacity:.9;}
@@ -374,37 +374,40 @@ function renderBody(text) {
 
 // ── IQ GAUGE SVG ──
 function buildGaugeSVG(iqScore) {
-  const W=280,H=160,cx=140,cy=148,R=108;
+  const W=320,H=190,cx=160,cy=174,R=126;
   const perim=Math.PI*R;
-  const t=Math.max(0,Math.min(1,(iqScore-65)/70));
+  // Ensure minimum 5% fill so arc is always visible even at IQ=65
+  const t=Math.max(0.05,Math.min(1,(iqScore-65)/70));
   const dashOffset=perim*(1-t);
   function pt(a,r){return{x:cx+Math.cos(a)*r,y:cy-Math.sin(a)*r};}
   function arcD(r){const s=pt(Math.PI,r),e=pt(0,r);return `M${s.x},${s.y} A${r},${r} 0 0,1 ${e.x},${e.y}`;}
   const ticks=[70,85,100,115,130].map(v=>{
     const ta=Math.PI*(1-((v-65)/70));
-    const i=pt(ta,R-9),o=pt(ta,R+9);
+    const i=pt(ta,R-10),o=pt(ta,R+10);
     return `<line x1="${i.x}" y1="${i.y}" x2="${o.x}" y2="${o.y}" class="gauge-tick"/>`;
   }).join('');
   const tlabels=[70,100,130].map(v=>{
     const ta=Math.PI*(1-((v-65)/70));
-    const lp=pt(ta,R+22);
+    const lp=pt(ta,R+26);
     return `<text x="${lp.x}" y="${lp.y+3}" class="gauge-scale-label">${v}</text>`;
   }).join('');
   const gid='g'+Math.random().toString(36).slice(2,7);
+  // Determine color based on IQ band
+  const arcColor1 = iqScore>=115?'#facc15':iqScore>=100?'#4ade80':iqScore>=85?'#818cf8':'#f43f8f';
+  const arcColor2 = iqScore>=115?'#fb923c':iqScore>=100?'#818cf8':iqScore>=85?'#f472b6':'#a78bfa';
   return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" class="hero-gauge-svg">
   <defs>
     <linearGradient id="${gid}" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#f43f8f"/>
-      <stop offset="50%" stop-color="#a78bfa"/>
-      <stop offset="100%" stop-color="#818cf8"/>
+      <stop offset="0%" stop-color="${arcColor1}"/>
+      <stop offset="100%" stop-color="${arcColor2}"/>
     </linearGradient>
   </defs>
-  <path d="${arcD(R)}" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="14" stroke-linecap="round"/>
-  <path d="${arcD(R)}" fill="none" stroke="url(#${gid})" stroke-width="14" stroke-linecap="round"
+  <path d="${arcD(R)}" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="16" stroke-linecap="round"/>
+  <path d="${arcD(R)}" fill="none" stroke="url(#${gid})" stroke-width="16" stroke-linecap="round"
     class="gauge-arc" style="--dash-total:${perim.toFixed(2)};--dash-offset:${dashOffset.toFixed(2)}"/>
   ${ticks}${tlabels}
-  <text id="gaugeIQNum" x="${cx}" y="${cy-26}" class="gauge-iq-num">0</text>
-  <text x="${cx}" y="${cy-6}" class="gauge-iq-label">PET IQ</text>
+  <text id="gaugeIQNum" x="${cx}" y="${cy-30}" class="gauge-iq-num">0</text>
+  <text x="${cx}" y="${cy-8}" class="gauge-iq-label">PET IQ</text>
 </svg>`;
 }
 
@@ -592,86 +595,164 @@ function getPriority(name, ds) {
 
 // ── INSTAGRAM SHARE CARD ──
 async function downloadShareCard(petName, profileEmoji, profileName, iqScore, percentile, dimScores, petType) {
-  const W=1080,H=1080;
-  const canvas=document.createElement('canvas');
-  canvas.width=W;canvas.height=H;
-  const ctx=canvas.getContext('2d');
-  if(!ctx.roundRect){
-    ctx.roundRect=function(x,y,w,h,r){
-      this.moveTo(x+r,y);this.lineTo(x+w-r,y);this.quadraticCurveTo(x+w,y,x+w,y+r);
-      this.lineTo(x+w,y+h-r);this.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
-      this.lineTo(x+r,y+h);this.quadraticCurveTo(x,y+h,x,y+h-r);
-      this.lineTo(x,y+r);this.quadraticCurveTo(x,y,x+r,y);this.closePath();
+  const W=1080, H=1080;
+  const canvas = document.createElement('canvas');
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+
+  // roundRect polyfill
+  if (!ctx.roundRect) {
+    ctx.roundRect = function(x,y,w,h,r) {
+      const rr = typeof r === 'number' ? [r,r,r,r] : r;
+      this.moveTo(x+rr[0],y); this.lineTo(x+w-rr[1],y);
+      this.quadraticCurveTo(x+w,y,x+w,y+rr[1]);
+      this.lineTo(x+w,y+h-rr[2]); this.quadraticCurveTo(x+w,y+h,x+w-rr[2],y+h);
+      this.lineTo(x+rr[3],y+h); this.quadraticCurveTo(x,y+h,x,y+h-rr[3]);
+      this.lineTo(x,y+rr[0]); this.quadraticCurveTo(x,y,x+rr[0],y); this.closePath();
     };
   }
-  // Background
-  const bg=ctx.createLinearGradient(0,0,W,H);bg.addColorStop(0,'#060d1a');bg.addColorStop(1,'#0b1f3a');
-  ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+
+  // ── BACKGROUND ──
+  const bg = ctx.createLinearGradient(0, 0, W, H);
+  bg.addColorStop(0, '#04081a'); bg.addColorStop(0.55, '#091730'); bg.addColorStop(1, '#04081a');
+  ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+
   // Dot grid
-  ctx.fillStyle='rgba(255,255,255,.035)';
-  for(let x=28;x<W;x+=28)for(let y=28;y<H;y+=28){ctx.beginPath();ctx.arc(x,y,1,0,Math.PI*2);ctx.fill();}
-  // Glows
-  const g1=ctx.createRadialGradient(200,200,0,200,200,450);
-  g1.addColorStop(0,'rgba(244,63,143,.2)');g1.addColorStop(1,'rgba(244,63,143,0)');
-  ctx.fillStyle=g1;ctx.fillRect(0,0,W,H);
-  const g2=ctx.createRadialGradient(880,880,0,880,880,380);
-  g2.addColorStop(0,'rgba(129,140,248,.15)');g2.addColorStop(1,'rgba(129,140,248,0)');
-  ctx.fillStyle=g2;ctx.fillRect(0,0,W,H);
-  // Brand pill
-  ctx.fillStyle='rgba(244,63,143,.12)';
-  ctx.beginPath();ctx.roundRect(64,60,200,42,21);ctx.fill();
-  ctx.strokeStyle='rgba(244,63,143,.3)';ctx.lineWidth=1.5;ctx.stroke();
-  ctx.font='bold 14px sans-serif';ctx.fillStyle='#f9a8d4';ctx.textAlign='left';ctx.fillText('🧠 PET IQ LAB',84,87);
+  ctx.fillStyle = 'rgba(255,255,255,.032)';
+  for(let x=36; x<W; x+=36) for(let y=36; y<H; y+=36) {
+    ctx.beginPath(); ctx.arc(x, y, 1.3, 0, Math.PI*2); ctx.fill();
+  }
+
+  // Glow: pink top-left
+  const g1 = ctx.createRadialGradient(160, 160, 0, 160, 160, 540);
+  g1.addColorStop(0, 'rgba(244,63,143,.22)'); g1.addColorStop(1, 'rgba(244,63,143,0)');
+  ctx.fillStyle = g1; ctx.fillRect(0, 0, W, H);
+
+  // Glow: indigo bottom-right
+  const g2 = ctx.createRadialGradient(920, 920, 0, 920, 920, 460);
+  g2.addColorStop(0, 'rgba(129,140,248,.20)'); g2.addColorStop(1, 'rgba(129,140,248,0)');
+  ctx.fillStyle = g2; ctx.fillRect(0, 0, W, H);
+
+  // ── BRAND PILL (top-left) ──
+  ctx.fillStyle = 'rgba(244,63,143,.11)';
+  ctx.beginPath(); ctx.roundRect(64, 64, 228, 46, 23); ctx.fill();
+  ctx.strokeStyle = 'rgba(244,63,143,.32)'; ctx.lineWidth = 1.5; ctx.stroke();
+  ctx.beginPath(); ctx.arc(93, 87, 8, 0, Math.PI*2); ctx.fillStyle = '#f43f8f'; ctx.fill();
+  ctx.font = '800 14px -apple-system,sans-serif'; ctx.fillStyle = '#f9a8d4';
+  ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillText('PET IQ LAB', 110, 87);
+
+  // ── PET EMOJI with ring ──
+  // Outer soft glow
+  const emoGlow = ctx.createRadialGradient(540, 248, 10, 540, 248, 90);
+  emoGlow.addColorStop(0, 'rgba(244,63,143,.28)'); emoGlow.addColorStop(1, 'rgba(244,63,143,0)');
+  ctx.fillStyle = emoGlow; ctx.beginPath(); ctx.arc(540, 248, 90, 0, Math.PI*2); ctx.fill();
+  // Ring border
+  ctx.beginPath(); ctx.arc(540, 248, 70, 0, Math.PI*2);
+  ctx.strokeStyle = 'rgba(244,63,143,.28)'; ctx.lineWidth = 2; ctx.stroke();
+  // Circle bg
+  ctx.fillStyle = 'rgba(244,63,143,.08)';
+  ctx.beginPath(); ctx.arc(540, 248, 68, 0, Math.PI*2); ctx.fill();
   // Emoji
-  ctx.font='130px serif';ctx.textAlign='center';ctx.fillText(profileEmoji,540,300);
-  // Pet name
-  ctx.font='bold italic 68px Georgia,serif';ctx.fillStyle='rgba(255,255,255,.95)';
-  ctx.fillText(`${petName}'s Intelligence Report`,540,400);
-  // Profile
-  ctx.font='italic 34px Georgia,serif';ctx.fillStyle='#f43f8f';ctx.fillText(profileName,540,456);
-  // Divider
-  ctx.strokeStyle='rgba(255,255,255,.08)';ctx.lineWidth=1;
-  ctx.beginPath();ctx.moveTo(120,490);ctx.lineTo(960,490);ctx.stroke();
-  // IQ score
-  const iqGrad=ctx.createLinearGradient(380,500,620,660);
-  iqGrad.addColorStop(0,'#f43f8f');iqGrad.addColorStop(1,'#818cf8');
-  ctx.font='bold 200px Georgia,serif';ctx.fillStyle=iqGrad;ctx.textAlign='center';
-  ctx.fillText(iqScore,540,660);
-  ctx.font='bold 18px sans-serif';ctx.fillStyle='rgba(255,255,255,.3)';ctx.letterSpacing='4px';
-  ctx.fillText('PET IQ SCORE',540,700);
-  ctx.font='20px sans-serif';ctx.fillStyle='rgba(255,255,255,.45)';
-  ctx.fillText(`Top ${100-percentile}% of ${petType}s tested · Pet IQ Lab`,540,740);
-  // Dimension bars
-  const dims=[
-    {key:'memory',label:'Memory',color:'#818cf8',max:6},
-    {key:'social',label:'Social',color:'#f472b6',max:9},
-    {key:'problem',label:'Problem Solving',color:'#fb923c',max:9},
-    {key:'selfcontrol',label:'Self-Control',color:'#4ade80',max:6},
-    {key:'adaptability',label:'Adaptability',color:'#facc15',max:6},
+  ctx.font = '96px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(profileEmoji, 540, 250);
+
+  // ── PET NAME ──
+  ctx.textBaseline = 'alphabetic';
+  // Smart truncation: measure and scale down if needed
+  let nameSize = 66;
+  const nameStr = `${petName}'s Report`;
+  ctx.font = `700 italic ${nameSize}px Georgia,serif`;
+  while(ctx.measureText(nameStr).width > 900 && nameSize > 36) { nameSize -= 2; ctx.font = `700 italic ${nameSize}px Georgia,serif`; }
+  ctx.fillStyle = 'rgba(255,255,255,.95)'; ctx.textAlign = 'center';
+  ctx.fillText(nameStr, 540, 376);
+
+  // Profile name
+  ctx.font = 'italic 30px Georgia,serif'; ctx.fillStyle = '#f43f8f';
+  ctx.fillText(profileName, 540, 424);
+
+  // ── DIVIDER ──
+  ctx.strokeStyle = 'rgba(255,255,255,.07)'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(140, 458); ctx.lineTo(940, 458); ctx.stroke();
+
+  // ── IQ SCORE (big gradient number) ──
+  const iqGrad = ctx.createLinearGradient(360, 470, 720, 620);
+  iqGrad.addColorStop(0, '#f43f8f'); iqGrad.addColorStop(0.5, '#c084fc'); iqGrad.addColorStop(1, '#818cf8');
+  ctx.font = '900 180px Georgia,serif'; ctx.fillStyle = iqGrad;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  ctx.fillText(iqScore, 540, 468);
+
+  // IQ label
+  ctx.font = '700 14px -apple-system,sans-serif'; ctx.fillStyle = 'rgba(255,255,255,.28)';
+  ctx.textBaseline = 'alphabetic'; ctx.letterSpacing = '4px';
+  ctx.fillText('PET IQ SCORE', 540, 670);
+
+  // Percentile line
+  const ordS = n => n===1?'st':n===2?'nd':n===3?'rd':'th';
+  const pctLabel = percentile >= 50
+    ? `Top ${100-percentile}% of ${petType}s tested`
+    : `${percentile}${ordS(percentile)} percentile · ${petType==='cat'?'Cat':'Dog'}`;
+  ctx.font = '400 20px -apple-system,sans-serif'; ctx.fillStyle = 'rgba(255,255,255,.38)';
+  ctx.fillText(pctLabel, 540, 698);
+
+  // ── DIMENSION BLOCK (bottom third) ──
+  // White card inset
+  ctx.fillStyle = 'rgba(255,255,255,.04)';
+  ctx.beginPath(); ctx.roundRect(80, 740, 920, 256, 28); ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,.07)'; ctx.lineWidth = 1; ctx.stroke();
+
+  const dims = [
+    {key:'memory',    label:'Memory',    icon:'🧠', color:'#818cf8', max:6},
+    {key:'social',    label:'Social',    icon:'👁️',  color:'#f472b6', max:9},
+    {key:'problem',   label:'Problem',   icon:'🔧', color:'#fb923c', max:9},
+    {key:'selfcontrol',label:'Control', icon:'🧘', color:'#4ade80', max:6},
+    {key:'adaptability',label:'Adapt.', icon:'🌍', color:'#facc15', max:6},
   ];
-  const bx=120,bw=840,bh=14,by0=790,bsp=48;
-  dims.forEach((d,i)=>{
-    const y=by0+i*bsp,pct=(dimScores[d.key]||0)/d.max;
-    ctx.font='600 20px sans-serif';ctx.fillStyle='rgba(255,255,255,.4)';ctx.textAlign='left';
-    ctx.fillText(d.label,bx,y+bh-1);
-    ctx.fillStyle='rgba(255,255,255,.06)';
-    ctx.beginPath();ctx.roundRect(bx+180,y,bw-180,bh,7);ctx.fill();
-    ctx.fillStyle=d.color;
-    ctx.beginPath();ctx.roundRect(bx+180,y,(bw-180)*pct,bh,7);ctx.fill();
-    ctx.font='600 16px sans-serif';ctx.fillStyle=d.color;ctx.textAlign='right';
-    ctx.fillText(Math.round(pct*100)+'%',bx+bw,y+bh-1);
+
+  const colW = 920/5, bPad = 80;
+  const barMaxH = 120, barW = 58;
+
+  dims.forEach((d, i) => {
+    const cx2 = bPad + i * colW + colW/2;
+    const pct = (dimScores[d.key]||0) / d.max;
+    const fillH = Math.max(6, Math.round(pct * barMaxH));
+    const barX = cx2 - barW/2;
+    const barBY = 748 + barMaxH; // bar bottom y
+
+    // Track
+    ctx.fillStyle = 'rgba(255,255,255,.06)';
+    ctx.beginPath(); ctx.roundRect(barX, 748, barW, barMaxH, 8); ctx.fill();
+
+    // Colored fill (bottom-aligned)
+    const barFillGrad = ctx.createLinearGradient(barX, barBY - fillH, barX, barBY);
+    barFillGrad.addColorStop(0, d.color); barFillGrad.addColorStop(1, d.color+'77');
+    ctx.fillStyle = barFillGrad;
+    ctx.beginPath(); ctx.roundRect(barX, barBY - fillH, barW, fillH, 8); ctx.fill();
+
+    // Percentage above bar
+    ctx.font = '700 18px -apple-system,sans-serif'; ctx.fillStyle = d.color;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+    ctx.fillText(Math.round(pct*100)+'%', cx2, 744);
+
+    // Icon + label below bar
+    ctx.font = '20px serif'; ctx.textBaseline = 'top';
+    ctx.fillText(d.icon, cx2, 878);
+    ctx.font = '600 13px -apple-system,sans-serif'; ctx.fillStyle = 'rgba(255,255,255,.4)';
+    ctx.fillText(d.label, cx2, 906);
   });
-  // Footer
-  ctx.font='16px sans-serif';ctx.fillStyle='rgba(255,255,255,.15)';ctx.textAlign='center';
-  ctx.fillText('iq.thecosmicpet.com',540,1054);
-  // Download
-  canvas.toBlob(blob=>{
-    const url=URL.createObjectURL(blob);
-    const a=document.createElement('a');
-    a.href=url;a.download=`${petName.replace(/\s+/g,'-').toLowerCase()}-iq-report.png`;
-    document.body.appendChild(a);a.click();document.body.removeChild(a);
-    setTimeout(()=>URL.revokeObjectURL(url),1000);
-  },'image/png');
+
+  // ── FOOTER ──
+  ctx.font = '400 15px -apple-system,sans-serif'; ctx.fillStyle = 'rgba(255,255,255,.14)';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+  ctx.fillText('iq.thecosmicpet.com · Pet IQ Lab', 540, 1056);
+
+  // ── DOWNLOAD ──
+  canvas.toBlob(blob => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `${petName.replace(/\s+/g,'-').toLowerCase()}-iq-card.png`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }, 'image/png');
 }
 
 // ── PROGRESS BAR ──
@@ -742,6 +823,13 @@ function renderReport(data) {
   else                  iqBandLabel='Below Average';
 
   // ── HERO ──
+  // Accurate percentile label: "Top X%" only for above-average, else "Xth percentile"
+  const ordSuffix = n => n===1?'st':n===2?'nd':n===3?'rd':'th';
+  const rankLabel = percentile >= 50
+    ? `Top ${100-percentile}%`
+    : `${percentile}${ordSuffix(percentile)} percentile`;
+  // Thin colored band at bottom of gauge to reinforce IQ band
+  const bandAccent = iqScore>=115?'#facc15':iqScore>=100?'#4ade80':iqScore>=85?'#818cf8':'#f43f8f';
   document.getElementById('hero-wrap').innerHTML = `
     <div class="hero fade-in">
       <div class="hero-brand">Pet IQ Lab · Cognitive Report</div>
@@ -750,10 +838,13 @@ function renderReport(data) {
       <div class="hero-profile">${profileName}</div>
       <div class="hero-gauge-wrap">${buildGaugeSVG(iqScore)}</div>
       <div class="hero-pills">
-        <div class="hero-pill">Top <strong>${topPct}%</strong></div>
+        <div class="hero-pill"><strong>${rankLabel}</strong></div>
         <div class="hero-pill"><strong>${petType==='cat'?'Cat':'Dog'}</strong></div>
         ${breed?`<div class="hero-pill"><strong>${breed}</strong></div>`:''}
-        <div class="hero-pill"><strong>${iqBandLabel}</strong></div>
+        <div class="hero-pill" style="color:${bandAccent};border-color:${bandAccent}30;"><strong>${iqBandLabel}</strong></div>
+      </div>
+      <div style="width:240px;height:3px;border-radius:2px;background:rgba(255,255,255,.06);margin:16px auto 0;overflow:hidden;">
+        <div style="width:${Math.max(4,Math.round((iqScore-65)/70*100))}%;height:100%;background:${bandAccent};border-radius:2px;transition:width 1.2s ease .8s;"></div>
       </div>
     </div>`;
 
