@@ -210,7 +210,8 @@ RULES:
 - Each INSIGHT sentence must be so accurate it makes the owner think "how did it know that?"
 - ${breed ? `Reference ${breed}-specific cognitive traits where scientifically relevant (e.g. ${breed}s are known for X).` : ''}
 - The final "Cognitive Signature" section must end with one sentence that is genuinely surprising or counterintuitive.
-- CRITICAL — Calibrate the overall tone strictly to the Pet IQ score: below 85 = below average (honest, constructive, not flattering); 85–100 = average (balanced); 100–115 = above average (positive); 115–130 = gifted (enthusiastic); above 130 = exceptional. An IQ of ${iqScore} must NOT be described as brilliant or gifted. Do not contradict the score.
+- CRITICAL — Calibrate the overall tone strictly to the Pet IQ score: below 85 = below average (honest, warm, constructive — never flattering or implying brilliance); 85–100 = average (balanced); 100–115 = above average (positive); 115–130 = gifted (enthusiastic); above 130 = exceptional. An IQ of ${iqScore} must NOT be described as brilliant or gifted. Do not contradict the score.
+- HUMOR RULE — The lower the IQ, the more warmly funny the report should be. IQ below 85: lean into gentle, affectionate humor — celebrate the chaos, the stubbornness, the loveable cluelessness. Make the owner laugh WITH their pet, not feel bad. IQ 85–100: light wit. IQ above 100: keep it warm but mostly scientific. The humor must feel true to the actual scores, never mocking.
 - 600-800 words total.`;
 
   const model  = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
