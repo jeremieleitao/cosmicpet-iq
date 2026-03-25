@@ -295,9 +295,9 @@ async function sendReportEmail(email, orderData, reportUrl) {
 // ─────────────────────────────────────────────────────────
 // MAIN FLOW — génère rapport + stocke + envoie email
 // ─────────────────────────────────────────────────────────
-async function generateAndSend(email, orderData) {
+async function generateAndSend(email, orderData, reportToken = null) {
   const content  = await generateReportContent(orderData);
-  const token    = crypto.randomUUID();
+  const token    = reportToken || crypto.randomUUID();
   const reportUrl = `${BASE_URL}/report.html?token=${token}`;
 
   const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
@@ -816,7 +816,8 @@ app.post('/api/webhook', async (req, res) => {
     console.log(`💳 Payment confirmed — ${orderData.petName}`);
 
     // Génère rapport et envoie email en arrière-plan
-    generateAndSend(email, orderData)
+    // On réutilise le sessionToken comme reportToken pour que l'URL OTO fonctionne
+    generateAndSend(email, orderData, sessionToken)
       .then(token => {
         console.log(`✅ Done — token: ${token}`);
         // Nettoyer pending
