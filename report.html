@@ -57,24 +57,25 @@ body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--in
   font-family:'Fraunces',serif; font-style:italic; font-weight:500;
   font-size:17px; color:var(--pink); margin-bottom:28px; opacity:.9;
 }
-.hero-stats {
-  display:flex; gap:1px; justify-content:center; max-width:260px; margin:0 auto 28px;
-  background:rgba(255,255,255,.06); border-radius:16px; overflow:hidden;
-  border:1px solid rgba(255,255,255,.07);
+
+/* ── IQ GAUGE ── */
+.iq-gauge-wrap {
+  display:flex; flex-direction:column; align-items:center; margin:0 auto 24px;
 }
-.hero-stat {
-  flex:1; padding:16px 12px; text-align:center;
+.iq-gauge-svg { display:block; }
+.iq-gauge-stats {
+  display:flex; gap:24px; justify-content:center; margin-top:14px;
 }
-.hero-stat + .hero-stat { border-left:1px solid rgba(255,255,255,.07); }
-.hero-stat-num {
-  font-family:'Fraunces',serif; font-size:32px; font-weight:700; color:var(--pink); line-height:1;
+.iq-gauge-stat { text-align:center; }
+.iq-gauge-stat-num {
+  font-family:'Fraunces',serif; font-size:22px; font-weight:700; color:var(--pink); line-height:1;
   font-variant-numeric:tabular-nums;
 }
-.hero-stat-denom { font-size:14px; color:rgba(255,255,255,.3); }
-.hero-stat-label {
+.iq-gauge-stat-label {
   font-size:9px; letter-spacing:1.5px; text-transform:uppercase; font-family:'DM Mono',monospace;
-  color:rgba(255,255,255,.25); margin-top:4px;
+  color:rgba(255,255,255,.3); margin-top:3px;
 }
+
 .hero-badge {
   display:inline-flex; align-items:center; gap:7px;
   background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1);
@@ -95,6 +96,37 @@ body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--in
   font-size:10px; letter-spacing:2.5px; text-transform:uppercase; font-family:'DM Mono',monospace;
   color:var(--muted); margin-bottom:20px;
 }
+
+/* ── DIM CARDS GRID ── */
+.dim-cards-grid {
+  display:grid; grid-template-columns:1fr 1fr; gap:12px;
+}
+.dim-card-5th { grid-column:1 / -1; display:flex; justify-content:center; }
+.dim-card-5th .dim-card { width:calc(50% - 6px); }
+.dim-card {
+  background:var(--white); border:1px solid var(--border); border-radius:16px;
+  padding:16px; position:relative; overflow:hidden;
+}
+.dim-card-header { display:flex; align-items:center; gap:8px; margin-bottom:10px; }
+.dim-card-icon { font-size:24px; line-height:1; }
+.dim-card-label { font-size:12px; font-weight:600; color:var(--ink); line-height:1.2; }
+.dim-card-score {
+  font-family:'Fraunces',serif; font-size:24px; font-weight:700; line-height:1;
+  margin-bottom:10px;
+}
+.dim-card-bar-track {
+  height:6px; background:rgba(11,31,58,.07); border-radius:3px; overflow:hidden; margin-bottom:8px;
+}
+.dim-card-bar-fill { height:100%; border-radius:3px; transition:width 1s cubic-bezier(.4,0,.2,1); }
+.dim-card-badge {
+  display:inline-block; font-size:9px; letter-spacing:1px; text-transform:uppercase;
+  font-family:'DM Mono',monospace; padding:3px 8px; border-radius:50px; font-weight:500;
+}
+.dim-card-badge.strength { background:rgba(74,222,128,.15); color:#15803d; }
+.dim-card-badge.develop  { background:rgba(251,146,60,.15);  color:#c2410c; }
+.dim-card-badge.average  { background:rgba(138,142,168,.12); color:var(--muted); }
+
+/* Legacy dim-row (kept for backwards compat, hidden when cards are used) */
 .dim-row { display:flex; align-items:center; gap:14px; padding:10px 0; border-bottom:1px solid rgba(11,31,58,.05); }
 .dim-row:last-child { border-bottom:none; padding-bottom:0; }
 .dim-row:first-of-type { padding-top:0; }
@@ -104,6 +136,65 @@ body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--in
 .dim-bar-track { height:5px; background:rgba(11,31,58,.07); border-radius:3px; overflow:hidden; }
 .dim-bar-fill { height:100%; border-radius:3px; transition:width 1s cubic-bezier(.4,0,.2,1); }
 .dim-score { font-size:11px; font-family:'DM Mono',monospace; color:var(--muted); width:34px; text-align:right; flex-shrink:0; }
+
+/* ── COGNITIVE RADAR ── */
+.radar-section {
+  background:var(--white); border-radius:20px; padding:28px 26px; margin-top:16px;
+  border:1px solid var(--border); text-align:center;
+}
+.radar-canvas-wrap { display:flex; justify-content:center; margin-top:8px; }
+#radarCanvas { display:block; }
+
+/* ── IQ CONTEXT ── */
+.iq-context-card {
+  background:var(--white); border-radius:20px; padding:28px 26px; margin-top:16px;
+  border:1px solid var(--border);
+}
+.iq-context-title {
+  font-family:'Fraunces',serif; font-style:italic; font-weight:700;
+  font-size:18px; color:var(--dark); margin-bottom:20px;
+}
+.iq-dist-wrap {
+  position:relative; height:48px; margin-bottom:14px;
+}
+.iq-dist-bar {
+  position:absolute; top:50%; transform:translateY(-50%);
+  width:100%; height:10px; border-radius:5px; overflow:hidden;
+  display:flex;
+}
+.iq-dist-segment { height:100%; }
+.iq-dist-below  { background:rgba(239,68,68,.25);  flex:1; }
+.iq-dist-avg    { background:rgba(138,142,168,.2); flex:2; }
+.iq-dist-above  { background:rgba(74,222,128,.25); flex:1; }
+.iq-dist-labels {
+  display:flex; justify-content:space-between;
+  margin-top:8px; font-size:9px; font-family:'DM Mono',monospace; color:var(--muted);
+  letter-spacing:.5px;
+}
+.iq-dist-marker {
+  position:absolute; top:50%; transform:translate(-50%,-50%);
+  display:flex; flex-direction:column; align-items:center; gap:3px;
+  z-index:2;
+}
+.iq-dist-marker-dot {
+  width:16px; height:16px; border-radius:50%;
+  background:var(--pink); border:2px solid white;
+  box-shadow:0 2px 8px rgba(244,63,143,.4);
+}
+.iq-dist-marker-name {
+  font-size:9px; font-family:'DM Mono',monospace; color:var(--pink); white-space:nowrap;
+  background:rgba(244,63,143,.08); padding:1px 5px; border-radius:4px; font-weight:600;
+}
+.iq-context-desc {
+  font-size:13.5px; color:#374151; line-height:1.7; margin:14px 0 16px;
+}
+.iq-context-desc strong { color:var(--dark); font-weight:600; }
+.fact-chips { display:flex; flex-wrap:wrap; gap:7px; }
+.fact-chip {
+  font-size:10px; font-family:'DM Mono',monospace; color:var(--muted);
+  background:rgba(11,31,58,.04); padding:5px 11px; border-radius:50px;
+  border:1px solid var(--border);
+}
 
 /* ── CHAPTER ── */
 .chapter { padding:40px 0; border-bottom:1px solid var(--border); }
@@ -277,6 +368,15 @@ body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--in
 @keyframes pulse  { 0%,100%{opacity:1} 50%{opacity:.3} }
 @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
 .fade-in { animation:fadeUp .45s ease both; }
+
+/* ── RESPONSIVE ── */
+@media (max-width:480px) {
+  .dim-cards-grid { grid-template-columns:1fr 1fr; gap:9px; }
+  .dim-card-5th .dim-card { width:100%; }
+  .dim-card-5th { grid-column:1 / -1; display:flex; justify-content:center; }
+  .dim-card { padding:12px; }
+  .dim-card-score { font-size:20px; }
+}
 </style>
 </head>
 <body>
@@ -312,6 +412,8 @@ body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--in
   <div id="hero-wrap"></div>
   <div class="page-wrap">
     <div id="dim-summary-wrap"></div>
+    <div id="radar-wrap"></div>
+    <div id="iq-context-wrap"></div>
     <div id="chapters-wrap"></div>
     <div id="signature-wrap"></div>
     <div id="refs-wrap"></div>
@@ -394,6 +496,118 @@ function renderBody(text) {
     .join('');
 }
 
+// ── IQ Arc Gauge (SVG) ──
+function buildGaugeSVG(iqScore) {
+  const W = 220, H = 130;
+  const cx = W / 2, cy = H - 10;
+  const R = 90;
+  const minIQ = 65, maxIQ = 135;
+  const startAngle = Math.PI; // 180deg (left)
+  const endAngle   = 0;       // 0deg (right)
+  // Map iqScore to angle
+  const t = Math.max(0, Math.min(1, (iqScore - minIQ) / (maxIQ - minIQ)));
+  const scoreAngle = Math.PI - t * Math.PI; // from PI down to 0
+
+  function polar(angle, r) {
+    return { x: cx + Math.cos(angle) * r, y: cy - Math.sin(angle) * r };
+  }
+
+  function arcPath(r, aStart, aEnd) {
+    const s = polar(aStart, r), e = polar(aEnd, r);
+    const largeArc = Math.abs(aEnd - aStart) > Math.PI ? 1 : 0;
+    return `M ${s.x} ${s.y} A ${r} ${r} 0 ${largeArc} 0 ${e.x} ${e.y}`;
+  }
+
+  const trackPath = arcPath(R, Math.PI, 0);
+  const fillPath  = arcPath(R, Math.PI, scoreAngle);
+
+  const gradId = 'iqGrad';
+  const svg = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" class="iq-gauge-svg">
+  <defs>
+    <linearGradient id="${gradId}" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#f43f8f"/>
+      <stop offset="100%" stop-color="#1d6ef5"/>
+    </linearGradient>
+  </defs>
+  <!-- Track -->
+  <path d="${trackPath}" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="12" stroke-linecap="round"/>
+  <!-- Fill -->
+  <path d="${fillPath}" fill="none" stroke="url(#${gradId})" stroke-width="12" stroke-linecap="round"/>
+  <!-- Score label -->
+  <text x="${cx}" y="${cy - 18}" text-anchor="middle" dominant-baseline="middle"
+    font-family="Fraunces,serif" font-size="36" font-weight="700" fill="white">${iqScore}</text>
+  <text x="${cx}" y="${cy - 2}" text-anchor="middle" dominant-baseline="hanging"
+    font-family="DM Mono,monospace" font-size="9" fill="rgba(255,255,255,.35)" letter-spacing="2">PET IQ</text>
+  <!-- Scale labels -->
+  <text x="${polar(Math.PI, R + 16).x}" y="${polar(Math.PI, R + 16).y + 4}" text-anchor="middle"
+    font-family="DM Mono,monospace" font-size="8" fill="rgba(255,255,255,.25)">${minIQ}</text>
+  <text x="${polar(0, R + 16).x}" y="${polar(0, R + 16).y + 4}" text-anchor="middle"
+    font-family="DM Mono,monospace" font-size="8" fill="rgba(255,255,255,.25)">${maxIQ}</text>
+</svg>`;
+  return svg;
+}
+
+// ── Radar Chart ──
+function drawRadar(canvasEl, dimData) {
+  const W = canvasEl.width, H = canvasEl.height;
+  const cx = W/2, cy = H/2 + 8, R = Math.min(W,H)/2 - 36;
+  const N = dimData.length;
+  const ctx = canvasEl.getContext('2d');
+  ctx.clearRect(0,0,W,H);
+
+  // Grille
+  [0.25,0.5,0.75,1].forEach(r => {
+    ctx.beginPath();
+    for(let i=0;i<N;i++){
+      const a=(i/N)*Math.PI*2-Math.PI/2;
+      const x=cx+Math.cos(a)*R*r, y=cy+Math.sin(a)*R*r;
+      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    }
+    ctx.closePath();
+    ctx.strokeStyle=r===1?'rgba(11,31,58,.1)':'rgba(11,31,58,.05)';
+    ctx.lineWidth=1; ctx.stroke();
+  });
+
+  // Axes
+  for(let i=0;i<N;i++){
+    const a=(i/N)*Math.PI*2-Math.PI/2;
+    ctx.beginPath();ctx.moveTo(cx,cy);
+    ctx.lineTo(cx+Math.cos(a)*R,cy+Math.sin(a)*R);
+    ctx.strokeStyle='rgba(11,31,58,.08)';ctx.lineWidth=1;ctx.stroke();
+  }
+
+  // Données
+  ctx.beginPath();
+  dimData.forEach((d,i)=>{
+    const a=(i/N)*Math.PI*2-Math.PI/2;
+    const v=d.raw/d.max;
+    const x=cx+Math.cos(a)*R*v, y=cy+Math.sin(a)*R*v;
+    i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  });
+  ctx.closePath();
+  ctx.fillStyle='rgba(244,63,143,.13)';ctx.fill();
+  ctx.strokeStyle='#f43f8f';ctx.lineWidth=2.5;ctx.stroke();
+
+  // Points
+  dimData.forEach((d,i)=>{
+    const a=(i/N)*Math.PI*2-Math.PI/2;
+    const v=d.raw/d.max;
+    const x=cx+Math.cos(a)*R*v, y=cy+Math.sin(a)*R*v;
+    ctx.beginPath();ctx.arc(x,y,4.5,0,Math.PI*2);
+    ctx.fillStyle='#f43f8f';ctx.fill();
+    ctx.strokeStyle='white';ctx.lineWidth=1.5;ctx.stroke();
+  });
+
+  // Labels emoji
+  dimData.forEach((d,i)=>{
+    const a=(i/N)*Math.PI*2-Math.PI/2;
+    const lR=R+26;
+    const x=cx+Math.cos(a)*lR, y=cy+Math.sin(a)*lR;
+    ctx.font='16px serif';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(d.icon,x,y);
+  });
+}
+
 async function loadReport() {
   const token = new URLSearchParams(window.location.search).get('token');
   if (!token) { showError(); return; }
@@ -440,47 +654,122 @@ function renderReport(data) {
   const speciesLabel = petType === 'cat' ? 'cats' : 'dogs';
   const topPct = 100 - percentile;
 
-  // ── Hero
+  // IQ band label
+  let iqBand, iqBandText;
+  if (iqScore >= 130)      { iqBand = 'Very Superior';    iqBandText = 'exceptionally gifted'; }
+  else if (iqScore >= 115) { iqBand = 'High Average';     iqBandText = 'above average'; }
+  else if (iqScore >= 100) { iqBand = 'Average';          iqBandText = 'above average'; }
+  else if (iqScore >= 85)  { iqBand = 'Low Average';      iqBandText = 'average'; }
+  else                     { iqBand = 'Below Average';    iqBandText = 'below average'; }
+
+  // ── Hero with IQ Gauge
   document.getElementById('hero-wrap').innerHTML = `
     <div class="hero fade-in">
       <div class="hero-brand">Pet IQ Lab · Cognitive Report</div>
       <span class="hero-emoji">${profileEmoji}</span>
       <div class="hero-title">${petName}'s Intelligence Report</div>
       <div class="hero-profile">${profileName}</div>
-      <div class="hero-stats">
-        <div class="hero-stat">
-          <div class="hero-stat-num">${iqScore}</div>
-          <div class="hero-stat-label">Pet IQ</div>
-        </div>
-        <div class="hero-stat">
-          <div class="hero-stat-num">top ${topPct}<span class="hero-stat-denom">%</span></div>
-          <div class="hero-stat-label">Percentile</div>
+      <div class="iq-gauge-wrap">
+        ${buildGaugeSVG(iqScore)}
+        <div class="iq-gauge-stats">
+          <div class="iq-gauge-stat">
+            <div class="iq-gauge-stat-num">Top ${topPct}%</div>
+            <div class="iq-gauge-stat-label">Percentile</div>
+          </div>
+          <div class="iq-gauge-stat">
+            <div class="iq-gauge-stat-num">${profileName}</div>
+            <div class="iq-gauge-stat-label">Profile</div>
+          </div>
         </div>
       </div>
       <div class="hero-badge">
         <span class="hero-badge-dot"></span>
-        ${iqScore > 115 ? 'exceptionally gifted' : iqScore > 100 ? 'above average' : iqScore === 100 ? 'exactly average' : 'below average'} · based on Arden & Adams 2016
+        ${iqBandText} · based on Arden &amp; Adams 2016
       </div>
     </div>`;
 
-  // ── Dim Summary
-  const dimRows = DIMS.map(d => {
+  // ── Dim Summary — cards grid
+  const dimCardItems = DIMS.map((d, i) => {
     const raw = dimScores[d.key] || 0;
     const pct = Math.round((raw / d.max) * 100);
-    return `<div class="dim-row">
-      <span class="dim-icon">${d.icon}</span>
-      <div class="dim-info">
-        <div class="dim-name">${d.label}</div>
-        <div class="dim-bar-track"><div class="dim-bar-fill" style="width:${pct}%;background:${d.color}"></div></div>
+    let badgeHtml = '';
+    if (pct >= 70)      badgeHtml = `<span class="dim-card-badge strength">strength</span>`;
+    else if (pct < 40)  badgeHtml = `<span class="dim-card-badge develop">to develop</span>`;
+    else                badgeHtml = `<span class="dim-card-badge average">average</span>`;
+
+    const isLast = i === DIMS.length - 1;
+    const cardHtml = `<div class="dim-card">
+      <div class="dim-card-header">
+        <span class="dim-card-icon">${d.icon}</span>
+        <span class="dim-card-label">${d.label}</span>
       </div>
-      <div class="dim-score">${raw}/${d.max}</div>
+      <div class="dim-card-score" style="color:${d.color}">${raw}<span style="font-size:14px;color:var(--muted);font-family:'DM Mono',monospace">/${d.max}</span></div>
+      <div class="dim-card-bar-track"><div class="dim-card-bar-fill" style="width:${pct}%;background:${d.color}"></div></div>
+      ${badgeHtml}
     </div>`;
+
+    if (isLast) {
+      return `<div class="dim-card-5th">${cardHtml}</div>`;
+    }
+    return cardHtml;
   }).join('');
 
   document.getElementById('dim-summary-wrap').innerHTML = `
     <div class="dim-summary fade-in">
-      <div class="section-eyebrow">Overview</div>
-      ${dimRows}
+      <div class="section-eyebrow">Overview · Dimensions</div>
+      <div class="dim-cards-grid">${dimCardItems}</div>
+    </div>`;
+
+  // ── Cognitive Radar
+  const radarDimData = DIMS.map(d => ({
+    icon: d.icon,
+    raw:  dimScores[d.key] || 0,
+    max:  d.max,
+  }));
+
+  document.getElementById('radar-wrap').innerHTML = `
+    <div class="radar-section fade-in">
+      <div class="section-eyebrow">Cognitive Radar</div>
+      <div class="radar-canvas-wrap">
+        <canvas id="radarCanvas" width="260" height="260"></canvas>
+      </div>
+    </div>`;
+
+  setTimeout(() => {
+    const canvas = document.getElementById('radarCanvas');
+    if (canvas) drawRadar(canvas, radarDimData);
+  }, 50);
+
+  // ── IQ in Context
+  // Position the marker: iq range 65..135 maps to 0%..100% of bar width
+  const markerPct = Math.max(1, Math.min(99, ((iqScore - 65) / (135 - 65)) * 100));
+
+  document.getElementById('iq-context-wrap').innerHTML = `
+    <div class="iq-context-card fade-in">
+      <div class="section-eyebrow">IQ in Context</div>
+      <div class="iq-context-title">How ${petName} compares</div>
+      <div class="iq-dist-wrap">
+        <div class="iq-dist-bar">
+          <div class="iq-dist-segment iq-dist-below"></div>
+          <div class="iq-dist-segment iq-dist-avg"></div>
+          <div class="iq-dist-segment iq-dist-above"></div>
+        </div>
+        <div class="iq-dist-marker" style="left:${markerPct}%">
+          <div class="iq-dist-marker-name">${petName}</div>
+          <div class="iq-dist-marker-dot"></div>
+        </div>
+      </div>
+      <div class="iq-dist-labels">
+        <span>65</span><span>85</span><span>100</span><span>115</span><span>135</span>
+      </div>
+      <div class="iq-context-desc">
+        <strong>${petName}</strong> scored in the <strong>${percentile}th percentile</strong> — better than <strong>${percentile}%</strong> of ${speciesLabel} tested.
+      </div>
+      <div class="fact-chips">
+        <span class="fact-chip">${petType === 'cat' ? '🐱 Cat' : '🐶 Dog'}</span>
+        <span class="fact-chip">${profileName}</span>
+        <span class="fact-chip">${iqBand} · IQ ${iqScore}</span>
+      </div>
     </div>`;
 
   // ── Chapters
