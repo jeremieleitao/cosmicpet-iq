@@ -143,9 +143,11 @@ async function generateReportContent(orderData) {
   const weakest  = DIMS.reduce((a, b) => ((dimScores[a.key]||0)/a.max < (dimScores[b.key]||0)/b.max) ? a : b);
   const strongest = DIMS.reduce((a, b) => ((dimScores[a.key]||0)/a.max > (dimScores[b.key]||0)/b.max) ? a : b);
 
+  // percentile = % of population scoring BELOW this animal
+  // e.g. percentile=1 → bottom 1%, scored higher than only 1% of animals
   const breedPercentileNote = breed
-    ? `top ${100 - percentile}% of ${breed}s specifically (breed-adjusted score)`
-    : `top ${100 - percentile}% of ${species}s tested`;
+    ? `${percentile}th percentile among ${breed}s (scores higher than ${percentile}% of ${breed}s tested — ${100 - percentile}% scored higher)`
+    : `${percentile}th percentile (scores higher than ${percentile}% of ${species}s tested — ${100 - percentile}% scored higher)`;
 
   const prompt = `You are an expert in animal cognition writing a premium, personalised intelligence report. You write like a scientist who genuinely cares about this specific animal — warm, precise, slightly witty. Never generic. Every sentence should feel like it could ONLY be written about ${petName}.
 
@@ -208,6 +210,7 @@ RULES:
 - Each INSIGHT sentence must be so accurate it makes the owner think "how did it know that?"
 - ${breed ? `Reference ${breed}-specific cognitive traits where scientifically relevant (e.g. ${breed}s are known for X).` : ''}
 - The final "Cognitive Signature" section must end with one sentence that is genuinely surprising or counterintuitive.
+- CRITICAL — Calibrate the overall tone strictly to the Pet IQ score: below 85 = below average (honest, constructive, not flattering); 85–100 = average (balanced); 100–115 = above average (positive); 115–130 = gifted (enthusiastic); above 130 = exceptional. An IQ of ${iqScore} must NOT be described as brilliant or gifted. Do not contradict the score.
 - 600-800 words total.`;
 
   const model  = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
