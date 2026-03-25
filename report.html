@@ -292,6 +292,17 @@ body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--in
   <div class="loading-sub">Fetching cognitive analysis</div>
 </div>
 
+<div id="generating" class="loading-wrap" style="display:none">
+  <div class="loading-emoji">✨</div>
+  <div class="loading-txt">Your report is being generated…</div>
+  <div class="loading-sub" id="generating-sub">Our AI is analysing your pet's cognitive profile — this takes about 30 seconds.</div>
+  <div style="margin-top:20px;display:flex;gap:6px;justify-content:center">
+    <span style="width:8px;height:8px;border-radius:50%;background:var(--pink);animation:pulse 1.2s ease-in-out infinite"></span>
+    <span style="width:8px;height:8px;border-radius:50%;background:var(--pink);animation:pulse 1.2s ease-in-out .4s infinite"></span>
+    <span style="width:8px;height:8px;border-radius:50%;background:var(--pink);animation:pulse 1.2s ease-in-out .8s infinite"></span>
+  </div>
+</div>
+
 <div id="error" class="error-wrap" style="display:none">
   <div class="error-txt">Report not found</div>
   <div class="error-sub">This link may have expired. Contact <a href="mailto:contact@thecosmicpet.com" style="color:var(--pink)">contact@thecosmicpet.com</a></div>
@@ -387,10 +398,35 @@ async function loadReport() {
   const token = new URLSearchParams(window.location.search).get('token');
   if (!token) { showError(); return; }
   try {
-    const res  = await fetch(`${API_BASE}/api/report/${token}`);
-    if (!res.ok) { showError(); return; }
-    renderReport(await res.json());
+    const res = await fetch(`${API_BASE}/api/report/${token}`);
+    if (res.ok) { renderReport(await res.json()); return; }
+    if (res.status === 404) { pollReport(token); return; }
+    showError();
   } catch { showError(); }
+}
+
+function pollReport(token) {
+  document.getElementById('loading').style.display    = 'none';
+  document.getElementById('generating').style.display = 'block';
+  let attempts = 0;
+  const MAX = 40; // ~2 minutes at 3s intervals
+  const interval = setInterval(async () => {
+    attempts++;
+    if (attempts > MAX) {
+      clearInterval(interval);
+      document.getElementById('generating').style.display = 'none';
+      showError();
+      return;
+    }
+    try {
+      const res = await fetch(`${API_BASE}/api/report/${token}`);
+      if (res.ok) {
+        clearInterval(interval);
+        document.getElementById('generating').style.display = 'none';
+        renderReport(await res.json());
+      }
+    } catch { /* keep polling */ }
+  }, 3000);
 }
 
 function showError() {
