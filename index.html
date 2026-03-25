@@ -1843,12 +1843,11 @@ function dimInsightTeaser(dimIdx, score, petName, species) {
 }
 
 // ── IQ SCALE (mean=100, SD=15) — Acklam probit approximation ──
-// Calibration: per-question difficulty analysis (IRT method)
-// Dogs: μ_adj=19.45, σ=3.284 | Cats: μ_adj=17.64, σ=3.30
-// μ_adj < μ_true by 0.533σ → median IQ ≈ 108 (slight upward inflation, defensible)
+// Calibration: E[rawTotal] = 12 questions × E[score 0-3] = 12 × 1.5 = 18.0
+// mu=18.0 → random answers → N(100,15), perfectly centred
 const IQ_CALIB = {
-  dog: { mu: 19.45, sigma: 3.284 },
-  cat: { mu: 17.64, sigma: 3.30  },
+  dog: { mu: 18.0, sigma: 3.284 },
+  cat: { mu: 18.0, sigma: 3.30  },
 };
 
 function erf(x){
