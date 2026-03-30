@@ -29,19 +29,46 @@ app.use((_req, res, next) => {
   next();
 });
 
-app.use(express.json({
-  verify: (req, _res, buf) => {
-    if (req.path === '/api/webhook') req.rawBody = buf;
-  },
-}));
+// Stripe webhook needs raw body — parse JSON for all other routes
+app.use((req, res, next) => {
+  if (req.path === '/api/webhook') {
+    express.raw({ type: 'application/json' })(req, res, next);
+  } else {
+    express.json()(req, res, next);
+  }
+});
 
 // ── Config ──
-const PADDLE_API_KEY        = process.env.PADDLE_API_KEY;
-const PADDLE_WEBHOOK_SECRET = process.env.PADDLE_WEBHOOK_SECRET;
-const PADDLE_PRICE_ID       = process.env.PADDLE_PRICE_ID;
-const PADDLE_ENV            = process.env.PADDLE_ENVIRONMENT || 'production';
-const PADDLE_BASE           = PADDLE_ENV === 'sandbox'
-  ? 'https://sandbox-api.paddle.com' : 'https://api.paddle.com';
+const Stripe              = require('stripe');
+const stripe              = Stripe(process.env.STRIPE_SECRET_KEY);
+const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
+const STRIPE_OTO_PRICE_ID   = process.env.STRIPE_OTO_PRICE_ID;   // prix OTO (programme 21j)
+
+// Prix multi-devises — rapport IQ
+const IQ_PRICES = {
+  eur: process.env.STRIPE_PRICE_EUR || 'price_1TGfC3GMNC7TgJhlNjbNEo4G',
+  usd: process.env.STRIPE_PRICE_USD || 'price_1TGfwaGMNC7TgJhld8S4G55F',
+  gbp: process.env.STRIPE_PRICE_GBP || 'price_1TGfwaGMNC7TgJhlIT5kbY7M',
+  aud: process.env.STRIPE_PRICE_AUD || 'price_1TGfwbGMNC7TgJhldJ5LRPEW',
+};
+
+// Langue → devise
+function currencyFromLang(lang) {
+  if (lang === 'en') return 'usd'; // default anglais = USD
+  if (lang === 'fr' || lang === 'es' || lang === 'pt') return 'eur';
+  return 'usd';
+}
+
+// Accept-Language header → devise (fallback côté serveur)
+function currencyFromAcceptLang(header) {
+  if (!header) return 'eur';
+  const h = header.toLowerCase();
+  if (h.includes('en-au') || h.includes('en-nz')) return 'aud';
+  if (h.includes('en-gb')) return 'gbp';
+  if (h.includes('en-us') || h.includes('en')) return 'usd';
+  if (h.includes('fr') || h.includes('es') || h.includes('pt') || h.includes('de') || h.includes('it')) return 'eur';
+  return 'usd';
+}
 const PORT                  = process.env.PORT || 8080;
 const PROJECT_ID            = process.env.GOOGLE_CLOUD_PROJECT || 'cosmicpet';
 const BASE_URL              = process.env.BASE_URL || 'https://iq.thecosmicpet.com';
@@ -92,19 +119,17 @@ function sanitizeGeminiOutput(text) {
   return text.replace(/<[^>]+>/g, '').replace(/javascript:/gi, '');
 }
 
-// ── Paddle webhook signature ──
-function verifyWebhook(req) {
-  if (!PADDLE_WEBHOOK_SECRET) return true;
-  const header = req.headers['paddle-signature'];
-  if (!header || !req.rawBody) return false;
-  const parts = Object.fromEntries(header.split(';').map(p => p.split('=')));
-  const { ts, h1 } = parts;
-  if (!ts || !h1) return false;
-  const digest = crypto.createHmac('sha256', PADDLE_WEBHOOK_SECRET)
-    .update(`${ts}:${req.rawBody}`).digest('hex');
+// ── Stripe webhook signature ──
+function verifyStripeWebhook(req) {
+  if (!STRIPE_WEBHOOK_SECRET) return null;
+  const sig = req.headers['stripe-signature'];
+  if (!sig) return null;
   try {
-    return crypto.timingSafeEqual(Buffer.from(h1, 'hex'), Buffer.from(digest, 'hex'));
-  } catch { return false; }
+    return stripe.webhooks.constructEvent(req.body, sig, STRIPE_WEBHOOK_SECRET);
+  } catch (err) {
+    console.error('❌ Stripe webhook signature verification failed:', err.message);
+    return null;
+  }
 }
 
 // ── Retry Firestore ──
@@ -447,7 +472,7 @@ app.get('/api/report/:token', async (req, res) => {
   }
 });
 
-// POST /api/checkout — sauvegarde quiz data, crée transaction Paddle côté serveur, retourne checkoutUrl
+// POST /api/checkout — sauvegarde quiz data, crée Stripe Checkout Session, retourne checkoutUrl
 app.post('/api/checkout', async (req, res) => {
   const ip = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || req.ip;
   if (rateLimit(ip, 10, 60000)) return res.status(429).json({ error: 'Too many requests' });
@@ -481,42 +506,43 @@ app.post('/api/checkout', async (req, res) => {
     await db.collection('petiq_pending').doc(sessionToken).set(orderData);
     console.log(`📝 Session saved: ${sessionToken} for ${orderData.petName}`);
 
-    const paddleRes = await fetch(`${PADDLE_BASE}/transactions`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${PADDLE_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        items: [{ price_id: PADDLE_PRICE_ID, quantity: 1 }],
-        custom_data: {
-          project:    'petiq',
-          sessionToken,
-          otoPet:     orderData.petName,
-          otoSpecies: orderData.petType,
-          otoDim:     weakDim,
-          otoIq:      String(orderData.iqScore || ''),
-        },
-      }),
+    // Paramètres OTO pour la success URL
+    const otoParams = new URLSearchParams({
+      pet:     orderData.petName,
+      dim:     weakDim,
+      species: orderData.petType,
+      iq:      String(orderData.iqScore || ''),
+      token:   sessionToken,
     });
 
-    const paddleJson = await paddleRes.json();
-    const txnId = paddleJson.data?.id;
-    if (!txnId) {
-      console.error('Paddle transaction error:', JSON.stringify(paddleJson));
-      return res.status(502).json({ error: 'Could not create Paddle transaction' });
-    }
+    // Choisir le prix selon la devise du visiteur
+    const currency = currencyFromAcceptLang(req.headers['accept-language']);
+    const priceId = IQ_PRICES[currency] || IQ_PRICES.eur;
 
-    const checkoutUrl = `https://checkout.paddle.com/checkout/buy?_ptxn=${txnId}`;
-    console.log(`💳 Paddle txn ${txnId}`);
-    res.json({ checkoutUrl });
+    const session = await stripe.checkout.sessions.create({
+      mode: 'payment',
+      line_items: [{ price: priceId, quantity: 1 }],
+      success_url: `${BASE_URL}/oto.html?${otoParams.toString()}&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${BASE_URL}`,
+      metadata: {
+        project:      'petiq',
+        sessionToken,
+        otoPet:       orderData.petName,
+        otoSpecies:   orderData.petType,
+        otoDim:       weakDim,
+        otoIq:        String(orderData.iqScore || ''),
+      },
+    });
+
+    console.log(`💳 Stripe session ${session.id}`);
+    res.json({ checkoutUrl: session.url });
   } catch (err) {
     console.error('POST /api/checkout:', err);
     res.status(500).json({ error: 'Server error' });
   }
 });
 
-// POST /api/oto-checkout — crée transaction Paddle pour l'OTO côté serveur
+// POST /api/oto-checkout — crée Stripe Checkout Session pour l'OTO (programme 21j)
 app.post('/api/oto-checkout', async (req, res) => {
   const ip = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || req.ip;
   if (rateLimit(ip, 10, 60000)) return res.status(429).json({ error: 'Too many requests' });
@@ -524,75 +550,68 @@ app.post('/api/oto-checkout', async (req, res) => {
   try {
     const { petName, species, weakDim, iqScore, token } = req.body;
 
-    const paddleRes = await fetch(`${PADDLE_BASE}/transactions`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${PADDLE_API_KEY}`,
-        'Content-Type': 'application/json',
+    const session = await stripe.checkout.sessions.create({
+      mode: 'payment',
+      line_items: [{ price: STRIPE_OTO_PRICE_ID || STRIPE_PRICE_ID, quantity: 1 }],
+      success_url: `${BASE_URL}/oto.html?` + new URLSearchParams({
+        pet: String(petName || ''), dim: String(weakDim || ''),
+        species: species === 'cat' ? 'cat' : 'dog', iq: String(iqScore || ''),
+        token: String(token || ''), success: '1',
+      }).toString() + '&session_id={CHECKOUT_SESSION_ID}',
+      cancel_url: `${BASE_URL}/oto.html?` + new URLSearchParams({
+        pet: String(petName || ''), dim: String(weakDim || ''),
+        species: species === 'cat' ? 'cat' : 'dog', iq: String(iqScore || ''),
+        token: String(token || ''),
+      }).toString(),
+      metadata: {
+        flow:    'oto',
+        petName: String(petName || '').slice(0, 50),
+        species: species === 'cat' ? 'cat' : 'dog',
+        weakDim: String(weakDim || ''),
+        iqScore: String(iqScore || ''),
+        token:   String(token || ''),
       },
-      body: JSON.stringify({
-        items: [{ price_id: PADDLE_PRICE_ID, quantity: 1 }],
-        custom_data: {
-          flow:    'oto',
-          petName: String(petName || '').slice(0, 50),
-          species: species === 'cat' ? 'cat' : 'dog',
-          weakDim: String(weakDim || ''),
-          iqScore: String(iqScore || ''),
-          token:   String(token || ''),
-        },
-      }),
     });
 
-    const paddleJson = await paddleRes.json();
-    const txnId = paddleJson.data?.id;
-    if (!txnId) {
-      console.error('Paddle OTO transaction error:', JSON.stringify(paddleJson));
-      return res.status(502).json({ error: 'Could not create Paddle transaction' });
-    }
-
-    const checkoutUrl = `https://checkout.paddle.com/checkout/buy?_ptxn=${txnId}`;
-    res.json({ checkoutUrl });
+    res.json({ checkoutUrl: session.url });
   } catch (err) {
     console.error('POST /api/oto-checkout:', err);
     res.status(500).json({ error: 'Server error' });
   }
 });
 
-// GET /api/payment-done — redirection post-paiement Paddle → OTO avec params
+// GET /api/payment-done — fallback redirection (Stripe success_url gère la majorité des cas)
 app.get('/api/payment-done', async (req, res) => {
-  const txnId = req.query._ptxn;
-  if (!txnId) return res.redirect(BASE_URL);
+  const sessionId = req.query.session_id;
+  if (!sessionId) return res.redirect(BASE_URL);
 
   try {
-    const txnRes = await fetch(`${PADDLE_BASE}/transactions/${txnId}`, {
-      headers: { 'Authorization': `Bearer ${PADDLE_API_KEY}` },
-    });
-    const txnJson = await txnRes.json();
-    const cd = txnJson.data?.custom_data || {};
+    const session = await stripe.checkout.sessions.retrieve(sessionId);
+    const md = session.metadata || {};
 
-    if (cd.project === 'astral') {
+    if (md.project === 'astral') {
       return res.redirect(
         'https://astral.thecosmicpet.com/merci?' + new URLSearchParams({
-          name:   cd.pet_name || '',
-          lang:   cd.lang || 'en',
-          st:     cd.session_token || '',
-          _ptxn:  txnId,
+          name:       md.pet_name || '',
+          lang:       md.lang || 'en',
+          st:         md.session_token || '',
+          session_id: sessionId,
         }).toString()
       );
-    } else if (cd.flow === 'oto') {
+    } else if (md.flow === 'oto') {
       return res.redirect(
         `${BASE_URL}/oto.html?` + new URLSearchParams({
-          pet: cd.petName || '', dim: cd.weakDim || '',
-          species: cd.species || 'dog', iq: cd.iqScore || '',
-          token: cd.token || '', success: '1',
+          pet: md.petName || '', dim: md.weakDim || '',
+          species: md.species || 'dog', iq: md.iqScore || '',
+          token: md.token || '', success: '1',
         }).toString()
       );
     } else {
       return res.redirect(
         `${BASE_URL}/oto.html?` + new URLSearchParams({
-          pet: cd.otoPet || '', dim: cd.otoDim || '',
-          species: cd.otoSpecies || 'dog', iq: cd.otoIq || '',
-          token: cd.sessionToken || '',
+          pet: md.otoPet || '', dim: md.otoDim || '',
+          species: md.otoSpecies || 'dog', iq: md.otoIq || '',
+          token: md.sessionToken || '',
         }).toString()
       );
     }
@@ -772,67 +791,52 @@ app.post('/api/upsell-interest', async (req, res) => {
   }
 });
 
-// POST /api/webhook — Paddle confirme paiement → génère rapport → email
+// POST /api/webhook — Stripe confirme paiement → génère rapport → email
 app.post('/api/webhook', async (req, res) => {
-  if (!verifyWebhook(req)) {
-    console.warn('❌ Invalid webhook signature');
+  const event = verifyStripeWebhook(req);
+  if (!event) {
+    console.warn('❌ Invalid Stripe webhook signature');
     return res.status(401).send('Invalid signature');
   }
   res.status(200).send('OK'); // Acknowledge immédiatement
 
   try {
-    const eventType = req.body?.event_type;
-    const data      = req.body?.data;
+    const eventType = event.type;
 
     // Remboursement
-    if (eventType === 'adjustment.created' && data?.action === 'refund') {
-      const txnId = data?.transaction_id;
-      if (txnId) {
-        const r   = await fetch(`${PADDLE_BASE}/transactions/${txnId}`, {
-          headers: { Authorization: `Bearer ${PADDLE_API_KEY}` },
-        });
-        const txn = await r.json();
-        const email = txn?.data?.customer?.email;
-        if (email) {
-          const snap = await db.collection('petiq_reports')
-            .where('email', '==', email).orderBy('created_at', 'desc').limit(1).get();
-          if (!snap.empty) await snap.docs[0].ref.update({ refunded: true });
-          console.log(`🔄 Refund processed for ${email}`);
-        }
+    if (eventType === 'charge.refunded') {
+      const charge = event.data.object;
+      const email = charge.billing_details?.email || charge.receipt_email;
+      if (email) {
+        const snap = await db.collection('petiq_reports')
+          .where('email', '==', email).orderBy('created_at', 'desc').limit(1).get();
+        if (!snap.empty) await snap.docs[0].ref.update({ refunded: true });
+        console.log(`🔄 Refund processed for ${email}`);
       }
       return;
     }
 
-    if (eventType !== 'transaction.completed') return;
+    if (eventType !== 'checkout.session.completed') return;
 
-    // Idempotency — reject if no orderId
-    const orderId = String(data?.id || '');
-    if (!orderId) {
-      console.error('❌ No orderId in webhook data — rejecting');
-      return;
-    }
+    const session = event.data.object;
+
+    // Idempotency
+    const orderId = session.id;
     const already = await db.collection('petiq_processed').doc(orderId).get();
     if (already.exists) {
-      console.log(`⚠️ Transaction ${orderId} already processed`);
+      console.log(`⚠️ Session ${orderId} already processed`);
       return;
     }
     await db.collection('petiq_processed').doc(orderId).set({ processed_at: new Date() });
 
-    // Email depuis Paddle
-    let email = data?.customer?.email || data?.billing_details?.email;
-    if (!email && data?.customer_id) {
-      const r    = await fetch(`${PADDLE_BASE}/customers/${data.customer_id}`, {
-        headers: { Authorization: `Bearer ${PADDLE_API_KEY}` },
-      });
-      const cust = await r.json();
-      email = cust?.data?.email;
-    }
+    // Email depuis Stripe
+    const email = session.customer_details?.email || session.customer_email;
 
     // Récupère les données quiz depuis Firestore
-    const sessionToken = data?.custom_data?.sessionToken;
+    const sessionToken = session.metadata?.sessionToken;
     if (!sessionToken) {
       // Transaction OTO (flow: 'oto') ou autre — gérée côté client, rien à faire ici
-      console.log(`ℹ️ Webhook transaction ${orderId} — no sessionToken (flow: ${data?.custom_data?.flow || 'unknown'}), skipping`);
+      console.log(`ℹ️ Stripe session ${orderId} — no sessionToken (flow: ${session.metadata?.flow || 'unknown'}), skipping`);
       return;
     }
 

@@ -595,8 +595,8 @@ const DIM_META = {
 (function init() {
   track('oto_view', { iq_score: Number(iqScore)||0, weak_dim: dimKey, pet_type: species });
 
-  // Purchase event si Paddle a redirigé ici après paiement
-  if (params.get('_ptxn')) {
+  // Purchase event si Stripe a redirigé ici après paiement
+  if (params.get('session_id')) {
     if (typeof fbq !== 'undefined') fbq('track', 'Purchase', { value: 9.90, currency: 'EUR', content_ids: ['petiq-report'], content_type: 'product' });
     if (typeof ttq !== 'undefined') ttq.track('CompletePayment', { value: 9.90, currency: 'EUR', content_id: 'petiq-report', content_type: 'product' });
   }
@@ -688,7 +688,7 @@ if (urgencyBanner && 'IntersectionObserver' in window) {
   obs.observe(urgencyBanner);
 }
 
-// Paddle.js retiré — checkout géré côté serveur
+// Stripe Checkout — redirect géré côté serveur
 
 // ── CTA HANDLER ──
 async function handleCTA() {

@@ -722,7 +722,7 @@ body.dark-screen .analysis-phase {
   animation:sb-eq var(--dur,1s) ease-in-out infinite alternate;
 }
 </style>
-<script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+<!-- Payment via Stripe Checkout (server-side redirect) -->
 </head>
 <body>
 
@@ -1803,9 +1803,8 @@ function sendFreeEmail(){
 // ── API ──
 const API_URL = '';
 
-// ── PADDLE INIT ──
+// ── STRIPE (checkout géré côté serveur) ──
 let _pendingOTOParams = null;
-Paddle.Initialize({ token: 'live_60db96c6f8ccd301d8076d1f84e' });
 
 // ── PAYWALL INSIGHT TEASERS ──
 function dimInsightTeaser(dimIdx, score, petName, species) {
@@ -1892,7 +1891,7 @@ function scrollToPaywall() {
   if (btn) btn.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
-// ── CHECKOUT — Paddle ──
+// ── CHECKOUT — Stripe (server-side redirect) ──
 async function checkout() {
   const btn = document.querySelector('.paywall-btn');
   if (!btn || btn.dataset.loading === 'true') return;
@@ -1932,38 +1931,21 @@ async function checkout() {
     });
 
     const data = await r.json();
-    if (!data.sessionToken) throw new Error('No session token');
-
-    // Préparer les params OTO pour la page de succès
-    const dimKeys = ['memory', 'social', 'problem', 'selfcontrol', 'adaptability'];
-    const dimPcts = ds.map((s, i) => s / DIM_MAX[i]);
-    const weakIdx = [0, 1, 2, 3, 4].reduce((a, b) => dimPcts[a] < dimPcts[b] ? a : b);
-    _pendingOTOParams = new URLSearchParams({
-      pet:     name,
-      dim:     dimKeys[weakIdx],
-      species: pet,
-      iq:      String(iqScore),
-      token:   data.sessionToken,
-    });
+    if (!data.checkoutUrl) throw new Error('No checkout URL');
 
     track('checkout_open', { pet_type: pet, iq_score: iqScore });
     if (typeof fbq !== 'undefined') fbq('track', 'InitiateCheckout', { value: 9.90, currency: 'EUR', content_ids: ['petiq-report'], content_type: 'product' });
     if (typeof ttq !== 'undefined') ttq.track('InitiateCheckout', { value: 9.90, currency: 'EUR', content_id: 'petiq-report', content_type: 'product' });
 
-    const successUrl = `${window.location.origin}/oto.html?${_pendingOTOParams.toString()}`;
-    Paddle.Checkout.open({
-      items: [{ priceId: data.priceId, quantity: 1 }],
-      customData: { sessionToken: data.sessionToken },
-      settings: { displayMode: 'redirect', successUrl, theme: 'light' },
-    });
+    // Redirect vers Stripe Checkout
+    window.location.href = data.checkoutUrl;
 
   } catch (err) {
     console.error('checkout error:', err);
+    btn.innerHTML = origHTML;
+    btn.disabled = false;
+    btn.dataset.loading = 'false';
   }
-
-  btn.innerHTML = origHTML;
-  btn.disabled = false;
-  btn.dataset.loading = 'false';
 }
 
 
