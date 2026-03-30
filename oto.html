@@ -597,6 +597,8 @@ const DIM_META = {
 
   // Purchase event si Stripe a redirigé ici après paiement
   if (params.get('session_id')) {
+    const txId = params.get('session_id');
+    if (typeof gtag !== 'undefined') gtag('event', 'purchase', { transaction_id: txId, value: 9.90, currency: 'EUR', items: [{ item_id: 'petiq-report', item_name: 'Pet IQ Report', price: 9.90, quantity: 1 }] });
     if (typeof fbq !== 'undefined') fbq('track', 'Purchase', { value: 9.90, currency: 'EUR', content_ids: ['petiq-report'], content_type: 'product' });
     if (typeof ttq !== 'undefined') ttq.track('CompletePayment', { value: 9.90, currency: 'EUR', content_id: 'petiq-report', content_type: 'product' });
   }
