@@ -1614,7 +1614,7 @@ function showTeaser(){
   const percentile=calibratedPercentile(rawTotal,pet,selectedBreed);
   const iqScore=percentileToIQ(percentile);
   track('paywall_view', { pet_type: pet, profile_name: profile.name, iq_estimate: iqScore });
-  if (typeof fbq !== 'undefined') fbq('track', 'ViewContent', { content_name: 'PaywallReached', content_ids: ['petiq-report'], content_type: 'product', value: 9.90, currency: 'EUR' });
+  if (typeof fbq !== 'undefined') fbq('trackCustom', 'PaywallViewIQ', { content_name: 'PaywallReached', content_ids: ['petiq-report'], content_type: 'product', value: 9.90, currency: 'EUR' });
   if (typeof ttq !== 'undefined') ttq.track('ViewContent', { content_name: 'PaywallReached', content_id: 'petiq-report', content_type: 'product', value: 9.90, currency: 'EUR' });
 
   // Start 24h countdown
