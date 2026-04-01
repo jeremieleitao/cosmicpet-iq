@@ -225,6 +225,10 @@ body {
 .mid-teaser-icon { font-size:32px;flex-shrink:0;animation:pulse 2s infinite; }
 .mid-teaser-title { font-family:'Fraunces',serif;font-size:16px;font-weight:800;font-style:italic;color:white;margin-bottom:4px; }
 .mid-teaser-sub { font-size:12px;font-weight:700;color:rgba(255,255,255,.45); }
+.mid-teaser.mini { padding:14px;border-radius:14px;animation:popIn .4s ease both; }
+.mid-teaser.mini .mid-teaser-icon { font-size:24px; }
+.mid-teaser.mini .mid-teaser-title { font-size:14px; }
+.mid-teaser.mini .mid-teaser-sub { font-size:11px; }
 
 /* ── DIM HEADER ── */
 .dim-pill { display:inline-flex;align-items:center;gap:8px;background:var(--purple-light);color:#7c3aed;font-size:12px;font-weight:800;padding:6px 14px;border-radius:50px;margin-bottom:18px; }
@@ -793,42 +797,6 @@ body.dark-screen .analysis-phase {
           <span class="pet-emoji">😼</span><span class="pet-label">Cat</span>
         </div>
       </div>
-      <!-- Breed autocomplete (shown after pet selected) -->
-      <div id="breed-wrap" style="display:none">
-        <div class="breed-search-wrap">
-          <div class="breed-search-input-wrap">
-            <input type="text" class="breed-search-input" id="breed-input"
-              placeholder="Search breed (optional)"
-              autocomplete="off" autocorrect="off" spellcheck="false"
-              oninput="onBreedInput(this)"
-              onfocus="onBreedFocus()"
-              onkeydown="onBreedKey(event)">
-            <button class="breed-clear" id="breed-clear" onclick="clearBreed()" style="display:none" tabindex="-1">✕</button>
-          </div>
-          <div class="breed-dropdown" id="breed-dropdown" style="display:none"></div>
-        </div>
-      </div>
-
-      <input class="name-input" id="pet-name" type="text" placeholder="Their name..." maxlength="20"
-        oninput="checkStart()" onkeydown="if(event.key==='Enter')startQuiz()">
-
-      <!-- Photo upload (shown after name entered) -->
-      <div class="photo-upload-area" id="photo-upload-area" style="display:none">
-        <div class="photo-upload-card" id="photo-upload-card" onclick="document.getElementById('photo-input').click()">
-          <div class="photo-upload-preview" id="photo-upload-preview">
-            <span id="photo-icon">📷</span>
-          </div>
-          <div class="photo-upload-text">
-            <strong>Add <span id="photo-name-hint">your pet</span>'s photo</strong>
-            <span>Optional — makes your result shareable</span>
-          </div>
-        </div>
-        <input type="file" id="photo-input" accept="image/*" style="display:none" onchange="handlePhotoUpload(event)">
-      </div>
-
-      <button class="start-btn" id="start-btn" disabled onclick="startQuiz()">
-        Find out how smart they are 🐾
-      </button>
       <div class="trust-row">
         <span>🧬 5 cognitive dimensions</span>
         <span>📚 Peer-reviewed science</span>
@@ -839,6 +807,38 @@ body.dark-screen .analysis-phase {
 
   <!-- ── QUIZ ── -->
   <div class="screen" id="s-quiz">
+    <!-- Name step (shown first, before questions) -->
+    <div id="name-step" style="animation:fadeUp .35s ease both">
+      <div class="card" style="text-align:center">
+        <p style="font-size:13px;font-weight:800;color:var(--muted);margin-bottom:12px;text-transform:uppercase;letter-spacing:1px">What's their name?</p>
+        <input class="name-input" id="quiz-pet-name" type="text" placeholder="Their name..." maxlength="20"
+          oninput="document.getElementById('name-next-btn').disabled=!this.value.trim()"
+          onkeydown="if(event.key==='Enter'&&this.value.trim())submitNameAndStart()">
+        <div style="margin:10px 0 14px">
+          <a href="#" id="breed-toggle-link" onclick="document.getElementById('quiz-breed-wrap').style.display='block';this.style.display='none';return false"
+            style="font-size:12px;color:var(--muted);text-decoration:underline dotted">+ Add breed (optional)</a>
+          <div id="quiz-breed-wrap" style="display:none;margin-top:8px">
+            <div class="breed-search-wrap">
+              <div class="breed-search-input-wrap">
+                <input type="text" class="breed-search-input" id="breed-input"
+                  placeholder="Search breed (optional)"
+                  autocomplete="off" autocorrect="off" spellcheck="false"
+                  oninput="onBreedInput(this)"
+                  onfocus="onBreedFocus()"
+                  onkeydown="onBreedKey(event)">
+                <button class="breed-clear" id="breed-clear" onclick="clearBreed()" style="display:none" tabindex="-1">✕</button>
+              </div>
+              <div class="breed-dropdown" id="breed-dropdown" style="display:none"></div>
+            </div>
+          </div>
+        </div>
+        <button class="start-btn" id="name-next-btn" disabled onclick="submitNameAndStart()">
+          Let's go 🐾
+        </button>
+      </div>
+    </div>
+    <!-- Quiz questions (hidden until name is submitted) -->
+    <div id="quiz-questions" style="display:none">
     <div style="margin-bottom:18px;animation:fadeUp .35s ease both">
       <div class="dim-pill" id="dim-pill">🧠 Memory · 1/5</div>
       <div class="dim-name" id="dim-name">Memory & Learning</div>
@@ -861,6 +861,7 @@ body.dark-screen .analysis-phase {
       <button class="btn-back" id="btn-back" onclick="prevQ()" disabled>← back</button>
       <span class="q-counter" id="q-counter">1 / 12</span>
     </div>
+    </div><!-- /quiz-questions -->
   </div>
 
   <!-- ── ANALYSIS ── -->
@@ -1207,13 +1208,31 @@ function selectPet(p){
   selectedBreed='';
   document.getElementById('pet-dog').classList.toggle('active',p==='dog');
   document.getElementById('pet-cat').classList.toggle('active',p==='cat');
-  // Reset + show breed autocomplete
-  const inp=document.getElementById('breed-input');
-  if(inp){ inp.value=''; }
-  document.getElementById('breed-clear').style.display='none';
-  document.getElementById('breed-dropdown').style.display='none';
-  document.getElementById('breed-wrap').style.display='block';
-  checkStart();
+  // Go straight to quiz (name step)
+  startQuizImmediate();
+}
+
+function startQuizImmediate(){
+  showScreen('s-quiz');setPips(2);
+  // Show name step, hide questions
+  document.getElementById('name-step').style.display='block';
+  document.getElementById('quiz-questions').style.display='none';
+  // Focus name input after transition
+  setTimeout(()=>{
+    const inp=document.getElementById('quiz-pet-name');
+    if(inp) inp.focus();
+  },100);
+}
+
+function submitNameAndStart(){
+  name=document.getElementById('quiz-pet-name').value.trim();
+  if(!name) return;
+  track('quiz_start', { pet_type: pet, has_photo: false, has_breed: !!selectedBreed });
+  shuffledOrders=[];
+  // Hide name step, show questions
+  document.getElementById('name-step').style.display='none';
+  document.getElementById('quiz-questions').style.display='block';
+  renderQ(0);updateSidebar('quiz');
 }
 
 let _breedHighlight=-1;
@@ -1291,15 +1310,7 @@ document.addEventListener('click',function(e){
   }
 });
 function checkStart(){
-  const n=document.getElementById('pet-name').value.trim();
-  name=n;
-  // Show/hide photo upload
-  const photoArea=document.getElementById('photo-upload-area');
-  if(photoArea) photoArea.style.display=n&&pet?'flex':'none';
-  // Update photo hint
-  const hint=document.getElementById('photo-name-hint');
-  if(hint) hint.textContent=n||'your pet';
-  document.getElementById('start-btn').disabled=!pet||!n;
+  // Legacy — no longer called but kept for safety
 }
 function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
@@ -1382,9 +1393,18 @@ function renderQ(idx){
       🐾 Test it live with ${name} · ${qdata.live.secs}s · optional →
     </div>`:'';
 
-  // Mid-quiz teaser at Q6 (halfway through 12)
+  // Mid-quiz teasers: mini at Q3, full at Q6
   const mtw=document.getElementById('mid-teaser-wrap');
-  if(idx===6){
+  if(idx===3){
+    mtw.innerHTML=`
+      <div class="mid-teaser mini">
+        <div class="mid-teaser-icon">🔬</div>
+        <div>
+          <div class="mid-teaser-title">First data coming in for ${name}…</div>
+          <div class="mid-teaser-sub">Early signals look interesting. Keep going.</div>
+        </div>
+      </div>`;
+  } else if(idx===6){
     mtw.innerHTML=`
       <div class="mid-teaser">
         <div class="mid-teaser-icon">📊</div>
@@ -1614,8 +1634,8 @@ function showTeaser(){
   const percentile=calibratedPercentile(rawTotal,pet,selectedBreed);
   const iqScore=percentileToIQ(percentile);
   track('paywall_view', { pet_type: pet, profile_name: profile.name, iq_estimate: iqScore });
-  if (typeof fbq !== 'undefined') fbq('trackCustom', 'PaywallViewIQ', { content_name: 'PaywallReached', content_ids: ['petiq-report'], content_type: 'product', value: 9.90, currency: 'EUR' });
-  if (typeof ttq !== 'undefined') ttq.track('ViewContent', { content_name: 'PaywallReached', content_id: 'petiq-report', content_type: 'product', value: 9.90, currency: 'EUR' });
+  if (typeof fbq !== 'undefined') fbq('trackCustom', 'PaywallViewIQ', { content_name: 'PaywallReached', content_ids: ['petiq-report'], content_type: 'product', value: 6.90, currency: 'EUR' });
+  if (typeof ttq !== 'undefined') ttq.track('ViewContent', { content_name: 'PaywallReached', content_id: 'petiq-report', content_type: 'product', value: 6.90, currency: 'EUR' });
 
   // Start 24h countdown
   urgencySecs=86400;
@@ -1729,7 +1749,7 @@ function showTeaser(){
       <div class="paywall-price">
         <div style="font-size:12px;color:rgba(255,255,255,.2);margin-bottom:4px;">Est. value <span style="text-decoration:line-through">€19.99</span></div>
         <div style="font-size:11px;color:rgba(255,255,255,.15);margin-bottom:4px;">Today only</div>
-        <div class="price-tag">€9<span class="price-cents">.90</span></div>
+        <div class="price-tag">€6<span class="price-cents">.90</span></div>
         <div class="price-desc">One-time · Instant delivery · 7-day guarantee</div>
       </div>
       <div class="urgency-wrap">
@@ -1934,8 +1954,8 @@ async function checkout() {
     if (!data.checkoutUrl) throw new Error('No checkout URL');
 
     track('checkout_open', { pet_type: pet, iq_score: iqScore });
-    if (typeof fbq !== 'undefined') fbq('track', 'InitiateCheckout', { value: 9.90, currency: 'EUR', content_ids: ['petiq-report'], content_type: 'product' });
-    if (typeof ttq !== 'undefined') ttq.track('InitiateCheckout', { value: 9.90, currency: 'EUR', content_id: 'petiq-report', content_type: 'product' });
+    if (typeof fbq !== 'undefined') fbq('track', 'InitiateCheckout', { value: 6.90, currency: 'EUR', content_ids: ['petiq-report'], content_type: 'product' });
+    if (typeof ttq !== 'undefined') ttq.track('InitiateCheckout', { value: 6.90, currency: 'EUR', content_id: 'petiq-report', content_type: 'product' });
 
     // Redirect vers Stripe Checkout
     window.location.href = data.checkoutUrl;
@@ -2211,7 +2231,7 @@ function updateSidebar(mode){
         <p style="margin-bottom:14px;font-size:12px">Score computed &amp; ready</p>
         <button class="sb-cta" style="margin-top:0;font-size:13px;padding:13px 18px;width:auto;white-space:nowrap"
           onclick="document.querySelector('.paywall-card').scrollIntoView({behavior:'smooth'})">
-          🔓 Unlock for €9.99 →
+          🔓 Unlock for €6.90 →
         </button>
         <div style="margin-top:8px;font-size:10px;color:rgba(255,255,255,.3);font-family:'DM Mono',monospace">Instant delivery · 7-day guarantee</div>`;
     }
@@ -2223,23 +2243,40 @@ function reset(){
   clearInterval(timerIv);clearInterval(urgencyIv);
   document.getElementById('pet-dog').classList.remove('active');
   document.getElementById('pet-cat').classList.remove('active');
-  document.getElementById('pet-name').value='';
-  document.getElementById('start-btn').disabled=true;
-  document.getElementById('breed-wrap').style.display='none';
-  document.getElementById('photo-upload-area').style.display='none';
+  // Reset name step
+  const quizNameInp=document.getElementById('quiz-pet-name');
+  if(quizNameInp) quizNameInp.value='';
+  const nameNextBtn=document.getElementById('name-next-btn');
+  if(nameNextBtn) nameNextBtn.disabled=true;
+  // Reset breed
   const _bInp=document.getElementById('breed-input');
   if(_bInp) _bInp.value='';
-  document.getElementById('breed-clear').style.display='none';
-  const _card=document.getElementById('photo-upload-card');
-  if(_card){ _card.classList.remove('has-photo'); }
-  const _prev=document.getElementById('photo-upload-preview');
-  if(_prev) _prev.innerHTML='<span id="photo-icon">📷</span>';
+  const _bClear=document.getElementById('breed-clear');
+  if(_bClear) _bClear.style.display='none';
+  const _bToggle=document.getElementById('breed-toggle-link');
+  if(_bToggle) _bToggle.style.display='';
+  const _bWrap=document.getElementById('quiz-breed-wrap');
+  if(_bWrap) _bWrap.style.display='none';
   petPhotoDataURL=null; selectedBreed='';
   setProgress(0);setPips(1);showScreen('s-intro');updateSidebar('intro');
 }
 
 // Init
 loadStats();
+
+// ── AUTO-SCROLL FOR PAID MOBILE TRAFFIC ──
+(function(){
+  const params = new URLSearchParams(location.search);
+  const src = (params.get('utm_source')||'').toLowerCase();
+  const isPaid = params.get('utm_medium') === 'paid'
+    || ['meta','facebook','fb','ig','instagram'].includes(src);
+  if (!isPaid) return;
+  if (window.innerWidth > 768) return;
+  setTimeout(() => {
+    const target = document.querySelector('.pet-row');
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 400);
+})();
 </script>
 
 <!-- Footer -->
